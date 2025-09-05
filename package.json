@@ -1,8 +1,9 @@
 {
-  "name": "nuxt-app",
+  "name": "keukensenmeer",
   "type": "module",
   "private": true,
   "scripts": {
+    "prepare": "husky",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -28,6 +29,7 @@
     "@vueuse/nuxt": "13.9.0",
     "eslint": "^9.34.0",
     "husky": "9.1.7",
+    "lint-staged": "^16.1.6",
     "nuxt": "^4.1.0",
     "nuxt-contextual-transition": "^0.1.4",
     "vue": "^3.5.20",
@@ -37,5 +39,10 @@
   "engines": {
     "node": "22.15.0"
   },
-  "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad"
+  "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
+  "lint-staged": {
+    "*.{js,ts,json}": [
+      "pnpm -r lint:fix"
+    ]
+  }
 }
