@@ -32,8 +32,10 @@
     "lint-staged": "^16.1.6",
     "nuxt": "^4.1.0",
     "nuxt-contextual-transition": "^0.1.4",
+    "typescript": "5.6.2",
     "vue": "^3.5.20",
     "vue-router": "^4.5.1",
+    "vue-tsc": "2.0.29",
     "wrangler": "^4.34.0"
   },
   "engines": {
