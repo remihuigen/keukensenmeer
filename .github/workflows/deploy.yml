@@ -1,0 +1,14 @@
+# Deploys new releases of the Nuxt application to NuxtHub
+name: Deploy to NuxtHub
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/nuxthub.yml
+    with:
+      environment: production
+    secrets: inherit  # Important for environment variables to be passed to the workflow

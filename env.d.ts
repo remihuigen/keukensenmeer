@@ -14,6 +14,7 @@ declare global {
       GITHUB_RELEASE_APP_ID: string
       GITHUB_RELEASE_APP_CLIENT_ID: string
       GITHUB_RELEASE_APP_CLIENT_SECRET: string
+      API_TOKEN: string
     }
   }
 }

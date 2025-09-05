@@ -6,15 +6,7 @@ on:
 
 jobs:
   preview:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm i -g --force corepack && corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "pnpm"
-      - run: pnpm install
-      - run: pnpm nuxi prepare
-      - name: Preview deployment placeholder
-        run: echo "placeholder step for preview deployments"
+    uses: ./.github/workflows/nuxthub.yml
+    with:
+      environment: preview
+    secrets: inherit  # Important for environment variables to be passed to the workflow

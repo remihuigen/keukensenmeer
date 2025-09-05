@@ -21,6 +21,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    apiToken: process.env.API_TOKEN,
     public: {
       tracking: {
         disabled: process.env.DISABLE_TRACKING === 'true' || false,
