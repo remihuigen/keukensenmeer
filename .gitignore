@@ -33,3 +33,7 @@ nuxt.d.ts
 .netlify
 .vercel
 .wrangler
+
+# Local secrets
+.secrets
+.secret
