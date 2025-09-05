@@ -14,7 +14,14 @@ export default defineNuxtConfig({
   ],
   css: ['~/assets/css/main.css'],
 
+  nitro: {
+    experimental: {
+      openAPI: true
+    }
+  },
+
   runtimeConfig: {
+    apiToken: process.env.API_TOKEN,
     public: {
       tracking: {
         disabled: process.env.DISABLE_TRACKING === 'true' || false,
