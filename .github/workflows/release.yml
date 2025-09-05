@@ -29,16 +29,26 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      - uses: pnpm/action-setup@v4
-        with: { run_install: false }
-
-      - uses: actions/setup-node@v4
+      # Use a fixed pnpm version for reproducibility
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with: 
+          version: 10
+          run_install: false
+        
+      # Match package.json "engines.node" and cache pnpm
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version-file: package.json
-          cache: pnpm
-
+          node-version: 22
+          cache: 'pnpm'
+        
       - name: Install dependencies
-        run: pnpm install --dev
+        env:
+          # Ensure platform-specific optional binaries (esbuild, oxc-parser) are installed
+          PNPM_CONFIG_OPTIONAL: 'true'
+          NPM_CONFIG_OPTIONAL: 'true'
+        run: pnpm install  --frozen-lockfile --enable-pre-post-scripts
 
       - name: Release
         env:

@@ -1,10 +1,8 @@
-# Lint and typecheck the project and creates a preview deployment
-name: Code Quality and Preview Deployment
+name: Code Quality
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_call: {}        # reusable
+  workflow_dispatch: {}    # (optional)
 
 jobs:
   lint:
@@ -19,8 +17,10 @@ jobs:
       - run: pnpm install
       - run: pnpm nuxi prepare
       - run: pnpm lint
+
   typecheck:
     runs-on: ubuntu-latest
+    needs: lint
     steps:
       - uses: actions/checkout@v4
       - run: npm i -g --force corepack && corepack enable
@@ -31,10 +31,3 @@ jobs:
       - run: pnpm install
       - run: pnpm nuxi prepare
       - run: pnpm typecheck
-  
-  # preview:
-  #   needs: [lint, typecheck]
-  #   uses: ./.github/workflows/nuxthub.yml
-  #   with:
-  #     environment: preview
-  #   secrets: inherit  # Important for environment variables to be passed to the workflow

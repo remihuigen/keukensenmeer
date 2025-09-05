@@ -2,7 +2,7 @@ export default defineNuxtPlugin({
   name: 'my-plugin',
   enforce: 'pre', // or 'post'
   parallel: true,
-  async setup(nuxtApp) {
+  async setup(_nuxtApp) {
     // this is the equivalent of a normal functional plugin
     const { message } = useExample()
 
@@ -19,8 +19,7 @@ export default defineNuxtPlugin({
   hooks: {
     // You can directly register Nuxt app runtime hooks here
     'app:created'() {
-      const nuxtApp = useNuxtApp()
-      // do something in the hook
+      console.log('Nuxt app instance created (from plugin)')
     }
   },
   env: {

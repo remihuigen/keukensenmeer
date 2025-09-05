@@ -7,5 +7,8 @@ fi
 
 # Check if DISABLE_PRE_COMMIT_LINT is not set to true
 if [ "$DISABLE_PRE_COMMIT_LINT" != "true" ]; then
-    pnpm lint-staged
+    pnpm lint:fix
+
+    # Add fixed files back to the staging area
+    git add .
 fi
