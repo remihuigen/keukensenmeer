@@ -1,9 +1,8 @@
 name: Code Quality
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_call: {}        # reusable
+  workflow_dispatch: {}    # (optional)
 
 jobs:
   lint:

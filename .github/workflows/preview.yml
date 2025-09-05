@@ -1,10 +1,8 @@
 name: Preview Deployment
 
 on:
-  workflow_run:
-    workflows: ["Code Quality"]   # must match the `name:` of the other workflow
-    types:
-      - completed
+  workflow_call: {}        # reusable
+  workflow_dispatch: {}    # (optional)
 
 jobs:
   preview:
