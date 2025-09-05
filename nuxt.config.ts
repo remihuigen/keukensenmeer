@@ -14,6 +14,12 @@ export default defineNuxtConfig({
   ],
   css: ['~/assets/css/main.css'],
 
+  nitro: {
+    experimental: {
+      openAPI: true
+    }
+  },
+
   runtimeConfig: {
     public: {
       tracking: {
