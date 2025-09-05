@@ -48,7 +48,7 @@ jobs:
           # Ensure platform-specific optional binaries (esbuild, oxc-parser) are installed
           PNPM_CONFIG_OPTIONAL: 'true'
           NPM_CONFIG_OPTIONAL: 'true'
-        run: pnpm install  --frozen-lockfile --enable-pre-post-scripts
+        run: pnpm install  --frozen-lockfile
 
       - name: Release
         env:
