@@ -1,0 +1,35 @@
+{
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "tailwindCSS.classAttributes": ["class", "ui"],
+  "tailwindCSS.experimental.classRegex": [
+    ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  // Enable Copilot globally and inline
+  "github.copilot.enable": {
+    "*": true
+  },
+  "github.copilot.inlineSuggest.enable": true,
+
+  // No filtering of completions
+  "github.copilot.advanced": {
+    "filterCompletions": false,
+    "filterProfanity": false
+  },
+
+  // Copilot Labs enabled for extra tools
+  "github.copilot.labs": {
+    "enabled": false
+  },
+
+  // Privacy: disable telemetry
+  "github.copilot.telemetry.enable": false
+}

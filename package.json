@@ -1,0 +1,41 @@
+{
+  "name": "nuxt-app",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxi typecheck",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --fix",
+    "analyze": "nuxi analyze",
+    "preview:edge": "nuxt build && pnpm nuxthub preview",
+    "debug:edge": "cross-env DEBUG=true nuxt build && pnpm nuxthub preview"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "19.8.0",
+    "@commitlint/config-conventional": "19.7.1",
+    "@iconify-json/heroicons": "^1.2.2",
+    "@nuxt/eslint": "1.9.0",
+    "@nuxt/fonts": "0.11.4",
+    "@nuxt/image": "1.11.0",
+    "@nuxt/ui-pro": "^3.3.3",
+    "@nuxthub/core": "0.9.0",
+    "@nuxtjs/seo": "3.1.0",
+    "@vueuse/nuxt": "13.9.0",
+    "eslint": "^9.34.0",
+    "husky": "9.1.7",
+    "nuxt": "^4.1.0",
+    "nuxt-contextual-transition": "^0.1.4",
+    "vue": "^3.5.20",
+    "vue-router": "^4.5.1",
+    "wrangler": "^4.34.0"
+  },
+  "engines": {
+    "node": "22.15.0"
+  },
+  "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad"
+}

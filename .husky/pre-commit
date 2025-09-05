@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Load environment variables from .env file
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
+
+# Check if DISABLE_PRE_COMMIT_LINT is not set to true
+if [ "$DISABLE_PRE_COMMIT_LINT" != "true" ]; then
+    pnpm lint-staged
+fi
