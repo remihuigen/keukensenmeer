@@ -4,6 +4,10 @@ on:
   workflow_call: {}        # reusable
   workflow_dispatch: {}    # (optional)
 
+permissions:
+  id-token: write          # Required for OIDC authentication
+  contents: read           # Required for checkout
+  
 jobs:
   preview:
     uses: ./.github/workflows/nuxthub.yml

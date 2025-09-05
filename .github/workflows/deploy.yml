@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write          # Required for OIDC authentication
+  contents: read           # Required for checkout
+  
 jobs:
   deploy:
     uses: ./.github/workflows/nuxthub.yml
