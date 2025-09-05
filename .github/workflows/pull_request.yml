@@ -18,7 +18,7 @@ jobs:
     secrets: inherit
 
   # Call reusable Preview workflow AFTER Code Quality succeeds
-  preview:
+  preview-deployment:
     needs: code-quality
     uses: ./.github/workflows/preview.yml
     secrets: inherit
