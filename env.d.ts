@@ -6,7 +6,6 @@ declare global {
       MODE: 'dev' | 'staging' | 'prod'
       CLOUDINARY_CLOUD_NAME: string
       NUXT_HUB_PROJECT_KEY: string
-      NUXT_HUB_PROJECT_SECRET_KEY: string
       NUXT_UI_PRO_LICENSE: string
       PLAUSIBLE_DOMAIN: string
       DISABLE_TRACKING?: 'true' | 'false'
