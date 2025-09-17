@@ -37,3 +37,5 @@ nuxt.d.ts
 # Local secrets
 .secrets
 .secret
+
+keukensenmeer.code-workspace
