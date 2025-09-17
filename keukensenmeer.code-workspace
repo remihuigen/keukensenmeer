@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../onderwijsloket-directus"
+		},
+		{
+			"path": "../hetonderwijsin"
 		}
 	],
 	"settings": {}
