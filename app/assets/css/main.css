@@ -1,2 +1,61 @@
-@import "tailwindcss";
+@import "tailwindcss" theme(static);
 @import "@nuxt/ui-pro";
+
+
+@plugin "@tailwindcss/typography";
+@plugin "tailwindcss-debug-screens";
+
+@theme static {
+    /* Fonts */
+    --font-sans: Objektiv Mk2, sans-serif;
+    --font-serif: "Playfair Display", serif;
+    --font-hand: NorthwellClean, serif;
+
+
+    --color-white: #FFFFFF;
+    --color-black: #09121B;
+
+    /* Primary Palette */
+    --color-primary-25:  #4F3D1D;
+    --color-primary-50:  #655324;
+    --color-primary-100: #7E6933;
+    --color-primary-200: #937B3B;
+    --color-primary-300: #A88C44;
+    --color-primary-400: #BD9D4C;
+    --color-primary-500: #D2AF55;
+    --color-primary-600: #DBBF77;
+    --color-primary-700: #E4CF99;
+    --color-primary-800: #EDDFBB;
+    --color-primary-900: #F6EFDD;
+    --color-primary-950: #FDF9F1;
+
+    /* Secondary Palette */
+    --color-secondary-25:  #0C1F29;
+    --color-secondary-50:  #0E2430;
+    --color-secondary-100: #102833;
+    --color-secondary-200: #122D39;
+    --color-secondary-300: #14323F;
+    --color-secondary-400: #153745;
+    --color-secondary-500: #173442;
+    --color-secondary-600: #415C67;
+    --color-secondary-700: #6A828C;
+    --color-secondary-800: #94ABB1;
+    --color-secondary-900: #BFD2D7;
+    --color-secondary-950: #E3EEF0;
+
+    /* Gray Palette */
+    --color-gray-25:  #1D2226;
+    --color-gray-50:  #262C31;
+    --color-gray-100: #303840;
+    --color-gray-200: #565D64;
+    --color-gray-300: #7C8488;
+    --color-gray-400: #A3A9AD;
+    --color-gray-500: #C9CFD1;
+    --color-gray-600: #DCDFE1;
+    --color-gray-700: #E4E7E7;
+    --color-gray-800: #ECEFEF;
+    --color-gray-900: #F9F9FA;
+    --color-gray-950: #FCFCFD;
+}
+
+

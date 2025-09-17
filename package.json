@@ -2,6 +2,18 @@
   "name": "keukensenmeer",
   "type": "module",
   "private": true,
+  "author": {
+    "name": "Remi Huigen",
+    "email": "remihuigen@gmail.com",
+    "url": "https://github.com/remihuigen"
+  },
+  "contributors": [
+    {
+      "name": "Remi Huigen",
+      "email": "remihuigen@gmail.com",
+      "url": "https://github.com/remihuigen"
+    }
+  ],
   "scripts": {
     "prepare": "husky",
     "build": "nuxt build",
@@ -34,11 +46,13 @@
     "@semantic-release/github": "11.0.6",
     "@semantic-release/npm": "12.0.2",
     "@semantic-release/release-notes-generator": "14.1.0",
+    "@tailwindcss/typography": "^0.5.16",
     "@vueuse/nuxt": "13.9.0",
     "eslint": "9.35.0",
     "husky": "9.1.7",
     "nuxt": "4.1.2",
     "nuxt-contextual-transition": "0.1.4",
+    "tailwindcss-debug-screens": "^3.0.1",
     "typescript": "5.8.3",
     "vue": "3.5.21",
     "vue-router": "4.5.1",
