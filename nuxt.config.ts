@@ -30,7 +30,7 @@ export default defineNuxtConfig({
   },
 
   hub: {
-    analytics: true,
+    analytics: false,
     blob: false,
     cache: true,
     database: false,
