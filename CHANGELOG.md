@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/remihuigen/keukensenmeer/compare/v1.1.0...v1.1.1) (2025-09-17)
+
+
+### Bug Fixes
+
+* Disable cf analytics ([47b67b7](https://github.com/remihuigen/keukensenmeer/commit/47b67b7a779cb526a568f1682dc84673ad846f6d))
+* Replace nuxthub flow ([9d9e00b](https://github.com/remihuigen/keukensenmeer/commit/9d9e00bfa44b4778b8a7c283ae18e7a03432615b))
+
 # [1.1.0](https://github.com/remihuigen/keukensenmeer/compare/v1.0.0...v1.1.0) (2025-09-05)
 
 
