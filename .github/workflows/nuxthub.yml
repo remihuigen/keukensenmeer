@@ -1,26 +1,13 @@
 name: Deploy to NuxtHub
-on:
-  workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-    outputs:
-      deployment-url:
-        description: "The deployment URL"
-        value: ${{ jobs.deploy.outputs.deployment-url }}
+on: push
 
 jobs:
   deploy:
     name: "Deploy to NuxtHub"
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ inputs.environment }}
     permissions:
       contents: read
       id-token: write
-    outputs:
-      deployment-url: ${{ steps.deploy.outputs.deployment-url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -43,24 +30,6 @@ jobs:
         run: pnpx nuxthub@latest ensure
 
       - name: Build & Deploy to NuxtHub
-        id: deploy
         uses: nuxt-hub/action@v2
         with:
-          project-key: keukensenmeer-lfsy
-      
-      - name: Invalidate Cache
-        if: ${{ steps.deploy.outcome == 'success' }}
-        run: |
-          echo "API_TOKEN is set: $([[ -n \"$API_TOKEN\" ]] && echo \"true\" || echo \"false\")"
-          echo "APP_URL: $APP_URL"
-
-          RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X POST $APP_URL/api/_cache/invalidate \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $API_TOKEN")
-          
-          echo "HTTP Status Code: $RESPONSE"
-          echo "Response Body:"
-          cat response.json
-        env:
-          API_TOKEN: ${{ secrets.API_TOKEN }}
-          APP_URL: ${{ steps.deploy.outputs.deployment-url }}
+          project-key: keukensenmeer-272p
