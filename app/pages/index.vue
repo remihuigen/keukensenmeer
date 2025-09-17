@@ -10,6 +10,12 @@
           leven</span> volgen. </h1>
       <p>This is the content of the index page.</p>
       <UButton to="/page" label="Other page" />
+
+      <NuxtImg
+src="site/modern_hero_fxhydj"
+size="800pxp"
+alt="Modern kitchen with island"
+        class="mt-8 rounded-lg shadow-lg" />
     </UContainer>
 
   </NuxtLayout>

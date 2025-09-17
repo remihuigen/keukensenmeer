@@ -65,6 +65,24 @@ export default defineNuxtConfig({
     ]
   },
 
+  image: {
+    provider: 'cloudinary',
+    cloudinary: {
+      baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUDNAME}/image/upload`,
+      modifiers: {
+        quality: '80',
+      }
+    },
+    providers: {
+      video: {
+        provider: 'cloudinary',
+        options: {
+          baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUDNAME}/video/upload`,
+        }
+      }
+    }
+  },
+
   app: {
     head: {
       htmlAttrs: {
