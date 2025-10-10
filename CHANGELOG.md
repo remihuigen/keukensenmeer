@@ -1,5 +1,13 @@
 # Changelog
 
+# [1.2.0](https://github.com/remihuigen/keukensenmeer/compare/v1.1.1...v1.2.0) (2025-09-17)
+
+
+### Features
+
+* Add fonts, color and icons ([d994b61](https://github.com/remihuigen/keukensenmeer/commit/d994b619edf1f0d7e92aa2c5aa26902677c9bdb3))
+* Add image config ([1e01565](https://github.com/remihuigen/keukensenmeer/commit/1e0156560b3549852ae837c948923a0ed6bb18a2))
+
 ## [1.1.1](https://github.com/remihuigen/keukensenmeer/compare/v1.1.0...v1.1.1) (2025-09-17)
 
 
