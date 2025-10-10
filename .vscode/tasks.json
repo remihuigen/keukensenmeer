@@ -11,14 +11,14 @@
      {
       "label": "👀 Preview on edge",
       "type": "shell",
-      "command": "preview:edge",
+      "command": "pnpm preview:edge",
       "problemMatcher": [],
       "group": "build"
     },
     {
       "label": "🐛 Debug on edge",
       "type": "shell",
-      "command": "debug:edge",
+      "command": "pnpm debug:edge",
       "problemMatcher": [],
       "group": "build"
     },
@@ -32,21 +32,21 @@
     {
       "label": "⚙️ Bump patch versions",
       "type": "shell",
-      "command": "bump:patch",
+      "command": "pnpm bump:patch",
       "problemMatcher": [],
       "group": "build"
     },
     {
       "label": "⚙️ Bump minor versions",
       "type": "shell",
-      "command": "bump:minor",
+      "command": "pnpm bump:minor",
       "problemMatcher": [],
       "group": "build"
     },
     {
       "label": "⚙️ Bump major versions",
       "type": "shell",
-      "command": "bump:major",
+      "command": "pnpm bump:major",
       "problemMatcher": [],
       "group": "build"
     },
