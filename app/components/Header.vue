@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui'
 
+import { useWindowSize } from '@vueuse/core'
+
+const { width } = useWindowSize()
+
 const route = useRoute()
 
 const items = computed<NavigationMenuItem[]>(() => [
@@ -18,17 +22,54 @@ const items = computed<NavigationMenuItem[]>(() => [
 		to: '/werkwijze',
 	},
 ])
+
+const open = useState('mobileMenuOpen', () => false)
+
+const { transitionDurationMs, shiftLeft, shiftRight, toggle } = useMobileMenu()
+
+watch(
+	() => route.path,
+	() => {
+		open.value = false
+	},
+)
+
+watch(width, (newWidth) => {
+	if (newWidth >= 1024) {
+		open.value = false
+	}
+})
+
+const forceRight = ref(false)
+const shiftMenuLeft = ref(false)
+
+watch(shiftLeft, (newVal) => {
+	if (newVal) {
+		forceRight.value = true
+		setTimeout(() => {
+			forceRight.value = false
+			shiftMenuLeft.value = true
+		}, 10)
+	} else {
+		forceRight.value = false
+		shiftMenuLeft.value = false
+	}
+})
 </script>
 
 <template>
-	<UHeader :ui="{ root: 'bg-secondary-600/90 border-secondary-700 shadow-2xl' }">
+	<UHeader
+		:ui="{
+			root: 'bg-secondary-600/90 border-secondary-700 shadow-2xl',
+		}"
+	>
 		<template #title>
-			<Logo class="h-10 w-auto" />
+			<Logo class="z-20 h-10 w-auto" />
 		</template>
 		<UNavigationMenu :items="items" color="neutral" variant="pill" highlight />
 		<template #right>
 			<UButton
-				class="absolute top-0 right-0 -bottom-0.25 grid w-56 place-content-center text-sm"
+				class="absolute top-0 right-0 -bottom-0.25 hidden w-56 place-content-center text-sm lg:grid"
 				size="xl"
 				color="primary"
 				variant="solid"
@@ -38,5 +79,93 @@ const items = computed<NavigationMenuItem[]>(() => [
 				<span class="flex items-center gap-5 uppercase"> Neem contact op </span>
 			</UButton>
 		</template>
+
+		<template #toggle>
+			<UButton
+				color="primary"
+				variant="solid"
+				class="absolute top-0 right-0 z-20 grid size-[var(--ui-header-height)] place-content-center lg:hidden"
+				title="Open navigatiemenu"
+				aria-label="Open het navigatiemenu"
+				@click="toggle"
+			>
+				<div class="swap">
+					<UIcon
+						name="heroicons:bars-3-bottom-right-20-solid"
+						class="size-7 transition-all"
+						:class="[!open ? 'rotate-0 opacity-100' : 'rotate-45 opacity-0']"
+					/>
+					<UIcon
+						name="heroicons:x-mark-20-solid"
+						class="size-7 transition-all"
+						:class="[open ? 'rotate-0 opacity-100' : 'rotate-45 opacity-0']"
+					/>
+				</div>
+			</UButton>
+		</template>
 	</UHeader>
+	<div
+		class="mobile-menu fixed inset-0 top-[var(--ui-header-height)] z-10"
+		:class="[
+			shiftMenuLeft && open ? 'shift-left' : '',
+			shiftRight && open ? 'shift-right' : '',
+			forceRight ? 'force-right' : '',
+			open ? 'open' : '',
+		]"
+	>
+		<UContainer class="grid h-full place-content-center gap-16">
+			<UNavigationMenu
+				:items="items"
+				color="neutral"
+				variant="link"
+				orientation="vertical"
+				highlight
+				:ui="{
+					root: 'font-serif -mt-12',
+					list: 'space-y-8',
+					link: 'text-xl grid place-content-center',
+				}"
+			/>
+			<UButton to="/contact" color="primary" variant="solid" size="xl">
+				Neem contact op
+			</UButton>
+		</UContainer>
+	</div>
 </template>
+
+<style lang="postcss" scoped>
+.swap {
+	cursor: pointer;
+	display: grid;
+	place-content: center;
+	position: relative;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+.swap > * {
+	grid-column-start: 1;
+	grid-row-start: 1;
+}
+
+.mobile-menu {
+	transition: transform v-bind(transitionDurationMs) ease-in;
+	transform: translateX(-100vw);
+
+	&.force-right {
+		transition: none;
+		transform: translateX(100vw);
+	}
+
+	&.shift-left {
+		transition: transform v-bind(transitionDurationMs) ease-in;
+		transform: translateX(0vw);
+	}
+
+	&.shift-right {
+		transition: transform v-bind(transitionDurationMs) ease-in;
+		transform: translateX(0vw);
+	}
+}
+</style>
