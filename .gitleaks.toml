@@ -2,6 +2,8 @@
 title = "Keukensenmeer Gitleaks Configuration"
 description = "Security scanning configuration for Nuxt TypeScript project"
 
+[extend]
+useDefault = true
 
 # Global allowlists for the Nuxt TypeScript project
 [[allowlists]]

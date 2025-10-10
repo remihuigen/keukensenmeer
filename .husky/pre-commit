@@ -2,14 +2,7 @@
 
 # Run gitleaks to scan for secrets in staged files
 # Using globally installed gitleaks via Homebrew
-
-gitleaks git --config gitleaks.toml  --exit-code 1
-
-# Check if gitleaks failed
-if [ $? -ne 0 ]; then
-    echo "❌ Gitleaks found secrets in staged files. Commit aborted."
-    exit 1
-fi
+gitleaks git  --staged --config .gitleaks.toml --verbose  --exit-code 1
 
 # Load environment variables from .env file
 if [ -f .env ]; then
