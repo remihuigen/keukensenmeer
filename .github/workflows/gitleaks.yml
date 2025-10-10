@@ -1,3 +1,6 @@
+# Scan for secrets using gitleaks
+name: Gitleaks
+
 on:
     pull_request:
     push:
