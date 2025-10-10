@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.3.0](https://github.com/remihuigen/keukensenmeer/compare/v1.2.0...v1.3.0) (2025-10-10)
+
+
+### Bug Fixes
+
+* Drop package manager from package ([292806e](https://github.com/remihuigen/keukensenmeer/commit/292806e00a65ec5de30b2a4b96f28596fa9088e1))
+
+
+### Features
+
+* Add routes, nav boilerplate, error layout and page transitions ([9566bfc](https://github.com/remihuigen/keukensenmeer/commit/9566bfc7c5f45a55399cd491ce538e4af880770b))
+
 # [1.2.0](https://github.com/remihuigen/keukensenmeer/compare/v1.1.1...v1.2.0) (2025-09-17)
 
 
