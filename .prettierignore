@@ -1,0 +1,7 @@
+.idea/
+.next/
+.nuxt/
+.data/
+.vscode/
+node_modules/
+pnpm-lock.yaml

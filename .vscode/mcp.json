@@ -1,0 +1,16 @@
+{
+    "servers": {
+        "nuxt-ui": {
+            "type": "http",
+            "url": "https://ui.nuxt.com/mcp"
+        },
+        "nuxt": {
+            "type": "http",
+            "url": "https://mcp.nuxt.com/sse"
+        },
+        "github-mcp": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp"
+    }
+    }
+}

@@ -1,0 +1,41 @@
+{
+	"semi": false,
+	"singleQuote": true,
+	"trailingComma": "all",
+	"proseWrap": "always",
+	"printWidth": 100,
+	"tabWidth": 4,
+	"useTabs": true,
+	"overrides": [
+		{
+			"files": ["*.yaml", "*.yml"],
+			"options": {
+				"tabWidth": 2,
+				"useTabs": false
+			}
+		},
+		{
+			"files": ["*.md"],
+			"options": {
+				"tabWidth": 2,
+				"useTabs": false
+			}
+		}
+	],
+	"plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+	"importOrder": [
+		"<TYPES>^(node:)",
+		"<TYPES>",
+		"<TYPES>^@/",
+		"<TYPES>^[.]",
+		"",
+		"<BUILTIN_MODULES>",
+		"",
+		"<THIRD_PARTY_MODULES>",
+		"",
+		"^@/(.*)$",
+		"",
+		"^[./]"
+	],
+	"importOrderCaseSensitive": false
+}

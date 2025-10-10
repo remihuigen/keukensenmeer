@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/image',
-    '@nuxt/ui-pro',
+    '@nuxt/ui',
     '@nuxthub/core',
     '@nuxtjs/seo',
     '@vueuse/nuxt',
@@ -61,7 +61,9 @@ export default defineNuxtConfig({
 
   fonts: {
     families: [
-      { name: 'Playfair Display', provider: 'google', weights: [200, 400, 500, 700] }
+      { name: 'Playfair Display', provider: 'google', weights: [200, 400, 500, 700] },
+      { name: 'NorthwellClean', provider: 'local', weights: [400] },
+      { name: 'Objektiv Mk2', provider: 'local', weights: [400, 700] },
     ]
   },
 
@@ -113,6 +115,8 @@ export default defineNuxtConfig({
           sizes: `${size}x${size}`
         }))
       ]
-    }
+    },
+    pageTransition: { name: 'page', mode: 'out-in' },
+
   },
 })
