@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Start Dev Server",
+      "type": "shell",
+      "command": "pnpm dev",
+      "problemMatcher": [],
+      "group": "build"
+    },
+     {
+      "label": "👀 Preview on edge",
+      "type": "shell",
+      "command": "preview:edge",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "🐛 Debug on edge",
+      "type": "shell",
+      "command": "debug:edge",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "✨ Check outdated dependencies",
+      "type": "shell",
+      "command": "pnpm outdated",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "⚙️ Bump patch versions",
+      "type": "shell",
+      "command": "bump:patch",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "⚙️ Bump minor versions",
+      "type": "shell",
+      "command": "bump:minor",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "⚙️ Bump major versions",
+      "type": "shell",
+      "command": "bump:major",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "⛰ Upgrade Nuxt",
+      "type": "shell",
+      "command": "pnpm nuxt:upgrade",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "🧹 Lint & Fix",
+      "type": "shell",
+      "command": "pnpm lint:fix",
+      "problemMatcher": [],
+      "group": "build"
+    },
+     {
+      "label": "🔧 Typecheck",
+      "type": "shell",
+      "command": "pnpm typecheck",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "📦 Analyze Bundle",
+      "type": "shell",
+      "command": "pnpm analyze",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "🧹 Clean node_modules & Reinstall",
+      "type": "shell",
+      "command": "rm -rf node_modules && pnpm install",
+      "problemMatcher": [],
+      "group": "build"
+    }
+  ]
+}

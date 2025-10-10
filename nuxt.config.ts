@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/image',
-    '@nuxt/ui-pro',
+    '@nuxt/ui',
     '@nuxthub/core',
     '@nuxtjs/seo',
     '@vueuse/nuxt',

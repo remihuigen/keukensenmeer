@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nl } from '@nuxt/ui-pro/locale'
+import { nl } from '@nuxt/ui/locale'
 
 const config = useRuntimeConfig().public
 
