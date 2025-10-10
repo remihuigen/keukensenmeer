@@ -1,0 +1,25 @@
+# Keukensenmeer Gitleaks Configuration
+title = "Keukensenmeer Gitleaks Configuration"
+description = "Security scanning configuration for Nuxt TypeScript project"
+
+
+# Global allowlists for the Nuxt TypeScript project
+[[allowlists]]
+description = "Nuxt project ignore paths and patterns"
+paths = [
+  '''node_modules/.*''',
+  '''\.git/.*''',
+  '''dist/.*''',
+  '''\.nuxt/.*''',
+  '''\.output/.*''',
+  '''coverage/.*''',
+  '''.*\.log$''',
+  '''\.env\.example$''',
+  '''\.env\.template$''',
+  '''public/.*\.json$''',
+  '''assets/.*\.svg$''',
+  '''components/.*\.stories\.ts$''',
+  '''storybook-static/.*''',
+  '''cypress/fixtures/.*''',
+  '''data/.*'''
+]

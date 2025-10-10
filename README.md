@@ -19,8 +19,9 @@ pnpm build
 
 ### Prerequisites
 
-- Node.js (version specified in `.tool-versions`)
-- pnpm
+- Node.js 22+
+- pnpm 10+
+- gitleaks (for pre-commit secret scanning)
 
 ### Available Scripts
 
@@ -40,7 +41,9 @@ When running `pnpm typecheck`, you may see errors like:
 Search string not found: "/supportedTSExtensions = .*(?=;)/"
 ```
 
-This is caused by an incompatibility between newer **TypeScript** releases (≥5.7) and `vue-tsc` ≤2.1.x. Internally, `vue-tsc` patches parts of TypeScript's compiler, but recent changes in TypeScript broke that patching logic.
+This is caused by an incompatibility between newer **TypeScript** releases (≥5.7) and `vue-tsc`
+≤2.1.x. Internally, `vue-tsc` patches parts of TypeScript's compiler, but recent changes in
+TypeScript broke that patching logic.
 
 To ensure reliable type checking, we **pinned both versions** to a known-working combination:
 
@@ -51,19 +54,22 @@ To ensure reliable type checking, we **pinned both versions** to a known-working
 }
 ```
 
-This avoids the runtime error and keeps `nuxi typecheck` stable.
-If you need to upgrade TypeScript in the future, make sure to update `vue-tsc` to a version that explicitly supports it.
+This avoids the runtime error and keeps `nuxi typecheck` stable. If you need to upgrade TypeScript
+in the future, make sure to update `vue-tsc` to a version that explicitly supports it.
 
 ## Tech Stack
 
 ### Core Framework
+
 - **[Nuxt 4](https://nuxt.com/)**: The Intuitive Vue Framework
 
 ### Styling & UI
+
 - **[Tailwind CSS](https://tailwindcss.com/)**: Utility-first CSS framework
 - Additional UI components and styling libraries (to be documented)
 
 ### Development Tools
+
 - **[TypeScript](https://www.typescriptlang.org/)**: Type-safe JavaScript
 - **[ESLint](https://eslint.org/)**: Code linting and formatting
 

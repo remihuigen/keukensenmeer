@@ -1,0 +1,21 @@
+{
+	"title": "Keukensenmeer Gitleaks Configuration",
+	"description": "Security scanning configuration for Nuxt TypeScript project",
+	"ignorePaths": [
+		"node_modules/**",
+		".git/**",
+		"dist/**",
+		".nuxt/**",
+		".output/**",
+		"coverage/**",
+		"*.log",
+		".env.example",
+		".env.template",
+		"public/**/*.json",
+		"assets/**/*.svg",
+		"components/**/*.stories.ts",
+		"storybook-static/**",
+		"cypress/fixtures/**",
+		"data/**"
+	]
+}
