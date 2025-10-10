@@ -1,9 +1,14 @@
 #!/bin/bash
 
+# Run gitleaks to scan for secrets in staged files
+# Using globally installed gitleaks via Homebrew
+gitleaks git  --staged --config .gitleaks.toml --verbose  --exit-code 1
+
 # Load environment variables from .env file
 if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
 fi
+
 
 # Check if DISABLE_PRE_COMMIT_LINT is not set to true
 if [ "$DISABLE_PRE_COMMIT_LINT" != "true" ]; then
