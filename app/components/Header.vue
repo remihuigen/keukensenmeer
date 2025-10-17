@@ -153,7 +153,8 @@ watch(width, (newWidth) => {
 }
 
 /* base delay during enter */
-.mobile-menu-enter-active .menu-item {
+.mobile-menu-enter-active .menu-item,
+.mobile-menu-leave-active .menu-item {
 	transition-delay: var(--menu-transition-duration);
 }
 

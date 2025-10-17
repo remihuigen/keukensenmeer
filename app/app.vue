@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nl } from '@nuxt/ui/locale'
 
-const { mobileMenuOpen, menuClosing, transitionDurationMs, setHooks } = useMobileMenu()
+const { mobileMenuOpen, menuClosing, setHooks } = useMobileMenu()
 
 setHooks()
 </script>
@@ -40,11 +40,6 @@ setHooks()
 </template>
 
 <style lang="postcss">
-.content,
-.menu-item {
-	--menu-transition-duration: v-bind(transitionDurationMs);
-}
-
 .debug-screens-wrapper {
 	position: fixed;
 	bottom: 0;

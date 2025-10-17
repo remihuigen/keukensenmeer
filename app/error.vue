@@ -47,7 +47,7 @@ onMounted(() => {
 	}
 })
 
-const { mobileMenuOpen, menuClosing, setHooks, transitionDurationMs } = useMobileMenu()
+const { mobileMenuOpen, menuClosing, setHooks } = useMobileMenu()
 setHooks()
 </script>
 
@@ -119,10 +119,3 @@ setHooks()
 		</UApp>
 	</Body>
 </template>
-
-<style lang="postcss">
-.content,
-.menu-item {
-	--menu-transition-duration: v-bind(transitionDurationMs);
-}
-</style>

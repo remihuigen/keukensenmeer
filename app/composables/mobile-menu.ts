@@ -1,6 +1,6 @@
 export const useMobileMenu = () => {
+  // This constant should match the --menu-transition-duration variable in the main.css file
   const transitionDuration = 300
-  const transitionDurationMs = transitionDuration + 'ms'
   const mobileMenuOpen = useState('mobileMenuOpen', () => false)
   const menuClosing = useState('menuClosing', () => false)
 
@@ -75,7 +75,6 @@ export const useMobileMenu = () => {
     mobileMenuOpen,
     menuClosing,
     transitionDuration,
-    transitionDurationMs,
     toggle,
     lockPageScroll,
     resetScrollLock,

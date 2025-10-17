@@ -65,6 +65,10 @@
 	}
 }
 
+:root {
+	--menu-transition-duration: 300ms;
+}
+
 /* default state */
 .content {
 	transform: translateX(0);
