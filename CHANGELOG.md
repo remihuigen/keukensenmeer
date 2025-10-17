@@ -1,5 +1,14 @@
 # Changelog
 
+# [1.4.0](https://github.com/remihuigen/keukensenmeer/compare/v1.3.0...v1.4.0) (2025-10-10)
+
+
+### Features
+
+* Add eslint security plugins ([b580bb8](https://github.com/remihuigen/keukensenmeer/commit/b580bb8dba14925a45ef7a3d81d73f2451eca3cf))
+* Add gitleaks ([e54f738](https://github.com/remihuigen/keukensenmeer/commit/e54f738b7bbf4446ebb956a56150d4e38cfd04ea))
+* Add gitleaks ([b46ca63](https://github.com/remihuigen/keukensenmeer/commit/b46ca6376784c30a7fcaf0630c62df70111cafae))
+
 # [1.3.0](https://github.com/remihuigen/keukensenmeer/compare/v1.2.0...v1.3.0) (2025-10-10)
 
 
