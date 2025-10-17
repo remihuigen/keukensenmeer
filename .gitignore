@@ -39,3 +39,7 @@ nuxt.d.ts
 .secret
 
 keukensenmeer.code-workspace
+
+
+# Auto generated data files
+# data/projects/index.ts

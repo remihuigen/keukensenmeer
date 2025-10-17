@@ -4,6 +4,30 @@ import type { Project } from '~~/shared/types/project'
 const route = useRoute()
 
 const { data, error, status } = await useFetch<Project>(`/api/projects/${route.params.slug}`)
+
+if (!data.value) {
+	throw createError({
+		statusCode: 404,
+		statusMessage: 'Project niet gevonden',
+		fatal: import.meta.client,
+	})
+}
+
+useSeoMeta({
+	title: data.value.title,
+	description: data.value.description,
+	ogDescription: data.value.description,
+	twitterTitle: data.value.title,
+	twitterDescription: data.value.description,
+	ogImage: data.value.mainImage,
+	twitterImage: data.value.mainImage,
+})
+
+useSchemaOrg([
+	defineWebPage({
+		'@type': 'ItemPage',
+	}),
+])
 </script>
 
 <template>

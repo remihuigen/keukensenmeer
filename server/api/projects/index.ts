@@ -4,6 +4,7 @@ import type { ProjectOverviewItem } from '~~/shared/types/project'
 export default defineEventHandler(async (_event) => {
   return Object.values(projects).map(project => ({
     title: project.title,
-    slug: project.slug
+    slug: project.slug,
+    mainImage: project.mainImage
   })) satisfies ProjectOverviewItem[]
 })
