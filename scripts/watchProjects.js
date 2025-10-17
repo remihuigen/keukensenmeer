@@ -32,11 +32,9 @@ function log(message, level = 'info') {
 
 	switch (level) {
 		case 'error':
-			 
 			console.error(prefix, message)
 			break
 		case 'warn':
-			 
 			console.warn(prefix, message)
 			break
 		default:
@@ -172,10 +170,6 @@ function startWatcher() {
 		ignoreInitial: true,
 		persistent: true,
 		usePolling: false,
-		awaitWriteFinish: {
-			stabilityThreshold: 200,
-			pollInterval: 100,
-		},
 	})
 
 	watcher
@@ -185,9 +179,7 @@ function startWatcher() {
 			// Check if watcher is actually watching directories
 			const watched = watcher.getWatched()
 			if (Object.keys(watched).length === 0) {
-				log('⚠️ No directories detected, switching to polling mode...', 'warn')
-				watcher.close()
-				setTimeout(() => startPollingWatcher(watchableFiles), 500)
+				log('⚠️ No directories detected', 'warn')
 			}
 		})
 		.on('add', (path) => handleFileChange('add', path))
@@ -195,15 +187,6 @@ function startWatcher() {
 		.on('unlink', (path) => handleFileChange('unlink', path))
 		.on('error', (error) => {
 			log(`❌ Watcher error: ${error.message}`, 'error')
-			log('🔄 Switching to polling mode...', 'warn')
-
-			try {
-				watcher.close()
-				setTimeout(() => startPollingWatcher(watchableFiles), 1000)
-			} catch (closeError) {
-				 
-				log(`❌ Error closing watcher: ${closeError.message}`, 'error')
-			}
 		})
 
 	// Graceful shutdown
@@ -217,56 +200,7 @@ function startWatcher() {
 				process.exit(0)
 			})
 			.catch((error) => {
-				 
 				log(`❌ Error during shutdown: ${error.message}`, 'error')
-				process.exit(1)
-			})
-	})
-}
-
-/**
- * Fallback watcher using polling mode for systems with unreliable native events
- *
- * @description Creates a polling-based watcher as fallback when native events fail
- * @param {string[]} filesToWatch - Array of full file paths to watch
- */
-function startPollingWatcher(filesToWatch) {
-	log('🔄 Starting polling watcher...')
-
-	const watcher = watch(filesToWatch, {
-		ignoreInitial: true,
-		persistent: true,
-		usePolling: true,
-		interval: 1000,
-		awaitWriteFinish: {
-			stabilityThreshold: 300,
-			pollInterval: 100,
-		},
-	})
-
-	watcher
-		.on('ready', () => {
-			log('🟢 Polling watcher ready')
-		})
-		.on('change', (path) => handleFileChange('change', path))
-		.on('add', (path) => handleFileChange('add', path))
-		.on('unlink', (path) => handleFileChange('unlink', path))
-		.on('error', (error) => {
-			log(`❌ Polling watcher error: ${error.message}`, 'error')
-		})
-
-	process.on('SIGINT', () => {
-		log('🛑 Shutting down polling watcher...')
-
-		watcher
-			.close()
-			.then(() => {
-				log('✅ Polling watcher stopped')
-				process.exit(0)
-			})
-			.catch((error) => {
-				 
-				log(`❌ Error during polling watcher shutdown: ${error.message}`, 'error')
 				process.exit(1)
 			})
 	})
