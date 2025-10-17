@@ -206,6 +206,13 @@ export default defineProject({
 The new file is automatically picked up by build config, api and page routes, making the project
 available under `<APP_URL>/projecten/[filename-without-extension]`.
 
+#### HRM support
+
+When starting local development, chokidar will watch the `/data/projects/` directory for any new,
+removed or changed files, and automatically regenerate the project index file.
+
+Thus you don't need to restart the development server when adding or modifying project files.
+
 ## Deployment
 
 This project is deployed to Cloudflare Workers using NuxtHub. Deployment is fully automated through
