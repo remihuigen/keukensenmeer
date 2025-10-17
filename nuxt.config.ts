@@ -30,8 +30,8 @@ export default defineNuxtConfig({
       mode: {
         value: process.env.MODE,
         isDev: process.env.MODE === 'dev',
-        isStaging: process.env.MODE === 'staging',
-        isProd: process.env.MODE === 'prod',
+        isPreview: process.env.MODE === 'preview',
+        isProd: process.env.MODE === 'production',
       }
     }
   },

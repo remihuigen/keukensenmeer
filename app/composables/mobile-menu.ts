@@ -1,44 +1,26 @@
 export const useMobileMenu = () => {
   const transitionDuration = 300
-  const transitionDurationMs = `${transitionDuration}ms`
+  const transitionDurationMs = transitionDuration + 'ms'
   const mobileMenuOpen = useState('mobileMenuOpen', () => false)
-  const shiftLeft = ref(false)
-  const shiftRight = ref(false)
+  const menuClosing = useState('menuClosing', () => false)
 
-  const isToggling = ref(false)
   /**
- * Toggle mobile menu with transition lock
- * Prevents rapid toggling during animation
- */
+   * Toggle mobile menu open/close state
+   */
   const toggle = () => {
-    // Prevent toggling if already in transition
-    if (isToggling.value) return
-
-    isToggling.value = true
-    mobileMenuOpen.value = !mobileMenuOpen.value
-
-    // Re-enable toggling after transition completes
-    setTimeout(() => {
-      isToggling.value = false
-    }, transitionDuration)
-  }
-
-
-  watch(mobileMenuOpen, (newVal, oldVal) => {
-    if (newVal === oldVal) return
-
-    if (newVal) {
-      shiftLeft.value = true
-      shiftRight.value = false
+    if (mobileMenuOpen.value) {
+      // closing: set closing flag to reverse content animation
+      menuClosing.value = true
+      mobileMenuOpen.value = false
       setTimeout(() => {
-        shiftLeft.value = false
-        shiftRight.value = true
+        menuClosing.value = false
+        // isToggling.value = false
       }, transitionDuration)
     } else {
-      shiftLeft.value = false
-      shiftRight.value = false
+      // opening
+      mobileMenuOpen.value = true
     }
-  })
+  }
 
   /**
    * Lock/unlock page scroll based on mobile menu state
@@ -78,14 +60,24 @@ export const useMobileMenu = () => {
     }
   }
 
+  /**
+   * We do not want to set lifecycle hooks and wacthers directly in the composable,
+   * since that will register them each them a composable is invoked.
+   * So we provide a utility function to set them in the consuming component.
+   */
+  function setHooks() {
+    watch(mobileMenuOpen, lockPageScroll, { immediate: false })
+    onUnmounted(resetScrollLock)
+  }
+
   return {
     mobileMenuOpen,
-    shiftLeft,
-    shiftRight,
+    menuClosing,
     transitionDuration,
     transitionDurationMs,
     toggle,
     lockPageScroll,
-    resetScrollLock
+    resetScrollLock,
+    setHooks
   }
 }

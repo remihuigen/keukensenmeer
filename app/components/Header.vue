@@ -7,6 +7,7 @@ const { width } = useWindowSize()
 
 const route = useRoute()
 
+// If you add more items, remember to update the styles for staggered transitions below
 const items = computed<NavigationMenuItem[]>(() => [
 	{
 		label: 'Studio',
@@ -23,9 +24,7 @@ const items = computed<NavigationMenuItem[]>(() => [
 	},
 ])
 
-const open = useState('mobileMenuOpen', () => false)
-
-const { transitionDurationMs, shiftLeft, shiftRight, toggle } = useMobileMenu()
+const { mobileMenuOpen: open, transitionDuration, toggle } = useMobileMenu()
 
 watch(
 	() => route.path,
@@ -37,22 +36,6 @@ watch(
 watch(width, (newWidth) => {
 	if (newWidth >= 1024) {
 		open.value = false
-	}
-})
-
-const forceRight = ref(false)
-const shiftMenuLeft = ref(false)
-
-watch(shiftLeft, (newVal) => {
-	if (newVal) {
-		forceRight.value = true
-		setTimeout(() => {
-			forceRight.value = false
-			shiftMenuLeft.value = true
-		}, 10)
-	} else {
-		forceRight.value = false
-		shiftMenuLeft.value = false
 	}
 })
 </script>
@@ -104,36 +87,38 @@ watch(shiftLeft, (newVal) => {
 			</UButton>
 		</template>
 	</UHeader>
-	<div
-		class="mobile-menu fixed inset-0 top-[var(--ui-header-height)] z-10"
-		:class="[
-			shiftMenuLeft && open ? 'shift-left' : '',
-			shiftRight && open ? 'shift-right' : '',
-			forceRight ? 'force-right' : '',
-			open ? 'open' : '',
-		]"
-	>
-		<UContainer class="grid h-full place-content-center gap-16">
-			<UNavigationMenu
-				:items="items"
-				color="neutral"
-				variant="link"
-				orientation="vertical"
-				highlight
-				:ui="{
-					root: 'font-serif -mt-12',
-					list: 'space-y-8',
-					link: 'text-xl grid place-content-center',
-				}"
-			/>
-			<UButton to="/contact" color="primary" variant="solid" size="xl">
-				Neem contact op
-			</UButton>
-		</UContainer>
-	</div>
+	<Transition :duration="transitionDuration" name="mobile-menu">
+		<div v-if="open" class="fixed inset-0 top-[var(--ui-header-height)] z-10">
+			<UContainer class="grid h-full place-content-center gap-16">
+				<UNavigationMenu
+					:items="items"
+					color="neutral"
+					variant="link"
+					orientation="vertical"
+					highlight
+					:ui="{
+						root: 'font-serif -mt-12',
+						list: 'space-y-8',
+						item: 'menu-item',
+						link: 'text-xl grid place-content-center',
+					}"
+				/>
+				<UButton
+					to="/contact"
+					color="primary"
+					variant="solid"
+					size="xl"
+					class="menu-item special"
+					:style="{ '--menu-index': items.length + 2 }"
+				>
+					Neem contact op
+				</UButton>
+			</UContainer>
+		</div>
+	</Transition>
 </template>
 
-<style lang="postcss" scoped>
+<style lang="postcss">
 .swap {
 	cursor: pointer;
 	display: grid;
@@ -149,23 +134,50 @@ watch(shiftLeft, (newVal) => {
 	grid-row-start: 1;
 }
 
-.mobile-menu {
-	transition: transform v-bind(transitionDurationMs) ease-in;
-	transform: translateX(-100vw);
+.menu-item {
+	transition: all 150ms ease-in-out;
+	--stagger: 50ms;
+	/* Note that --menu-transition-duration is set globally in app.vue */
+}
 
-	&.force-right {
-		transition: none;
-		transform: translateX(100vw);
-	}
+/* enter/leave transforms */
+.mobile-menu-enter-from .menu-item {
+	transform: translateY(1rem);
+	opacity: 0;
+	filter: blur(0.1rem);
+}
+.mobile-menu-leave-to .menu-item {
+	transform: translateY(-1rem);
+	opacity: 0;
+	filter: blur(0.1rem);
+}
 
-	&.shift-left {
-		transition: transform v-bind(transitionDurationMs) ease-in;
-		transform: translateX(0vw);
-	}
+/* base delay during enter */
+.mobile-menu-enter-active .menu-item {
+	transition-delay: var(--menu-transition-duration);
+}
 
-	&.shift-right {
-		transition: transform v-bind(transitionDurationMs) ease-in;
-		transform: translateX(0vw);
-	}
+/* 
+	staggered offsets for 3 items 
+	Add more if needed...
+*/
+.mobile-menu-enter-active .menu-item:nth-child(1) {
+	transition-delay: calc(var(--menu-transition-duration) + calc(var(--stagger) * 0));
+}
+.mobile-menu-enter-active .menu-item:nth-child(2) {
+	transition-delay: calc(var(--menu-transition-duration) + calc(var(--stagger) * 1));
+}
+.mobile-menu-enter-active .menu-item:nth-child(3) {
+	transition-delay: calc(var(--menu-transition-duration) + calc(var(--stagger) * 2));
+}
+
+/*
+	staggered offset for items outside loop (e.g. contact button)
+	For items outside of nav menu we can set the --menu-index CSS variable
+*/
+.mobile-menu-enter-active .menu-item.special {
+	transition-delay: calc(
+		var(--menu-transition-duration) + calc(var(--stagger) * var(--menu-index))
+	);
 }
 </style>

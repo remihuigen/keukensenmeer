@@ -65,16 +65,30 @@
 	}
 }
 
+/* default state */
 .content {
-	transition: transform 300ms ease-in;
 	transform: translateX(0);
+	transition: transform var(--menu-transition-duration) ease-in-out;
+	will-change: transform;
+}
 
-	&.shift-left {
-		transform: translateX(-110vw);
-	}
-	&.shift-right {
+/* when menu opens -> slide out left */
+.content.menu-open {
+	transform: translateX(-110vw);
+}
+
+/* when closing -> slide in from right */
+.content.menu-closing {
+	transition: none;
+	animation: content-in-from-right var(--menu-transition-duration) ease-in-out both;
+}
+
+@keyframes content-in-from-right {
+	from {
 		transform: translateX(110vw);
-		transition: none;
+	}
+	to {
+		transform: translateX(0);
 	}
 }
 

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { nl } from '@nuxt/ui/locale'
 
-const { mobileMenuOpen, shiftLeft, shiftRight, lockPageScroll, resetScrollLock } = useMobileMenu()
+const { mobileMenuOpen, menuClosing, transitionDurationMs, setHooks } = useMobileMenu()
 
-watch(mobileMenuOpen, lockPageScroll, { immediate: false })
-onUnmounted(resetScrollLock)
+setHooks()
 </script>
 
 <template>
@@ -23,24 +22,29 @@ onUnmounted(resetScrollLock)
 		<Header />
 		<UMain
 			class="content relative pt-[var(--header-height)]"
-			:class="[
-				shiftLeft && mobileMenuOpen ? 'shift-left' : '',
-				shiftRight && mobileMenuOpen ? 'shift-right' : '',
-			]"
+			:class="{
+				'menu-open': mobileMenuOpen,
+				'menu-closing': menuClosing,
+			}"
 		>
 			<NuxtPage />
 		</UMain>
 		<Footer
 			class="content"
-			:class="[
-				shiftLeft && mobileMenuOpen ? 'shift-left' : '',
-				shiftRight && mobileMenuOpen ? 'shift-right' : '',
-			]"
+			:class="{
+				'menu-open': mobileMenuOpen,
+				'menu-closing': menuClosing,
+			}"
 		/>
 	</UApp>
 </template>
 
 <style lang="postcss">
+.content,
+.menu-item {
+	--menu-transition-duration: v-bind(transitionDurationMs);
+}
+
 .debug-screens-wrapper {
 	position: fixed;
 	bottom: 0;

@@ -1,97 +1,236 @@
 # Nuxt 4 app for keukensenmeer.nl
 
-Brief description of what this application does and its purpose.
+A small static site for Keuken & Meer, built with Nuxt 4, Nuxt UI and NuxtHub.
+
+## Overview
+
+This project leverages the full power of the Nuxt and Vue ecosystems to deliver a fast, modern
+website. Key features include:
+
+- **Nuxt 4**: The latest version of the Nuxt framework for building Vue.js applications.
+- **Static Site Generation**: Pre-renders pages for optimal performance and SEO.
+- **TypeScript**: Strongly typed JavaScript for improved developer experience.
+- **Tailwind CSS**: Uses Nuxt UI 4 with Tailwind 4 for utility-first styling.
+- **SEO Optimization**: Uses NuxtSEO for meta tags and schemas.
+- **Static data**: Due to the nature of the site, all data is static and either hardcoded or defined
+  in data files. These files are then served through the Nuxt server routes.
+- **Edge Runtime**: Deployed to Cloudflare Workers through NuxtHub for global low-latency delivery.
+
+## Prerequisites
+
+- **Node.js**: 22+ (LTS recommended)
+- **pnpm**: 10+
+- **gitleaks**: 8+ (for security scanning)
+
+If working in vscode, it's recommended to install the following extensions:
+
+- [Vue Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- [Nuxtr](https://marketplace.visualstudio.com/items?itemName=Nuxtr.nuxtr-vscode).
+- [Nuxt Extension Pack](https://marketplace.visualstudio.com/items?itemName=Nuxtr.nuxt-vscode-extentions)
+- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
+- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [PostCSS Vue](https://marketplace.visualstudio.com/items?itemName=SamaTech.postcss-vue)
 
 ## Quick Start
 
 ```bash
-# Install dependencies
+# 1. Clone the repository
+git clone <repository-url>
+cd keukensenmeer
+
+# 2. Install dependencies
 pnpm install
 
-# Start development server
-pnpm dev
+# 3. Copy environment variables
+cp .env.example .env
+# Edit .env with your actual values
 
-# Build for production
-pnpm build
+# 4. Start development server
+pnpm dev
 ```
 
 ## Development
 
-### Prerequisites
+This project uses pnpm as package manager. Make sure to install dependencies with `pnpm install`
+before running any scripts.
 
-- Node.js 22+
-- pnpm 10+
-- gitleaks (for pre-commit secret scanning)
+Other development tools you need to be aware of are:
+
+- **TypeScript**: for static type checking
+- **ESLint**: for code linting and formatting
+- **Husky**: for git hooks to enforce code quality before commits and pushes
+- **Gitleaks**: for scanning sensitive information in git history and staged files
+- **Commitlint**: for enforcing conventional commit messages
 
 ### Available Scripts
+
+When developing this project, you can use the following scripts. Most of these commands have a handy
+VS Code task for easy access.
+
+#### Core Development
 
 - `pnpm dev` - Start development server
 - `pnpm build` - Build for production
 - `pnpm generate` - Generate static site
 - `pnpm preview` - Preview production build
+
+#### Code Quality
+
 - `pnpm typecheck` - Run TypeScript type checking
-- `pnpm lint` - Run ESLint
+- `pnpm lint` - Run ESLint with caching
 - `pnpm lint:fix` - Run ESLint with auto-fix
 
-### TypeScript & `vue-tsc` Version Pinning
+#### Analysis & Debugging
 
-When running `pnpm typecheck`, you may see errors like:
+- `pnpm analyze` - Analyze bundle size and performance
+- `pnpm preview:edge` - Build and preview on NuxtHub edge runtime
+- `pnpm debug:edge` - Build with debug mode and preview on edge runtime
 
+#### Dependency Management
+
+- `pnpm bump:patch` - Update patch version dependencies
+- `pnpm bump:minor` - Update minor version dependencies
+- `pnpm bump:major` - Update all dependencies to latest versions
+- `pnpm nuxt:upgrade` - Upgrade Nuxt to latest version with deduplication
+
+#### Internal Scripts
+
+- `pnpm prepare` - Setup Husky git hooks (runs automatically after install)
+- `pnpm postinstall` - Prepare Nuxt (runs automatically after install)
+
+### Creating new releases
+
+Releases are managed automatically through semantic-release. To create a new release, simply merge
+your changes into the `main` branch with a properly formatted commit message. The CI/CD pipeline
+will handle version bumping, changelog generation, and deployment of the new release.
+
+#### Release application
+
+In order to automatically create releases, you need to set up a GitHub App with the following
+permissions:
+
+- Repository contents: Read & Write
+- Pull requests: Read & Write
+- Issues: Read & Write
+- Commit statuses: Read
+- Metadata: Read only
+
+You will also need to generate a private key for the app to authenticate with GitHub during the
+release process (see [Environment Variables](#environment-variables) section below).
+
+## Environment Variables
+
+This project uses environment variables for configuration. Create a `.env` file in the root
+directory with the following variables:
+
+### Required environment variables
+
+```env
+# dev, preview, production
+MODE="dev"
+PLAUSIBLE_DOMAIN="<your-plausible-domain>"
+
+# The NuxtHub project key (found in the NuxtHub dashboard)
+NUXT_HUB_PROJECT_KEY="<your-nuxthub-project-key>"
+
+CLOUDINARY_CLOUDNAME="<your-cloudinary-cloudname>"
+
+# A randomly generated API token for securing internal API routes
+API_TOKEN="<string>"
+
+# The public URL of the application including protocol
+APP_URL="http://localhost:3000"
 ```
-Search string not found: "/supportedTSExtensions = .*(?=;)/"
+
+### Optional environment variables
+
+```env
+# Disable husky hooks
+DISABLE_PRE_COMMIT_LINT=false
+DISABLE_PRE_PUSH_TYPECHECK=false
+
+# Enables Nuxt, Nitro and Wrangler debug mode
+DEBUG=true
+
+# Disable Plausible tracking globally
+DISABLE_TRACKING=false
 ```
 
-This is caused by an incompatibility between newer **TypeScript** releases (≥5.7) and `vue-tsc`
-≤2.1.x. Internally, `vue-tsc` patches parts of TypeScript's compiler, but recent changes in
-TypeScript broke that patching logic.
+### CI/CD Repository Secrets
 
-To ensure reliable type checking, we **pinned both versions** to a known-working combination:
+There are also Repository Secrets that need to be configured for CI/CD deployments, which are:
 
-```jsonc
-"devDependencies": {
-  "typescript": "5.6.2",
-  "vue-tsc": "2.0.29"
-}
-```
+```env
+# The same API token as above for securing internal API routes. Used to invalidate cache after new deployments.
+API_TOKEN="<string>"
 
-This avoids the runtime error and keeps `nuxi typecheck` stable. If you need to upgrade TypeScript
-in the future, make sure to update `vue-tsc` to a version that explicitly supports it.
-
-## Tech Stack
-
-### Core Framework
-
-- **[Nuxt 4](https://nuxt.com/)**: The Intuitive Vue Framework
-
-### Styling & UI
-
-- **[Tailwind CSS](https://tailwindcss.com/)**: Utility-first CSS framework
-- Additional UI components and styling libraries (to be documented)
-
-### Development Tools
-
-- **[TypeScript](https://www.typescriptlang.org/)**: Type-safe JavaScript
-- **[ESLint](https://eslint.org/)**: Code linting and formatting
-
-## Project Structure
-
-```
-/
-├── app/                 # Application source code
-├── public/              # Static assets
-├── server/              # Server-side code
-├── .nuxt/              # Generated files (auto-generated)
-└── ...
+# GitHub App credentials for semantic-release to create releases
+RELEASE_APP_ID="<your-github-app-id>"
+RELEASE_APP_PRIVATE_KEY="<your-github-app-private-key>"
 ```
 
 ## Deployment
 
-Deployment configuration and instructions will be added here.
+This project is deployed to Cloudflare Workers using NuxtHub. Deployment is fully automated through
+the CI/CD pipeline for both `preview` and `production` environments.
 
-## Contributing
+### Preview Deployments
 
-Guidelines for contributing to the project will be added here.
+To start a preview deployment, you will need to create a pull request targeting the `main` branch.
+Once the PR is created, the CI/CD pipeline will automatically build and deploy a preview version of
+the site to NuxtHub. You can find the preview URL in the pipeline logs.
+
+Note that preview deployments are only started if the code quality checks (linting, type checking)
+pass successfully.
+
+Preview deployments are ephemeral and will be redployed on any new commit, to any PR targeting
+`main`, overriding the previous preview.
+
+### Production Deployments
+
+Production deployments are triggered automatically when pull requests are merged into the `main`
+branch.
+
+Before you can merge a pull request into `main`, status checks for code quality (linting, type
+checking) and successful preview deployment must pass.
+
+Upon merging, two things will happen automatically:
+
+1. A new release will be created using semantic-release, which will bump the version number and
+   generate a changelog entry based on the commit messages.
+2. The CI/CD pipeline will build and deploy the new version of the site to the production
+   environment on NuxtHub.
+
+### Notifications
+
+Both preview and production deployments will send notifications to the configured Slack channel upon
+completion, indicating whether the deployment was successful or if it failed.
+
+## Cloud services
+
+This project uses multiple third party cloud services for hosting, deployment and analytics:
+
+- **Cloudflare Workers**: for global edge hosting through NuxtHub
+- **NuxtHub**: for CI/CD and edge deployment of Nuxt applications
+- **Plausible Analytics**: for privacy-focused website analytics
+- **Cloudinary**: for image hosting and optimization
+- **GitHub**: for source code hosting and version control
+
+## Troubleshooting
+
+If you encounter issues during development or deployment, consider the following steps:
+
+1. **Check Environment Variables**: Ensure all required environment variables are set correctly.
+2. Run `pnpm lint` and `pnpm typecheck` to identify any code quality issues.
+3. Create a fresh install with:
+   ```bash
+   rm -rf node_modules pnpm-lock.yaml
+   pnpm install
+   ```
 
 ## License
 
-License information will be added here.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+**Note**: This license covers the source code only. Content, images, and branding materials may have
+different licensing terms.

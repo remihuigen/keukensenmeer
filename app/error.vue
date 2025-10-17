@@ -47,10 +47,8 @@ onMounted(() => {
 	}
 })
 
-const { mobileMenuOpen, shiftLeft, shiftRight, lockPageScroll, resetScrollLock } = useMobileMenu()
-
-watch(mobileMenuOpen, lockPageScroll, { immediate: false })
-onUnmounted(resetScrollLock)
+const { mobileMenuOpen, menuClosing, setHooks, transitionDurationMs } = useMobileMenu()
+setHooks()
 </script>
 
 <template>
@@ -66,10 +64,10 @@ onUnmounted(resetScrollLock)
 			<Header />
 			<UMain
 				class="content relative pt-[var(--header-height)]"
-				:class="[
-					shiftLeft && mobileMenuOpen ? 'shift-left' : '',
-					shiftRight && mobileMenuOpen ? 'shift-right' : '',
-				]"
+				:class="{
+					'menu-open': mobileMenuOpen,
+					'menu-closing': menuClosing,
+				}"
 			>
 				<UContainer
 					class="flex h-full flex-col items-start justify-center gap-6 py-12 lg:py-24"
@@ -113,11 +111,18 @@ onUnmounted(resetScrollLock)
 			</DevOnly>
 			<Footer
 				class="content"
-				:class="[
-					shiftLeft && mobileMenuOpen ? 'shift-left' : '',
-					shiftRight && mobileMenuOpen ? 'shift-right' : '',
-				]"
+				:class="{
+					'menu-open': mobileMenuOpen,
+					'menu-closing': menuClosing,
+				}"
 			/>
 		</UApp>
 	</Body>
 </template>
+
+<style lang="postcss">
+.content,
+.menu-item {
+	--menu-transition-duration: v-bind(transitionDurationMs);
+}
+</style>
