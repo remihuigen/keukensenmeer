@@ -9,7 +9,7 @@
  */
 
 import { spawn } from 'node:child_process'
-import { existsSync, readdirSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -40,40 +40,6 @@ function log(message, level = 'info') {
 		default:
 			// eslint-disable-next-line security-node/detect-crlf
 			console.log(prefix, message)
-	}
-}
-
-/**
- * Validates watcher setup and returns files to watch
- *
- * @description Checks directory structure and identifies TypeScript files to monitor
- * @returns {string[]} Array of full file paths that should be watched
- */
-function getWatchableFiles() {
-	if (!existsSync(projectsDir)) {
-		log('❌ Projects directory does not exist!', 'error')
-		return []
-	}
-
-	try {
-		const files = readdirSync(projectsDir)
-		const watchableFiles = []
-
-		files.forEach((file) => {
-			const fullPath = resolve(projectsDir, file)
-			const isTypeScript = file.endsWith('.ts')
-			const isIndex = file === 'index.ts'
-
-			if (isTypeScript && !isIndex) {
-				watchableFiles.push(fullPath)
-			}
-		})
-
-		log(`🔍 Found ${watchableFiles.length} project files to watch`)
-		return watchableFiles
-	} catch (error) {
-		log(`❌ Error reading directory: ${error.message}`, 'error')
-		return []
 	}
 }
 
@@ -154,55 +120,44 @@ function handleFileChange(eventType, path) {
 /**
  * Starts the file watcher with event logging
  *
- * @description Sets up chokidar watcher targeting specific TypeScript files
+ * @description Sets up chokidar watcher targeting TypeScript files in the projects directory
  */
 function startWatcher() {
-	const watchableFiles = getWatchableFiles()
-
-	if (watchableFiles.length === 0) {
-		log('❌ No files to watch - exiting', 'error')
+	if (!existsSync(projectsDir)) {
+		log('❌ Projects directory does not exist!', 'error')
 		process.exit(1)
 	}
 
 	log('👀 Starting file watcher...')
 
-	const watcher = watch(watchableFiles, {
+	const watcher = watch(projectsDir, {
+		ignored: /index\.ts$/,
 		ignoreInitial: true,
 		persistent: true,
 		usePolling: false,
+		depth: 0,
+		awaitWriteFinish: {
+			stabilityThreshold: 200,
+			pollInterval: 100,
+		},
 	})
 
 	watcher
-		.on('ready', () => {
-			log('🟢 Watcher ready and monitoring')
-
-			// Check if watcher is actually watching directories
-			const watched = watcher.getWatched()
-			if (Object.keys(watched).length === 0) {
-				log('⚠️ No directories detected', 'warn')
-			}
-		})
+		.on('ready', () => log('🟢 Watcher ready and monitoring'))
 		.on('add', (path) => handleFileChange('add', path))
 		.on('change', (path) => handleFileChange('change', path))
 		.on('unlink', (path) => handleFileChange('unlink', path))
 		.on('error', (error) => {
-			log(`❌ Watcher error: ${error.message}`, 'error')
+			log(`❌ Watcher error`, 'error')
+			console.error(error)
 		})
 
-	// Graceful shutdown
 	process.on('SIGINT', () => {
 		log('🛑 Shutting down watcher...')
-
-		watcher
-			.close()
-			.then(() => {
-				log('✅ Watcher stopped')
-				process.exit(0)
-			})
-			.catch((error) => {
-				log(`❌ Error during shutdown: ${error.message}`, 'error')
-				process.exit(1)
-			})
+		watcher.close().then(() => {
+			log('✅ Watcher stopped')
+			process.exit(0)
+		})
 	})
 }
 
