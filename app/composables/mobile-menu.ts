@@ -63,7 +63,8 @@ export const useMobileMenu = () => {
   /**
    * We do not want to set lifecycle hooks and wacthers directly in the composable,
    * since that will register them each them a composable is invoked.
-   * So we provide a utility function to set them in the consuming component.
+   * So we provide a utility function to set them in the consuming component,
+   * where the utility is only called once
    */
   function setHooks() {
     watch(mobileMenuOpen, lockPageScroll, { immediate: false })
