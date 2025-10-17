@@ -80,6 +80,10 @@ VS Code task for easy access.
 - `pnpm lint` - Run ESLint with caching
 - `pnpm lint:fix` - Run ESLint with auto-fix
 
+#### Data processing
+
+- `pnpm generate-projects` - Generate project index file from `/data/projects/` files
+
 #### Analysis & Debugging
 
 - `pnpm analyze` - Analyze bundle size and performance
@@ -154,6 +158,10 @@ DEBUG=true
 
 # Disable Plausible tracking globally
 DISABLE_TRACKING=false
+
+# Block non-SEO bots from accessing the site
+BLOCK_NON_SEO_BOTS=false
+BLOCK_AI_BOTS=false
 ```
 
 ### CI/CD Repository Secrets
@@ -168,6 +176,35 @@ API_TOKEN="<string>"
 RELEASE_APP_ID="<your-github-app-id>"
 RELEASE_APP_PRIVATE_KEY="<your-github-app-private-key>"
 ```
+
+## Static data
+
+All data for this site is static and stored in the `/data` directory. This includes:
+
+- `global.ts`: Global settings and metadata for the site
+- `identity.ts`: Core identity information such as name, description, logo, contact details.
+  Integrates some of the global data.
+- `images.ts`: Some images used throughout the application
+- `projects/`: A collection of project data files, each representing a kitchen project with details
+  such as title, description, images, and specifications. Each file is used as a dynamic route under
+  `/projecten/[project-name]`.
+
+### Adding new projects
+
+To add a new kitchen project to the site, create a new TypeScript file in the `/data/projects/`
+directory. You can use this boilerplate as a starting point:
+
+```ts
+import defineProject from '../../shared/utils/defineProject'
+
+export default defineProject({
+  title: 'Project Title',
+  // ... other project fields
+})
+```
+
+The new file is automatically picked up by build config, api and page routes, making the project
+available under `<APP_URL>/projecten/[filename-without-extension]`.
 
 ## Deployment
 

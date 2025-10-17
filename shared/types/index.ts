@@ -1,4 +1,5 @@
-export type ExampleType = {
-    id: number
-    name: string
+export type Image = {
+    /* Cloudinary image URL */
+    src: string
+    alt: string
 }

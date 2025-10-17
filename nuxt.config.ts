@@ -1,8 +1,16 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import identity from './data/identity'
+import { identity as coreIdentity } from './data/global'
+import projects from './data/projects'
 
+const isDebug = process.env.DEBUG === 'true' || false
+const isDev = process.env.MODE === 'dev'
+const isProd = process.env.MODE === 'production'
+
+// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
@@ -13,13 +21,23 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/plausible'
   ],
+
+
   css: ['~/assets/css/main.css'],
 
   nitro: {
+    minify: process.env.DEBUG !== 'true',
+    prerender: {
+      crawlLinks: true,
+      failOnError: false,
+    },
     experimental: {
       openAPI: true
     }
   },
+  debug: isDebug,
+  ssr: true,
+
 
   runtimeConfig: {
     apiToken: process.env.API_TOKEN,
@@ -29,9 +47,9 @@ export default defineNuxtConfig({
       },
       mode: {
         value: process.env.MODE,
-        isDev: process.env.MODE === 'dev',
+        isDev: isDev,
         isPreview: process.env.MODE === 'preview',
-        isProd: process.env.MODE === 'production',
+        isProd: isProd,
       }
     }
   },
@@ -119,4 +137,58 @@ export default defineNuxtConfig({
     pageTransition: { name: 'page', mode: 'out-in' },
 
   },
+
+
+  // SEO Stuff from NuxtSEO
+  site: {
+    name: coreIdentity.name,
+    description: coreIdentity.description,
+    url: process.env.APP_URL,
+    indexable: isProd,
+    env: process.env.MODE,
+    debug: isDebug,
+    titleSeparator: '|',
+    defaultLocale: 'nl',
+    language: 'nl_NL',
+    trailingSlash: false
+  },
+
+  schemaOrg: {
+    identity,
+    debug: isDebug,
+  },
+
+  robots: {
+    allow: [],
+    disallow: [],
+    sitemap: [],
+    blockNonSeoBots: process.env.BLOCK_NON_SEO_BOTS === 'true' || false,
+    blockAiBots: process.env.BLOCK_AI_BOTS === 'true' || false,
+    debug: isDebug,
+  },
+
+  linkChecker: {
+    debug: isDebug,
+    report: {
+      // Publishes the report after deployment at /link-checker/link-checker-report.[html|json|md]
+      publish: true,
+
+      // File formats to generate
+      html: true,
+      markdown: true,
+      json: true,
+    }
+  },
+
+  sitemap: {
+    autoLastmod: true,
+    debug: isDebug,
+    urls: () => {
+      return Object.values(projects).map((project) => ({
+        loc: `/projecten/${project.slug}`,
+        changefreq: 'yearly',
+        priority: 0.7,
+      }))
+    }
+  }
 })
