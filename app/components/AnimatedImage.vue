@@ -84,8 +84,6 @@ const props = withDefaults(defineProps<AnimationProps & ImageProps>(), {
 	rootMargin: '0px 0px -10% 0px',
 	threshold: 0.1,
 	pan: true,
-	panDirection: undefined,
-	panDuration: 8000,
 })
 
 /**
