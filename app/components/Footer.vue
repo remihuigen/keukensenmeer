@@ -12,7 +12,7 @@ const year = useState('footer-year', () => new Date().getFullYear())
 </script>
 
 <template>
-	<UFooter :ui="{ root: 'bg-secondary-600' }">
+	<UFooter :ui="{ root: 'bg-secondary-600', container: 'pb-12 ' }">
 		<template #left>
 			<p class="text-muted text-sm">Keukens & Meer © {{ year }}</p>
 		</template>

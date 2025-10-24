@@ -1,4 +1,6 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const { data, error, status } = await useFetch<Project[]>(`/api/projects`)
+</script>
 
 <template>
 	<UContainer class="py-8">
@@ -6,5 +8,8 @@
 			Onze
 			<Hand> projecten </Hand>
 		</h1>
+		<pre>{{ data }}</pre>
+		<pre>{{ error }}</pre>
+		<pre>Status: {{ status }}</pre>
 	</UContainer>
 </template>

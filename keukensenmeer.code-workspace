@@ -1,17 +1,11 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": ".",
 		},
 		{
-			"path": "../clients-onderwijsloket/onderwijsloket"
+			"path": "../kem/kem-nuxt",
 		},
-		{
-			"path": "../kem/kem-nuxt"
-		},
-		{
-			"path": "../onderwijsloket-directus"
-		}
 	],
-	"settings": {}
+	"settings": {},
 }

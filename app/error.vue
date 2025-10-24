@@ -38,6 +38,17 @@ const description = computed(() => {
 		return 'Ververs deze pagina of ga terug naar de vorige pagina.'
 	return 'Ververs deze pagina of ga terug naar de vorige pagina.'
 })
+
+// Finish loading indicator when component is mounted (this does not always happen automatically on error pages)
+const { isLoading, finish } = useLoadingIndicator()
+onMounted(() => {
+	if (isLoading.value) {
+		finish()
+	}
+})
+
+const { mobileMenuOpen, menuClosing, setHooks } = useMobileMenu()
+setHooks()
 </script>
 
 <template>
@@ -51,7 +62,13 @@ const description = computed(() => {
 			/>
 
 			<Header />
-			<UMain class="relative pt-[var(--header-height)]">
+			<UMain
+				class="content relative pt-[var(--header-height)]"
+				:class="{
+					'menu-open': mobileMenuOpen,
+					'menu-closing': menuClosing,
+				}"
+			>
 				<UContainer
 					class="flex h-full flex-col items-start justify-center gap-6 py-12 lg:py-24"
 				>
@@ -90,9 +107,15 @@ const description = computed(() => {
 			</UMain>
 
 			<DevOnly>
-				<div class="py-8"/>
+				<div class="py-8" />
 			</DevOnly>
-			<Footer />
+			<Footer
+				class="content"
+				:class="{
+					'menu-open': mobileMenuOpen,
+					'menu-closing': menuClosing,
+				}"
+			/>
 		</UApp>
 	</Body>
 </template>

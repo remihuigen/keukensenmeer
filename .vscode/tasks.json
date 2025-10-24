@@ -84,6 +84,13 @@
       "command": "rm -rf node_modules && pnpm install",
       "problemMatcher": [],
       "group": "build"
+    },
+    {
+      "label": "🛠 Gitleaks repo scan",
+      "type": "shell",
+      "command": "gitleaks git --config .gitleaks.toml --verbose  --exit-code 1",
+      "problemMatcher": [],
+      "group": "build"
     }
   ]
 }

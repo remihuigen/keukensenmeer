@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { nl } from '@nuxt/ui/locale'
 
-const config = useRuntimeConfig().public
+const { mobileMenuOpen, menuClosing, setHooks } = useMobileMenu()
+
+setHooks()
 </script>
 
 <template>
@@ -12,30 +14,39 @@ const config = useRuntimeConfig().public
 			color="var(--color-primary-500)"
 			error-color="var(--color-error-main)"
 		/>
-
+		<DevOnly>
+			<span class="debug-screens-wrapper" style="z-index: 9999">
+				<span class="debug-screens" />
+			</span>
+		</DevOnly>
 		<Header />
 		<UMain
-			class="relative pt-[var(--header-height)]"
-			:class="[config.mode.isDev ? 'debug-screens' : '']"
+			class="content relative pt-[var(--header-height)]"
+			:class="{
+				'menu-open': mobileMenuOpen,
+				'menu-closing': menuClosing,
+			}"
 		>
 			<NuxtPage />
 		</UMain>
-		<Footer />
+		<Footer
+			class="content"
+			:class="{
+				'menu-open': mobileMenuOpen,
+				'menu-closing': menuClosing,
+			}"
+		/>
 	</UApp>
 </template>
 
 <style lang="postcss">
-body {
-	background-color: var(--color-secondary-500);
+.debug-screens-wrapper {
+	position: fixed;
+	bottom: 0;
+	left: 0;
 }
 
-.page-enter-active,
-.page-leave-active {
-	transition: all 0.15s;
-}
-.page-enter-from,
-.page-leave-to {
-	opacity: 0;
-	filter: blur(0.2rem);
+body {
+	background-color: var(--color-secondary-500);
 }
 </style>
