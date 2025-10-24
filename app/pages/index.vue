@@ -14,7 +14,15 @@
 			src="site/modern_hero_fxhydj"
 			sizes="800px"
 			alt="Modern kitchen with island"
-			class="mt-8"
+			direction="down"
+			class="mt-20 h-80 w-full"
+		/>
+		<div class="h-800" />
+		<AnimatedImage
+			src="site/modern_hero_fxhydj"
+			sizes="800px"
+			alt="Modern kitchen with island"
+			direction="right"
 		/>
 	</UContainer>
 </template>

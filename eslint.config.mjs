@@ -16,6 +16,8 @@ export default withNuxt({
 		'nuxt/nuxt-config-keys-order': 'off',
 		'vue/multi-word-component-names': 'off',
 		'@typescript-eslint/ban-ts-comment': 'off',
+		'security/detect-object-injection': 'off',
+		'vue/require-default-prop': 'off',
 	},
 })
 	.override('nuxt/vue/rules', {

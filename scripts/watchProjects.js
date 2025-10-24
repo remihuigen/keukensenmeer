@@ -108,7 +108,7 @@ function handleFileChange(eventType, path) {
 		unlink: '🗑️',
 	}
 
-	// eslint-disable-next-line security/detect-object-injection
+	 
 	const emoji = eventEmojis[eventType] || '📄'
 	log(`${emoji} File ${eventType}: ${path}`)
 
