@@ -1,5 +1,29 @@
 # Changelog
 
+# [1.5.0](https://github.com/remihuigen/keukensenmeer/compare/v1.4.0...v1.5.0) (2025-10-24)
+
+
+### Bug Fixes
+
+* Generate project data on postinstall ([f809759](https://github.com/remihuigen/keukensenmeer/commit/f8097590cc228a215148e2886020a5aa65f88273))
+* Mobile menu styles ([6d43ef3](https://github.com/remihuigen/keukensenmeer/commit/6d43ef3e526380edf11bca81d90a64b325d40521))
+* Remove alias import in script ([c0a17dd](https://github.com/remihuigen/keukensenmeer/commit/c0a17dd3a851e7d78d0a2332a879d61afb553f59))
+* Simplify watcher ([3c2a698](https://github.com/remihuigen/keukensenmeer/commit/3c2a6983b8566ac7e4bc025da8d0f7b0cd8bedaf))
+* Update readme and refactor mobile menu ([aaea713](https://github.com/remihuigen/keukensenmeer/commit/aaea713f350c3c8db87a4d48c96bfe86266168c2))
+* Watch entire dir ([e63cbc1](https://github.com/remihuigen/keukensenmeer/commit/e63cbc18dea80dacf95edf52778633ff7c11ca07))
+
+
+### Features
+
+* Add gitleaks action ([8c9eaf4](https://github.com/remihuigen/keukensenmeer/commit/8c9eaf443535db5fb49046fdc79c08f276d82ec5))
+* Add nuxtseo and dynamic project data ([5ef26a9](https://github.com/remihuigen/keukensenmeer/commit/5ef26a99d80c197517bfc9d9c0d7467ee5bb0e84))
+* Add some cld processing and remove auto gen data from git ([796444c](https://github.com/remihuigen/keukensenmeer/commit/796444c16933c05d399ad194c2040d1f85bbad7d))
+* Add watcher for data files ([5273485](https://github.com/remihuigen/keukensenmeer/commit/5273485419bc4891988a490cc97da9999e5f8402))
+* Finish animated image ([64e59c7](https://github.com/remihuigen/keukensenmeer/commit/64e59c78482800495b05256a476bf8c50ae8e9cf))
+* Finish header and footer ([86e68c6](https://github.com/remihuigen/keukensenmeer/commit/86e68c622a949c0c7d5591987af3a3f50932c760))
+* Implement animated img ([6e69950](https://github.com/remihuigen/keukensenmeer/commit/6e69950ab8361c2f479b729d3c60477aa6f622c7))
+* Working on animated image ([a3e58fb](https://github.com/remihuigen/keukensenmeer/commit/a3e58fb69c91cf79ab197b55edd337e679d6469a))
+
 # [1.4.0](https://github.com/remihuigen/keukensenmeer/compare/v1.3.0...v1.4.0) (2025-10-10)
 
 
