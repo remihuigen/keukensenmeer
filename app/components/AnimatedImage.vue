@@ -1,22 +1,25 @@
 <script lang="ts" setup>
-import type { ImageOptions } from '@nuxt/image'
-
 import { useElementVisibility } from '@vueuse/core'
 
 /**
- * Animation control props.
+ * Animation direction type for reveal and pan effects.
  */
-interface AnimationProps {
+type AnimationDirection = 'up' | 'down' | 'left' | 'right'
+
+/**
+ * Animation control configuration.
+ */
+interface AnimationConfig {
 	/**
 	 * Direction of the reveal animation.
 	 * Controls whether width or height expands, and from which side.
 	 * @default "right"
 	 */
-	direction?: 'up' | 'down' | 'left' | 'right'
+	direction?: AnimationDirection
 
 	/**
 	 * Duration of the expand animation, in milliseconds.
-	 * @default 500
+	 * @default 800
 	 */
 	duration?: number
 
@@ -29,175 +32,347 @@ interface AnimationProps {
 
 	/**
 	 * Animate only once when entering the viewport.
-	 * If true, animation won’t replay on re-entry.
+	 * If true, animation won't replay on re-entry.
 	 * @default true
 	 */
 	once?: boolean
 
 	/**
 	 * Intersection observer root margin.
-	 * @default "0px 0px -10% 0px"
+	 * @default "-10% 0px -10% 0px"
 	 */
 	rootMargin?: string
 
 	/**
 	 * Intersection observer visibility threshold.
-	 * @default 0.1
+	 * @default 0.3
 	 */
 	threshold?: number | number[]
 }
 
 /**
- * Props forwarded to NuxtImg.
+ * Pan effect configuration.
  */
-interface ImageProps {
-	/** Image source */
+interface PanConfig {
+	/**
+	 * Enables a panning effect on the image background property,
+	 * separate from the reveal animation.
+	 * @default false
+	 */
+	enabled?: boolean
+
+	/**
+	 * Direction of the pan effect. Defaults to the animation direction.
+	 */
+	direction?: AnimationDirection
+
+	/**
+	 * Duration of the pan effect, in milliseconds.
+	 * @default 12000
+	 */
+	duration?: number
+
+	/**
+	 * The total drift percentage of the object position (0–50).
+	 * Controls both visible movement and overscan.
+	 * @default 10
+	 */
+	drift?: number
+
+	/**
+	 * Disables the subtle initial pan effect on reveal.
+	 * Is only relevant if `enabled` is false.
+	 * @default false
+	 */
+	disableInitial?: boolean
+}
+
+/**
+ * Image configuration props.
+ */
+interface ImageConfig {
+	/** Image source URL */
 	src: string
-	/** Alt text */
+	/** Alt text for accessibility */
 	alt?: string
 	/** Nuxt image responsive sizes */
 	sizes?: string
-	/** Explicit width */
+	/** Explicit width in pixels */
 	width?: number
-	/** Explicit height */
+	/** Explicit height in pixels */
 	height?: number
 	/** Nuxt image modifiers */
-	modifiers?: ImageOptions['modifiers']
-
-	/**
-	 * Enables a panning effect on the image background property,
-	 * seperate from the reveal animation
-	 * @default true
-	 */
-	pan?: boolean
-	/** Direction of the pan effect. Defaults to the animation direction */
-	panDirection?: 'up' | 'down' | 'left' | 'right'
-	/** Duration of the pan effect, in milliseconds */
-	panDuration?: number
+	modifiers?: Record<string, unknown>
+	/** Image loading strategy */
+	loading?: 'lazy' | 'eager'
+	/** Image quality percentage */
+	quality?: number
 }
 
-const props = withDefaults(defineProps<AnimationProps & ImageProps>(), {
+/**
+ * Component props combining all configuration interfaces.
+ */
+interface Props extends AnimationConfig, ImageConfig {
+	/** Pan effect configuration */
+	pan?: PanConfig | boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
 	direction: 'right',
-	duration: 500,
+	duration: 800,
 	delay: 0,
 	once: true,
-	rootMargin: '0px 0px -10% 0px',
-	threshold: 0.1,
-	pan: true,
+	rootMargin: '-10% 0px -10% 0px',
+	threshold: 0.3,
+	pan: false,
 })
 
 /**
- * Determine whether we’re expanding width or height.
+ * Normalize pan configuration from prop input.
  */
-const isHorizontal = computed(() => ['left', 'right'].includes(props.direction))
+const panConfig = computed((): PanConfig => {
+	if (typeof props.pan === 'boolean') {
+		return {
+			enabled: props.pan,
+			duration: 12000,
+			drift: 10,
+			disableInitial: false,
+		}
+	}
+
+	return {
+		enabled: true,
+		duration: 12000,
+		drift: 10,
+		disableInitial: false,
+		...props.pan,
+	}
+})
 
 /**
- * Track visibility of the container
+ * Check if animation direction is horizontal.
  */
-const container = useTemplateRef('container')
-const elementIsVisible = useElementVisibility(container, {
+const isHorizontalDirection = computed(
+	(): boolean => props.direction === 'left' || props.direction === 'right',
+)
+
+/**
+ * Get the effective pan direction.
+ */
+const effectivePanDirection = computed(
+	(): AnimationDirection => panConfig.value.direction || props.direction,
+)
+
+/**
+ * Container element reference for visibility tracking.
+ */
+const containerRef = useTemplateRef<HTMLElement>('container')
+
+/**
+ * Track visibility of the container element.
+ */
+const elementIsVisible = useElementVisibility(containerRef, {
 	once: props.once,
 	rootMargin: props.rootMargin,
 	threshold: props.threshold,
 })
 
 /**
- * We need a shadow state for items that are in the viewport on mounted, since these get triggered twice.
- * The second time is when the element leaves the viewport, setting elementIsVisible to false again.
- * We want to avoid that if props.once is true.
+ * Shadow state for items in viewport on mount to prevent double triggering.
+ * Prevents animation reset when element leaves viewport if `once` is true.
  */
 const isVisible = shallowRef(false)
 
-watch(elementIsVisible, (newVal) => {
+/**
+ * Debounced ref to track if image is fully retracted.
+ * Prevents animation jank during hide transition.
+ */
+const isNotRetracted = debouncedRef(isVisible, props.duration + props.delay)
+
+/**
+ * Update visibility state with once-only logic.
+ */
+watch(elementIsVisible, (newValue: boolean) => {
 	if (isVisible.value && props.once) {
-		// Already visible and only once, do nothing
-		return
+		return // Already visible and only once, do nothing
 	}
-	isVisible.value = newVal
+	isVisible.value = newValue
 })
 
 /**
- * Reactive size of the container.
- * Needed for width and height calculations.
- *
- * Reset values on resize, and remove listener on unmount.
+ * Generate clip path for reveal animation.
  */
-const containerSize = reactive({ width: 0, height: 0 })
-
-function setContainerSize() {
-	if (container.value) {
-		const rect = container.value.getBoundingClientRect()
-		containerSize.width = rect.width
-		containerSize.height = rect.height
+const getClipPath = (direction: AnimationDirection, isVisible: boolean): string => {
+	if (isVisible) {
+		return 'inset(0 0 0 0)'
 	}
+
+	const clipPaths: Record<AnimationDirection, string> = {
+		right: 'inset(0 100% 0 0)',
+		left: 'inset(0 0 0 100%)',
+		up: 'inset(100% 0 0 0)',
+		down: 'inset(0 0 100% 0)',
+	}
+
+	return clipPaths[direction]
 }
 
-onMounted(() => {
-	setContainerSize()
-	window.addEventListener('resize', setContainerSize)
-})
-onBeforeUnmount(() => {
-	window.removeEventListener('resize', setContainerSize)
-})
+/**
+ * Computed style for the clip container.
+ */
+const clipperStyle = computed(() => ({
+	clipPath: getClipPath(props.direction, isVisible.value),
+	transition: `clip-path ${props.duration}ms cubic-bezier(0.65, 0.05, 0.36, 1) ${props.delay}ms`,
+}))
 
-const wrapperStyle = computed(() => {
-	/*
-	 * Expand container width or height when visible, based on direction prop.
-	 */
-	return {
-		overflow: 'hidden',
-		height: isHorizontal.value ? '100%' : isVisible.value ? `${containerSize.height}px` : '0px',
-		width: !isHorizontal.value ? '100%' : isVisible.value ? `${containerSize.width}px` : '0px',
-		transition: isVisible.value
-			? `width ${props.duration}ms ease-in ${props.delay}ms, height ${props.duration}ms ease-in ${props.delay}ms`
-			: undefined,
-	}
-})
+/**
+ * Generate keyframe name for pan animation.
+ */
+const getPanKeyframes = (direction: AnimationDirection, isInitial: boolean): string => {
+	const prefix = isInitial ? 'initial-' : ''
+	return `${prefix}pan-${direction}`
+}
 
-// const panPercentage = 3
+/**
+ * Computed style for the image with pan effects.
+ */
 const imageStyle = computed(() => {
-	/**
-	 * Pan image to direction prop when in view
-	 * When visible, set transfromX/Y to 0
-	 * Otherwise, set to +/- panPercentage% inverse to direction.
-	 */
+	const config = panConfig.value
+
+	// No pan effects applied
+	if (!config.enabled && config.disableInitial) {
+		return {}
+	}
+
+	const isInitialOnly = !config.enabled
+	const timing = isInitialOnly ? 'cubic-bezier(0.65, 0.05, 0.36, 1)' : 'linear'
+	const repeat = isInitialOnly ? '1 both' : 'infinite alternate'
+	const duration = isInitialOnly ? props.duration : config.duration
+	const keyframes = getPanKeyframes(effectivePanDirection.value, isInitialOnly)
+
+	// Continue pan during retraction to avoid visual jank
+	const shouldAnimate = isVisible.value || isNotRetracted.value
+
+	if (!shouldAnimate) {
+		return {}
+	}
+
+	const driftAmount = config.drift || 0
+
 	return {
-		height: containerSize.height + 'px',
-		width: containerSize.width + 'px',
-		// transition: isVisible.value
-		// 	? `transform ${props.duration}ms ease-in ${props.delay}ms`
-		// 	: undefined,
-		// transform: isVisible.value
-		// 	? 'translate(0, 0)'
-		// 	: props.direction === 'right'
-		// 		? `translate(-${panPercentage}%, 0)`
-		// 		: props.direction === 'left'
-		// 			? `translate(${panPercentage}%, 0)`
-		// 			: props.direction === 'down'
-		// 				? `translate(0, -${panPercentage}%)`
-		// 				: `translate(0, ${panPercentage}%)`,
+		'--pan-drift': `${driftAmount}%`,
+		animation: `${keyframes} ${duration}ms ${timing} ${props.delay}ms ${repeat}`,
+		width: `${100 + (isHorizontalDirection.value ? driftAmount : 0)}%`,
+		height: `${100 + (!isHorizontalDirection.value ? driftAmount : 0)}%`,
+		maxWidth: 'none',
+		maxHeight: 'none',
+		willChange: 'transform',
 	}
 })
 
-const imagePropKeys = ['src', 'alt', 'sizes', 'width', 'height', 'modifiers'] as const
-
+/**
+ * Extract image-specific props for NuxtImg component.
+ */
 const imageProps = computed(() => {
-	const result: Record<string, any> = {}
-	for (const key of imagePropKeys) {
-		result[key] = props[key]
+	const { src, alt, sizes, width, height, modifiers, loading, quality } = props
+
+	return {
+		src,
+		alt,
+		sizes,
+		width,
+		height,
+		modifiers,
+		loading,
+		quality,
 	}
-	return result
 })
 </script>
 
 <template>
-	<div ref="container" class="relative">
-		<div :style="wrapperStyle" class="absolute">
+	<div ref="container" class="animated-image relative">
+		<div :style="clipperStyle" class="absolute inset-0 h-full w-full overflow-hidden">
 			<NuxtImg
 				v-bind="imageProps"
+				class="absolute inset-0 block h-full w-full object-cover object-center"
 				:style="imageStyle"
-				class="block object-cover object-center"
 			/>
 		</div>
 	</div>
 </template>
+
+<style lang="postcss">
+/* Continuous pan animations */
+@keyframes pan-left {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(calc(-1 * var(--pan-drift)));
+	}
+}
+
+@keyframes pan-right {
+	from {
+		transform: translateX(calc(-1 * var(--pan-drift)));
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes pan-up {
+	from {
+		transform: translateY(0);
+	}
+	to {
+		transform: translateY(calc(-1 * var(--pan-drift)));
+	}
+}
+
+@keyframes pan-down {
+	from {
+		transform: translateY(calc(-1 * var(--pan-drift)));
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
+/* Initial reveal pan animations */
+@keyframes initial-pan-left {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-2%);
+	}
+}
+
+@keyframes initial-pan-right {
+	from {
+		transform: translateX(-2%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes initial-pan-up {
+	from {
+		transform: translateY(0);
+	}
+	to {
+		transform: translateY(-2%);
+	}
+}
+
+@keyframes initial-pan-down {
+	from {
+		transform: translateY(-2%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+</style>

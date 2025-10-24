@@ -15,9 +15,10 @@
 			sizes="800px"
 			alt="Modern kitchen with island"
 			direction="right"
-			class="mt-20 h-80 w-full"
+			class="mt-20 h-140 w-full"
 			:once="false"
-			:duration="5000"
+			:duration="800"
+			:pan="false"
 		/>
 		<div class="h-800" />
 	</UContainer>
