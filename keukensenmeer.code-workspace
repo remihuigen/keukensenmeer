@@ -3,6 +3,9 @@
 		{
 			"path": ".",
 		},
+		{
+			"path": "../kem/kem-nuxt",
+		},
 	],
 	"settings": {},
 }

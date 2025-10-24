@@ -8,13 +8,13 @@
 			volgen.
 		</h1>
 		<p>This is the content of the index page.</p>
-		<UButton to="/page" label="Other page" />
+		<UButton to="/projecten" label="Projecten" />
 
-		<NuxtImg
+		<AnimatedImage
 			src="site/modern_hero_fxhydj"
-			size="800pxp"
+			sizes="800px"
 			alt="Modern kitchen with island"
-			class="mt-8 rounded-lg shadow-lg"
+			class="mt-8"
 		/>
 	</UContainer>
 </template>
