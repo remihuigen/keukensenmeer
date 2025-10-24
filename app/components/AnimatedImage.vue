@@ -95,10 +95,25 @@ const isHorizontal = computed(() => ['left', 'right'].includes(props.direction))
  * Track visibility of the container
  */
 const container = useTemplateRef('container')
-const isVisible = useElementVisibility(container, {
+const elementIsVisible = useElementVisibility(container, {
 	once: props.once,
 	rootMargin: props.rootMargin,
 	threshold: props.threshold,
+})
+
+/**
+ * We need a shadow state for items that are in the viewport on mounted, since these get triggered twice.
+ * The second time is when the element leaves the viewport, setting elementIsVisible to false again.
+ * We want to avoid that if props.once is true.
+ */
+const isVisible = shallowRef(false)
+
+watch(elementIsVisible, (newVal) => {
+	if (isVisible.value && props.once) {
+		// Already visible and only once, do nothing
+		return
+	}
+	isVisible.value = newVal
 })
 
 /**
@@ -139,7 +154,7 @@ const wrapperStyle = computed(() => {
 	}
 })
 
-const panPercentage = 3
+// const panPercentage = 3
 const imageStyle = computed(() => {
 	/**
 	 * Pan image to direction prop when in view
@@ -147,28 +162,42 @@ const imageStyle = computed(() => {
 	 * Otherwise, set to +/- panPercentage% inverse to direction.
 	 */
 	return {
-		height: isHorizontal.value ? '100%' : `${containerSize.height}px`,
-		width: isHorizontal.value ? `${containerSize.width}px` : '100%',
-		transition: isVisible.value
-			? `transform ${props.duration}ms ease-in ${props.delay}ms`
-			: undefined,
-		transform: isVisible.value
-			? 'translate(0, 0)'
-			: props.direction === 'right'
-				? `translate(-${panPercentage}%, 0)`
-				: props.direction === 'left'
-					? `translate(${panPercentage}%, 0)`
-					: props.direction === 'down'
-						? `translate(0, -${panPercentage}%)`
-						: `translate(0, ${panPercentage}%)`,
+		height: containerSize.height + 'px',
+		width: containerSize.width + 'px',
+		// transition: isVisible.value
+		// 	? `transform ${props.duration}ms ease-in ${props.delay}ms`
+		// 	: undefined,
+		// transform: isVisible.value
+		// 	? 'translate(0, 0)'
+		// 	: props.direction === 'right'
+		// 		? `translate(-${panPercentage}%, 0)`
+		// 		: props.direction === 'left'
+		// 			? `translate(${panPercentage}%, 0)`
+		// 			: props.direction === 'down'
+		// 				? `translate(0, -${panPercentage}%)`
+		// 				: `translate(0, ${panPercentage}%)`,
 	}
+})
+
+const imagePropKeys = ['src', 'alt', 'sizes', 'width', 'height', 'modifiers'] as const
+
+const imageProps = computed(() => {
+	const result: Record<string, any> = {}
+	for (const key of imagePropKeys) {
+		result[key] = props[key]
+	}
+	return result
 })
 </script>
 
 <template>
-	<div ref="container">
-		<div :style="wrapperStyle">
-			<NuxtImg v-bind="props" :style="imageStyle" class="block object-cover object-center" />
+	<div ref="container" class="relative">
+		<div :style="wrapperStyle" class="absolute">
+			<NuxtImg
+				v-bind="imageProps"
+				:style="imageStyle"
+				class="block object-cover object-center"
+			/>
 		</div>
 	</div>
 </template>
