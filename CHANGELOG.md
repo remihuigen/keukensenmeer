@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.1](https://github.com/remihuigen/keukensenmeer/compare/v1.5.0...v1.5.1) (2025-10-25)
+
+
+### Bug Fixes
+
+* Mobile menu animations ([4c0b13d](https://github.com/remihuigen/keukensenmeer/commit/4c0b13d0c3e3d7935f90059ee97b505b3c791ad9))
+* Update error layout as well ([ee9a6f1](https://github.com/remihuigen/keukensenmeer/commit/ee9a6f1fabd9e489930c9f5ba1c994aeac093d4b))
+
 # [1.5.0](https://github.com/remihuigen/keukensenmeer/compare/v1.4.0...v1.5.0) (2025-10-24)
 
 
