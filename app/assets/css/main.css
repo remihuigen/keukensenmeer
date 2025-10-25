@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
-@plugin "@tailwindcss/typography";
-@plugin "tailwindcss-debug-screens";
+@plugin '@tailwindcss/typography';
+@plugin 'tailwindcss-debug-screens';
 
 @theme static {
 	/* Fonts */
@@ -65,6 +65,7 @@
 	}
 }
 
+/* When updating, please make sure that the transition duration in mobile-menu.ts matches the value below. */
 :root {
 	--menu-transition-duration: 300ms;
 }
@@ -81,10 +82,21 @@
 	transform: translateX(-110vw);
 }
 
+/* 
+	When closing (either through toggle or route change), disable the transition.
+	Either it will be animated (toggle) or the page transition will handle it (route change). 
+*/
+.content {
+	&.menu-closing,
+	&.route-change {
+		transition: none;
+	}
+}
+
 /* when closing -> slide in from right */
 .content.menu-closing {
-	transition: none;
 	animation: content-in-from-right var(--menu-transition-duration) ease-in-out both;
+	animation-delay: var(--menu-transition-duration);
 }
 
 @keyframes content-in-from-right {
@@ -98,7 +110,8 @@
 
 .page-enter-active,
 .page-leave-active {
-	transition: all 0.15s;
+	transition-property: opacity, filter;
+	transition-duration: 300ms;
 }
 .page-enter-from,
 .page-leave-to {
