@@ -47,7 +47,7 @@ onMounted(() => {
 	}
 })
 
-const { mobileMenuOpen, menuClosing, setHooks } = useMobileMenu()
+const { contentTransitionClasses, setHooks } = useMobileMenu()
 setHooks()
 </script>
 
@@ -62,13 +62,7 @@ setHooks()
 			/>
 
 			<Header />
-			<UMain
-				class="content relative pt-[var(--header-height)]"
-				:class="{
-					'menu-open': mobileMenuOpen,
-					'menu-closing': menuClosing,
-				}"
-			>
+			<UMain class="relative pt-(--header-height)" :class="contentTransitionClasses">
 				<UContainer
 					class="flex h-full flex-col items-start justify-center gap-6 py-12 lg:py-24"
 				>
@@ -109,13 +103,7 @@ setHooks()
 			<DevOnly>
 				<div class="py-8" />
 			</DevOnly>
-			<Footer
-				class="content"
-				:class="{
-					'menu-open': mobileMenuOpen,
-					'menu-closing': menuClosing,
-				}"
-			/>
+			<Footer :class="contentTransitionClasses" />
 		</UApp>
 	</Body>
 </template>
