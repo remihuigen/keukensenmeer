@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nl } from '@nuxt/ui/locale'
 
-const { mobileMenuOpen, menuClosing, setHooks } = useMobileMenu()
+const { contentTransitionClasses, setHooks } = useMobileMenu()
 
 setHooks()
 </script>
@@ -20,22 +20,10 @@ setHooks()
 			</span>
 		</DevOnly>
 		<Header />
-		<UMain
-			class="content relative pt-[var(--header-height)]"
-			:class="{
-				'menu-open': mobileMenuOpen,
-				'menu-closing': menuClosing,
-			}"
-		>
+		<UMain class="relative pt-(--header-height)" :class="contentTransitionClasses">
 			<NuxtPage />
 		</UMain>
-		<Footer
-			class="content"
-			:class="{
-				'menu-open': mobileMenuOpen,
-				'menu-closing': menuClosing,
-			}"
-		/>
+		<Footer :class="contentTransitionClasses" />
 	</UApp>
 </template>
 

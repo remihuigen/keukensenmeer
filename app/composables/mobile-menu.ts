@@ -3,6 +3,7 @@ export const useMobileMenu = () => {
   const transitionDuration = 300
   const mobileMenuOpen = useState('mobileMenuOpen', () => false)
   const menuClosing = useState('menuClosing', () => false)
+  const routeChange = useState('routeChange', () => false)
 
   /**
    * Toggle mobile menu open/close state
@@ -14,8 +15,9 @@ export const useMobileMenu = () => {
       mobileMenuOpen.value = false
       setTimeout(() => {
         menuClosing.value = false
-        // isToggling.value = false
-      }, transitionDuration)
+        // Twice the transition duration to ensure all animations are complete
+        // Being the fade out of menu, and slide in of page content
+      }, transitionDuration * 2)
     } else {
       // opening
       mobileMenuOpen.value = true
@@ -60,6 +62,24 @@ export const useMobileMenu = () => {
     }
   }
 
+
+  /** Navigation logic for route changes */
+  const route = useRoute()
+
+  function onRouteChange() {
+    if (mobileMenuOpen.value) {
+      // closing: set route change flag to prevent content animation
+      // and let the page transition handle it
+      routeChange.value = true
+      setTimeout(() => {
+        routeChange.value = false
+        // Twice the transition duration to ensure all animations are complete
+        // Being the fade out of menu, and slide in of page content
+      }, transitionDuration * 2)
+    }
+    mobileMenuOpen.value = false
+  }
+
   /**
    * We do not want to set lifecycle hooks and wacthers directly in the composable,
    * since that will register them each them a composable is invoked.
@@ -69,12 +89,33 @@ export const useMobileMenu = () => {
   function setHooks() {
     watch(mobileMenuOpen, lockPageScroll, { immediate: false })
     onUnmounted(resetScrollLock)
+
+    watch(
+      () => route.path,
+      onRouteChange
+    )
   }
+
+  /**
+   * Computed classes for content wrapper
+   * Applies the appropriate classes based on menu state
+   * to handle animations and transitions
+   */
+  const contentTransitionClasses = computed(() => {
+    return {
+      'content': true,
+      'menu-open': mobileMenuOpen.value,
+      'menu-closing': menuClosing.value,
+      'route-change': routeChange.value
+    }
+  })
 
   return {
     mobileMenuOpen,
     menuClosing,
+    routeChange,
     transitionDuration,
+    contentTransitionClasses,
     toggle,
     lockPageScroll,
     resetScrollLock,

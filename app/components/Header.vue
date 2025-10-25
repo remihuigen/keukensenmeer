@@ -24,14 +24,7 @@ const items = computed<NavigationMenuItem[]>(() => [
 	},
 ])
 
-const { mobileMenuOpen: open, transitionDuration, toggle } = useMobileMenu()
-
-watch(
-	() => route.path,
-	() => {
-		open.value = false
-	},
-)
+const { mobileMenuOpen: open, transitionDuration, toggle, routeChange } = useMobileMenu()
 
 watch(width, (newWidth) => {
 	if (newWidth >= 1024) {
@@ -52,7 +45,7 @@ watch(width, (newWidth) => {
 		<UNavigationMenu :items="items" color="neutral" variant="pill" highlight />
 		<template #right>
 			<UButton
-				class="absolute top-0 right-0 -bottom-0.25 hidden w-56 place-content-center text-sm lg:grid"
+				class="absolute top-0 right-0 -bottom-px hidden w-56 place-content-center text-sm lg:grid"
 				size="xl"
 				color="primary"
 				variant="solid"
@@ -67,7 +60,7 @@ watch(width, (newWidth) => {
 			<UButton
 				color="primary"
 				variant="solid"
-				class="absolute top-0 right-0 z-20 grid size-[var(--ui-header-height)] place-content-center lg:hidden"
+				class="absolute top-0 right-0 z-20 grid size-(--ui-header-height) place-content-center lg:hidden"
 				title="Open navigatiemenu"
 				aria-label="Open het navigatiemenu"
 				@click="toggle"
@@ -87,8 +80,11 @@ watch(width, (newWidth) => {
 			</UButton>
 		</template>
 	</UHeader>
-	<Transition :duration="transitionDuration" name="mobile-menu">
-		<div v-if="open" class="fixed inset-0 top-[var(--ui-header-height)] z-10">
+	<Transition
+		:duration="transitionDuration"
+		:name="'mobile-menu' + (routeChange ? '-route' : '')"
+	>
+		<div v-if="open" class="menu-container fixed inset-0 top-(--ui-header-height) z-10">
 			<UContainer class="grid h-full place-content-center gap-16">
 				<UNavigationMenu
 					:items="items"
@@ -137,7 +133,7 @@ watch(width, (newWidth) => {
 .menu-item {
 	transition: all 150ms ease-in-out;
 	--stagger: 50ms;
-	/* Note that --menu-transition-duration is set globally in app.vue */
+	/* Note that --menu-transition-duration is set globally in main.css */
 }
 
 /* enter/leave transforms */
@@ -146,20 +142,43 @@ watch(width, (newWidth) => {
 	opacity: 0;
 	filter: blur(0.1rem);
 }
-.mobile-menu-leave-to .menu-item {
+
+/* Menu container needs a background to hide page content  */
+.menu-container {
+	background: var(--ui-bg);
+	transition: background var(--menu-transition-duration) ease-in-out;
+}
+
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+	transition: all var(--menu-transition-duration) ease-in-out;
+}
+
+/* If route is changing, delay the menu closing to allow the new page to fully load before fading out the menu */
+.mobile-menu-route-leave-active {
+	transition: all var(--menu-transition-duration) ease-in-out
+		calc(var(--menu-transition-duration) / 2);
+}
+
+.mobile-menu-enter-from {
+	opacity: 0;
+}
+
+.mobile-menu-leave-to {
 	transform: translateY(-1rem);
 	opacity: 0;
 	filter: blur(0.1rem);
 }
 
 /* base delay during enter */
+.mobile-menu-enter-active,
 .mobile-menu-enter-active .menu-item,
 .mobile-menu-leave-active .menu-item {
 	transition-delay: var(--menu-transition-duration);
 }
 
-/* 
-	staggered offsets for 3 items 
+/*
+	staggered offsets for 3 items
 	Add more if needed...
 */
 .mobile-menu-enter-active .menu-item:nth-child(1) {
