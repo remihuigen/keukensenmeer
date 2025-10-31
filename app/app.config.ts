@@ -77,6 +77,11 @@ export default defineAppConfig({
                     variant: 'link',
                     class: 'text-primary-400'
                 },
+                {
+                    color: 'secondary',
+                    variant: 'solid',
+                    class: 'text-white'
+                }
             ]
         },
         navigationMenu: {

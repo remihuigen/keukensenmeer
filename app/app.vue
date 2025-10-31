@@ -20,10 +20,9 @@ setHooks()
 			</span>
 		</DevOnly>
 		<Header />
-		<UMain class="relative pt-(--header-height)" :class="contentTransitionClasses">
+		<UMain :class="contentTransitionClasses">
 			<NuxtPage />
 		</UMain>
-		<Footer :class="contentTransitionClasses" />
 	</UApp>
 </template>
 

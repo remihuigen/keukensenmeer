@@ -6,7 +6,7 @@ defineProps<{
 
 <template>
 	<span
-		class="font-hand text-primary-500 leading-[0] whitespace-nowrap"
+		class="font-hand text-primary-500 relative leading-0 whitespace-nowrap"
 		:style="{
 			fontSize: '2em',
 			marginLeft: !!noMargin ? '0' : '0.25em',
