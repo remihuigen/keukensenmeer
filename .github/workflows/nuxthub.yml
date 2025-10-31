@@ -23,21 +23,10 @@ jobs:
       deployment-url: ${{ steps.deploy.outputs.deployment-url }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
+      - name: Setup Node & dependencies
+        uses: ./.github/actions/setup
 
       - name: Ensure NuxtHub module is installed
         run: pnpx nuxthub@latest ensure
@@ -47,7 +36,7 @@ jobs:
         uses: nuxt-hub/action@v2
         with:
           project-key: keukensenmeer-272p
-      
+
       - name: Invalidate Cache
         if: ${{ steps.deploy.outcome == 'success' }}
         run: |
@@ -57,7 +46,7 @@ jobs:
           RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X POST $APP_URL/api/_cache/invalidate \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $API_TOKEN")
-          
+
           echo "HTTP Status Code: $RESPONSE"
           echo "Response Body:"
           cat response.json
