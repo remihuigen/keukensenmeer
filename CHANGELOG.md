@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.6.0](https://github.com/remihuigen/keukensenmeer/compare/v1.5.1...v1.6.0) (2025-10-31)
+
+
+### Features
+
+* Implement setup action ([719b559](https://github.com/remihuigen/keukensenmeer/commit/719b55969764172f8c271cf92153c16f46c64c7e))
+
 ## [1.5.1](https://github.com/remihuigen/keukensenmeer/compare/v1.5.0...v1.5.1) (2025-10-25)
 
 
