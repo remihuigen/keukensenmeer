@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import type { Project } from '~~/shared/types/project'
-
 const route = useRoute()
 
-const { data, error, status } = await useFetch<Project>(`/api/projects/${route.params.slug}`)
+const { data, error, status } = await useFetch(`/api/projects/${route.params.slug}`)
 
 if (!data.value) {
 	throw createError({
@@ -14,10 +12,10 @@ if (!data.value) {
 }
 
 useSeoMeta({
-	title: data.value.title,
+	title: `Project - ${data.value.publicTitle}`,
 	description: data.value.description,
 	ogDescription: data.value.description,
-	twitterTitle: data.value.title,
+	twitterTitle: `Project - ${data.value.publicTitle}`,
 	twitterDescription: data.value.description,
 	ogImage: data.value.mainImage,
 	twitterImage: data.value.mainImage,

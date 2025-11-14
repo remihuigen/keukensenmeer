@@ -13,14 +13,18 @@ export default defineCachedEventHandler(async (event) => {
 
   const project = projects[slug as ProjectKey];
 
-  if (!project) {
+  // If project not found or not published
+  if (!project || project.status !== 'published') {
     throw createError({
       statusCode: 404,
       statusMessage: 'Project niet gevonden'
     })
   }
 
-  return project
+  // Strip sensitive fields from payload
+  const { title: _, ...rest } = project
+
+  return rest
 }, {
   maxAge: 1000 * 60 * 60 * 24 * 5,
   staleMaxAge: 1000 * 60 * 60 * 24 * 10,
