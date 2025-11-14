@@ -1,5 +1,19 @@
 # Changelog
 
+# [1.7.0](https://github.com/remihuigen/keukensenmeer/compare/v1.6.0...v1.7.0) (2025-11-14)
+
+
+### Bug Fixes
+
+* Update api routes for expanded data types ([d6fbc41](https://github.com/remihuigen/keukensenmeer/commit/d6fbc41fb7e0cdc04d0929d93f3211385e0d5e35))
+
+
+### Features
+
+* Add homepage layout, WIP studio ([565b674](https://github.com/remihuigen/keukensenmeer/commit/565b674892419a1a5db13893e9930e623d8f4673))
+* Add project files and conversion script from old data ([627f41a](https://github.com/remihuigen/keukensenmeer/commit/627f41a6ee7bf7fbcb489e714fe0cbd5a323d6b5))
+* Expand project types, add raw data, and update defienProject handler ([18b21aa](https://github.com/remihuigen/keukensenmeer/commit/18b21aa8751b38bfc624b90057fd2ac0b51cca1b))
+
 # [1.6.0](https://github.com/remihuigen/keukensenmeer/compare/v1.5.1...v1.6.0) (2025-10-31)
 
 
