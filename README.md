@@ -213,6 +213,10 @@ removed or changed files, and automatically regenerate the project index file.
 
 Thus you don't need to restart the development server when adding or modifying project files.
 
+> Looking back on this implementation, it would probably have been better to use
+> [Nuxt Content](https://content.nuxt.com/) since that basically provides all this functionality out
+> of the box. Anyway, at was a fun exercise to build it from scratch.
+
 ## Deployment
 
 This project is deployed to Cloudflare Workers using NuxtHub. Deployment is fully automated through

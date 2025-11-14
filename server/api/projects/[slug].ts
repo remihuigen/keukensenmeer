@@ -1,7 +1,7 @@
 import projects from '~~/data/projects'
 import type { ProjectKey } from '~~/data/projects'
 
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
 
   if (typeof slug !== 'string') {
@@ -13,12 +13,20 @@ export default defineEventHandler(async (event) => {
 
   const project = projects[slug as ProjectKey];
 
-  if (!project) {
+  // If project not found or not published
+  if (!project || project.status !== 'published') {
     throw createError({
       statusCode: 404,
       statusMessage: 'Project niet gevonden'
     })
   }
 
-  return project
+  // Strip sensitive fields from payload
+  const { title: _, ...rest } = project
+
+  return rest
+}, {
+  maxAge: 1000 * 60 * 60 * 24 * 5,
+  staleMaxAge: 1000 * 60 * 60 * 24 * 10,
+  getKey: (slug) => `project:${slug}`
 })

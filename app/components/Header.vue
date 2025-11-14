@@ -36,7 +36,7 @@ watch(width, (newWidth) => {
 <template>
 	<UHeader
 		:ui="{
-			root: 'bg-secondary-600/90 border-secondary-700 shadow-2xl',
+			root: 'bg-secondary-600/90 border-secondary-700 shadow-2xl z-30',
 		}"
 	>
 		<template #title>

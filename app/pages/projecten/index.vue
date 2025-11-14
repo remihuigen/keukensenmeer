@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { data, error, status } = await useFetch<Project[]>(`/api/projects`)
+const { data, error, status } = await useFetch(`/api/projects`)
 </script>
 
 <template>
