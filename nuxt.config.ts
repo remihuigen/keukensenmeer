@@ -45,14 +45,14 @@ export default defineNuxtConfig({
     }
   },
 
-  hub: {
-    analytics: false,
-    blob: false,
-    cache: true,
-    database: false,
-    kv: false,
-    projectUrl: process.env.APP_URL
-  },
+  // hub: {
+  //   analytics: false,
+  //   blob: false,
+  //   cache: true,
+  //   database: false,
+  //   kv: false,
+  //   projectUrl: process.env.APP_URL
+  // },
 
   css: ['~/assets/css/main.css'],
   debug: isDebug,
