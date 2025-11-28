@@ -114,17 +114,6 @@ export default defineNuxtConfig({
     }
   },
 
-  conversationalCms: {
-    projectsDir: 'data/projects',
-    github: {
-      owner: 'remihuigen',
-      repo: 'keukensenmeer',
-      defaultBranch: 'main',
-      branchPrefix: 'cms/',
-    },
-    previewBaseUrl: 'https://preview.keukensenmeer.nl',
-  },
-
   app: {
     head: {
       htmlAttrs: {
