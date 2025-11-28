@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/image',
     '@nuxt/ui',
-    '@nuxthub/core',
+    // '@nuxthub/core',
     '@nuxtjs/seo',
     '@vueuse/nuxt',
     '@nuxtjs/plausible',
@@ -34,7 +34,7 @@ export default defineNuxtConfig({
       openAPI: true
     },
 
-    preset: 'cloudflare-module',
+    preset: 'cloudflare_module',
     cloudflare: {
       deployConfig: true,
       nodeCompat: true,
