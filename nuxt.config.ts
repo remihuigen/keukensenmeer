@@ -5,6 +5,7 @@ import projects from './data/projects'
 const isDebug = process.env.DEBUG === 'true' || false
 const isDev = process.env.MODE === 'dev'
 const isProd = process.env.MODE === 'production'
+const isPreview = process.env.MODE === 'preview'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -23,8 +24,6 @@ export default defineNuxtConfig({
   ],
 
 
-  css: ['~/assets/css/main.css'],
-
   nitro: {
     minify: process.env.DEBUG !== 'true',
     prerender: {
@@ -33,11 +32,31 @@ export default defineNuxtConfig({
     },
     experimental: {
       openAPI: true
+    },
+
+    preset: 'cloudflare-module',
+    cloudflare: {
+      deployConfig: true,
+      nodeCompat: true,
+
+      wrangler: {
+        name: isPreview ? 'keukensenmeer-preview' : 'keukensenmeer',
+      }
     }
   },
+
+  hub: {
+    analytics: false,
+    blob: false,
+    cache: true,
+    database: false,
+    kv: false,
+    projectUrl: process.env.APP_URL
+  },
+
+  css: ['~/assets/css/main.css'],
   debug: isDebug,
   ssr: true,
-
 
   runtimeConfig: {
     apiToken: process.env.API_TOKEN,
@@ -52,14 +71,6 @@ export default defineNuxtConfig({
         isProd: isProd,
       }
     }
-  },
-
-  hub: {
-    analytics: false,
-    blob: false,
-    cache: true,
-    database: false,
-    kv: true,
   },
 
   plausible: {
