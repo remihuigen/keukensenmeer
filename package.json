@@ -23,7 +23,7 @@
 		"generate": "nuxt generate",
 		"generate-projects": "node scripts/generateProjectIndex.js",
 		"preview": "nuxt preview",
-		"postinstall": "nuxt prepare",
+		"postinstall": "pnpm generate-projects && nuxt prepare",
 		"typecheck": "nuxi typecheck",
 		"lint": "eslint . --cache",
 		"lint:fix": "eslint . --fix",
