@@ -47,7 +47,14 @@ export default defineNuxtConfig({
         name: isPreview ? 'keukensenmeer-preview' : 'keukensenmeer',
         kv_namespaces: [
           { binding: 'CACHE', id: process.env.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID || '' }
-        ]
+        ],
+        observability: {
+          logs: {
+            enabled: true,
+            head_sampling_rate: 1,
+            invocation_logs: true,
+          }
+        }
       }
     },
     storage: {
