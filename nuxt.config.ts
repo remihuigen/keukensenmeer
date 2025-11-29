@@ -41,6 +41,12 @@ export default defineNuxtConfig({
 
       wrangler: {
         name: isPreview ? 'keukensenmeer-preview' : 'keukensenmeer',
+        build: {
+          command: 'npx nuxi build',
+        },
+        kv_namespaces: [
+          { binding: 'CACHE', id: process.env.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID || '' }
+        ]
       }
     }
   },
