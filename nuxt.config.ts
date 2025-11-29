@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/image',
     '@nuxt/ui',
-    // '@nuxthub/core',
+    '@nuxthub/core',
     '@nuxtjs/seo',
     '@vueuse/nuxt',
     '@nuxtjs/plausible',
@@ -39,40 +39,40 @@ export default defineNuxtConfig({
     },
 
     preset: 'cloudflare_module',
-    cloudflare: {
-      deployConfig: true,
-      nodeCompat: true,
+    // cloudflare: {
+    //   deployConfig: true,
+    //   nodeCompat: true,
 
-      wrangler: {
-        name: isPreview ? 'keukensenmeer-preview' : 'keukensenmeer',
-        kv_namespaces: [
-          { binding: 'CACHE', id: process.env.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID || '' }
-        ],
-        observability: {
-          logs: {
-            enabled: true,
-            head_sampling_rate: 1,
-            invocation_logs: true,
-          }
-        }
-      }
-    },
-    storage: {
-      cache: {
-        driver: await resolvePath('./config/cache/driver.mjs'),
-        binding: 'CACHE'
-      }
-    }
+    //   wrangler: {
+    //     name: isPreview ? 'keukensenmeer-preview' : 'keukensenmeer',
+    //     kv_namespaces: [
+    //       { binding: 'CACHE', id: process.env.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID || '' }
+    //     ],
+    //     observability: {
+    //       logs: {
+    //         enabled: true,
+    //         head_sampling_rate: 1,
+    //         invocation_logs: true,
+    //       }
+    //     }
+    //   }
+    // },
+    // storage: {
+    //   cache: {
+    //     driver: await resolvePath('./config/cache/driver.mjs'),
+    //     binding: 'CACHE'
+    //   }
+    // }
   },
 
-  // hub: {
-  //   analytics: false,
-  //   blob: false,
-  //   cache: true,
-  //   database: false,
-  //   kv: false,
-  //   projectUrl: process.env.APP_URL
-  // },
+  hub: {
+    analytics: false,
+    blob: false,
+    cache: true,
+    database: false,
+    kv: false,
+    projectUrl: process.env.APP_URL
+  },
 
   css: ['~/assets/css/main.css'],
   debug: isDebug,
