@@ -48,6 +48,12 @@ export default defineNuxtConfig({
           { binding: 'CACHE', id: process.env.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID || '' }
         ]
       }
+    },
+    storage: {
+      cache: {
+        driver: 'cloudflare-kv-binding',
+        binding: 'CACHE'
+      }
     }
   },
 
@@ -77,6 +83,27 @@ export default defineNuxtConfig({
         isProd: isProd,
       }
     }
+  },
+
+  routeRules: {
+    '/': {
+      ssr: true,
+      cache: {
+        maxAge: 60 * 60 * 24
+      }
+    },
+    '/**': {
+      ssr: true,
+      cache: {
+        maxAge: 60 * 60 * 24
+      }
+    },
+    '/projecten/**': {
+      ssr: true,
+      cache: {
+        maxAge: 60 * 60 * 24
+      }
+    },
   },
 
   plausible: {
