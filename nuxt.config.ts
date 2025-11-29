@@ -39,30 +39,6 @@ export default defineNuxtConfig({
     },
 
     preset: 'cloudflare_module',
-    // cloudflare: {
-    //   deployConfig: true,
-    //   nodeCompat: true,
-
-    //   wrangler: {
-    //     name: isPreview ? 'keukensenmeer-preview' : 'keukensenmeer',
-    //     kv_namespaces: [
-    //       { binding: 'CACHE', id: process.env.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID || '' }
-    //     ],
-    //     observability: {
-    //       logs: {
-    //         enabled: true,
-    //         head_sampling_rate: 1,
-    //         invocation_logs: true,
-    //       }
-    //     }
-    //   }
-    // },
-    // storage: {
-    //   cache: {
-    //     driver: await resolvePath('./config/cache/driver.mjs'),
-    //     binding: 'CACHE'
-    //   }
-    // }
   },
 
   hub: {
