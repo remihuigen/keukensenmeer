@@ -48,6 +48,7 @@ jobs:
                   API_TOKEN: ${{ secrets.API_TOKEN }}
                   NUXT_HUB_PROJECT_SECRET_KEY: ${{ secrets.NUXT_HUB_PROJECT_SECRET_KEY }}
                   CLOUDINARY_CLOUDNAME: ${{ secrets.CLOUDINARY_CLOUDNAME }}
+                  NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID: ${{ secrets.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID }}
 
             - name: Deploy Worker
               id: deploy
