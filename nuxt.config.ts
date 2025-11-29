@@ -2,14 +2,10 @@ import identity from './data/identity'
 import { identity as coreIdentity } from './data/global'
 import projects from './data/projects'
 
-import { createResolver } from '@nuxt/kit'
-
 const isDebug = process.env.DEBUG === 'true' || false
 const isDev = process.env.MODE === 'dev'
 const isProd = process.env.MODE === 'production'
 const isPreview = process.env.MODE === 'preview'
-
-const { resolvePath } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -29,7 +25,7 @@ export default defineNuxtConfig({
 
 
   nitro: {
-    minify: process.env.DEBUG !== 'true',
+    minify: isDebug,
     prerender: {
       crawlLinks: true,
       failOnError: false,
@@ -51,7 +47,6 @@ export default defineNuxtConfig({
   },
 
   css: ['~/assets/css/main.css'],
-  debug: isDebug,
   ssr: true,
 
   runtimeConfig: {
@@ -129,6 +124,20 @@ export default defineNuxtConfig({
         }
       }
     }
+  },
+
+  // List of debug options for various Nuxt subsystems
+  debug: {
+    nitro: isDebug,
+    hydration: isDebug || isDev || isPreview,
+    watchers: isDebug || isDev,
+    router: isDebug,
+    templates: isDebug,
+    modules: isDebug,
+    hooks: {
+      server: isDebug,
+      client: isDebug,
+    },
   },
 
   app: {
