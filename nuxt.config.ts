@@ -2,12 +2,13 @@ import identity from './data/identity'
 import { identity as coreIdentity } from './data/global'
 import projects from './data/projects'
 
+import { createResolver } from '@nuxt/kit'
+
 const isDebug = process.env.DEBUG === 'true' || false
 const isDev = process.env.MODE === 'dev'
 const isProd = process.env.MODE === 'production'
 const isPreview = process.env.MODE === 'preview'
 
-import { createResolver } from '@nuxt/kit'
 const { resolvePath } = createResolver(import.meta.url)
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
