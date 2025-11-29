@@ -7,6 +7,9 @@ const isDev = process.env.MODE === 'dev'
 const isProd = process.env.MODE === 'production'
 const isPreview = process.env.MODE === 'preview'
 
+import { createResolver } from '@nuxt/kit'
+const { resolvePath } = createResolver(import.meta.url)
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -48,7 +51,7 @@ export default defineNuxtConfig({
     },
     storage: {
       cache: {
-        driver: 'cloudflare-kv-binding',
+        driver: await resolvePath('./config/cache/driver.mjs'),
         binding: 'CACHE'
       }
     }
