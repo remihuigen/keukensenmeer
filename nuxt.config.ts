@@ -84,6 +84,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiToken: process.env.API_TOKEN,
     public: {
+      apiToken: process.env.PUBLIC_API_TOKEN,
       tracking: {
         disabled: process.env.DISABLE_TRACKING === 'true' || false,
       },
@@ -98,7 +99,7 @@ export default defineNuxtConfig({
 
   hub: {
     analytics: false,
-    blob: false,
+    blob: true,
     cache: true,
     database: false,
     kv: true,
@@ -115,7 +116,7 @@ export default defineNuxtConfig({
 
   ui: {
     theme: {
-      colors: ['primary', 'secondary']
+      colors: ['primary', 'secondary', 'neutral', 'info', 'warning', 'error', 'success',]
     }
   },
 
@@ -128,20 +129,15 @@ export default defineNuxtConfig({
   },
 
   image: {
-    provider: 'cloudinary',
-    cloudinary: {
-      baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUDNAME}/image/upload`,
-      modifiers: {
-        quality: '80',
-      }
-    },
+    provider: 'none',
+
     providers: {
-      video: {
-        provider: 'cloudinary',
-        options: {
-          baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUDNAME}/video/upload`,
+      cloudinary: {
+        baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUDNAME}/image/upload`,
+        modifiers: {
+          quality: '80',
         }
-      }
+      },
     }
   },
 
