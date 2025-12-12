@@ -80,6 +80,14 @@ export default defineNuxtConfig({
           maxAge: 60 * 60 * 24
         }
       },
+      '/api/**': {
+        ssr: false,
+        cache: false
+      },
+      '/images/**': {
+        ssr: false,
+        cache: false
+      },
     },
 
   },
