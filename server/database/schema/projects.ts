@@ -3,10 +3,12 @@ import {
     sqliteTable,
     text,
     integer,
+    primaryKey,
 } from "drizzle-orm/sqlite-core";
-import { sql } from "drizzle-orm";
 
-/** Domain Types ----------------------------- */
+/** ------------------------------------------
+ *   Domain Types (Strong & Explicit)
+ * ------------------------------------------ */
 
 export interface ParagraphNode {
     type: 'paragraph';
@@ -24,17 +26,9 @@ export type Style = (typeof styleEnum)[number];
 export const orientationEnum = ['landscape', 'portrait', 'square'] as const;
 export type ImageOrientation = (typeof orientationEnum)[number];
 
-/** Image object including metadata */
-export interface ImageWithMeta {
-    url: string;
-    orientation: ImageOrientation;
-    alt?: string;
-    width: number;
-    height: number;
-    mime: string;
-}
-
-/** ----------------------------------------- */
+/** ------------------------------------------
+ *   PROJECTS TABLE
+ * ------------------------------------------ */
 
 export const projects = sqliteTable("projects", {
     id: integer("id").primaryKey({ autoIncrement: true }),
@@ -55,26 +49,19 @@ export const projects = sqliteTable("projects", {
         .notNull()
         .default(100),
 
-    /** Typed JSON arrays */
     styles: text("styles", { mode: "json" })
         .$type<Style[]>()
         .notNull(),
 
     body: text("body", { mode: "json" })
-        .$type<Node[]>()            // <-- Strong type preserved ✔
+        .$type<Node[]>()
         .notNull(),
 
-    /** Main image (with metadata) */
+    /** Main image (single) */
     mainImageUrl: text("main_image_url").notNull(),
     mainImageWidth: integer("main_image_width").notNull(),
     mainImageHeight: integer("main_image_height").notNull(),
     mainImageMime: text("main_image_mime").notNull(),
-
-    /** Gallery images (typed JSON array) */
-    images: text("images", { mode: "json" })
-        .$type<ImageWithMeta[]>()   // <-- Fully typed images ✔
-        .notNull()
-        .default(sql`'[]'`),
 
     description: text("description").notNull(),
 
