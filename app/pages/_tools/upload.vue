@@ -151,6 +151,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             class="rounded-full size-16"
             width="80"
             height="80"
+            provider="none"
           />
           <div class="flex gap-3 items-center">
             <span>{{ blob.pathname }}</span>

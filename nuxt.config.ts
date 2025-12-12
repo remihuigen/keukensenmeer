@@ -133,7 +133,7 @@ export default defineNuxtConfig({
   },
 
   image: {
-    // provider: 'none',
+    provider: 'ipx',
 
     providers: {
       cloudinary: {
@@ -145,6 +145,7 @@ export default defineNuxtConfig({
       cloudflare: {
         baseURL: joinURL(process.env.APP_URL!, '/images/')
       },
+      none: {}
     }
   },
 
