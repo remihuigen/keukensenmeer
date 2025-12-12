@@ -147,11 +147,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           class="flex gap-6 items-center"
         >
           <NuxtImg 
-            :src="`/images/${blob.pathname}`"
+            :src="blob.pathname"
             class="rounded-full size-16"
             width="80"
             height="80"
-            provider="none"
+            provider="cloudflare"
           />
           <div class="flex gap-3 items-center">
             <span>{{ blob.pathname }}</span>
