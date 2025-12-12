@@ -147,7 +147,7 @@ const { isDev } = useRuntimeConfig().public.mode
           class="flex gap-6 items-center"
         >
           <NuxtImg 
-            :src="isDev ? `/images/${blob.pathname}` : blob.pathname"
+            :src="isDev ? `/images/${blob.pathname}` : `/${blob.pathname}`"
             class="rounded-full size-16"
             width="80"
             height="80"

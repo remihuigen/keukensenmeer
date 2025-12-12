@@ -151,7 +151,7 @@ export default defineNuxtConfig({
         }
       },
       cloudflare: {
-        baseURL: joinURL(process.env.APP_URL!, '/images/')
+        baseURL: '/images/'
       },
       none: {}
     }
