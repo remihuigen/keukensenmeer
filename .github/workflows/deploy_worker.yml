@@ -38,8 +38,6 @@ jobs:
                   transient-environment: false
                   auto-merge: false
 
-            # Test read all vars and secrets and dump to .env file
-            # to see if Nuxt build can read them correctly
             - name: Export environment variables
               id: export_env
               run: |
@@ -57,15 +55,6 @@ jobs:
 
             - name: Build Nuxt Application
               run: pnpm build
-            #   env:
-            #       MODE: ${{ vars.MODE }}
-            #       APP_URL: ${{ vars.APP_URL }}
-            #       BLOCK_NON_SEO_BOTS: ${{ vars.BLOCK_NON_SEO_BOTS }}
-            #       BLOCK_AI_BOTS: ${{ vars.BLOCK_AI_BOTS }}
-            #       API_TOKEN: ${{ secrets.API_TOKEN }}
-            #       NUXT_HUB_PROJECT_SECRET_KEY: ${{ secrets.NUXT_HUB_PROJECT_SECRET_KEY }}
-            #       CLOUDINARY_CLOUDNAME: ${{ secrets.CLOUDINARY_CLOUDNAME }}
-            #       NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID: ${{ secrets.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID }}
 
             - name: Deploy Worker
               id: deploy
@@ -75,7 +64,7 @@ jobs:
                   accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
                   command: deploy
                   packageManager: pnpm
-                  workingDirectory: ./output/server
+                  workingDirectory: ./output
 
             - name: Mark Deployment as Successful
               if: ${{ success() }}
