@@ -105,7 +105,7 @@ export default defineNuxtConfig({
     analytics: false,
     blob: true,
     cache: true,
-    database: false,
+    database: true,
     kv: true,
   },
 
@@ -114,7 +114,7 @@ export default defineNuxtConfig({
     ignoredHostnames: [''],
     autoPageviews: true,
     apiHost: 'https://plausible.io',
-    proxy: true,
+    proxy: false,
     autoOutboundTracking: true
   },
 
