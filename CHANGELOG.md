@@ -1,5 +1,23 @@
 # Changelog
 
+# [1.10.0](https://github.com/remihuigen/keukensenmeer/compare/v1.9.0...v1.10.0) (2025-12-12)
+
+
+### Bug Fixes
+
+* Change method to post ([657dce5](https://github.com/remihuigen/keukensenmeer/commit/657dce58ee9aae8bd6cb1b91d0fa737cd94d98c2))
+* Dont remove file on upload error ([7931438](https://github.com/remihuigen/keukensenmeer/commit/7931438787927301f9c3e7904d607cf5b02affb5))
+* Only support bearer ([91c5394](https://github.com/remihuigen/keukensenmeer/commit/91c53948be96055bdebe53323e14fbc820652ecc))
+* Update project schema ([93f70be](https://github.com/remihuigen/keukensenmeer/commit/93f70beb96e7036f05773ff7bd2faa36abb8adf3))
+* Uplaoded file path ([dba439d](https://github.com/remihuigen/keukensenmeer/commit/dba439dc74622ff5ae35ba6070d022d8baa28a93))
+* Use defineEventHandler ([016181f](https://github.com/remihuigen/keukensenmeer/commit/016181f819a9108b57f8037f07c3997ad42ff5bc))
+* Use uuid ([bbc710d](https://github.com/remihuigen/keukensenmeer/commit/bbc710d5543fa51b8b95e4e4e390058871c86da5))
+
+
+### Features
+
+* Add dimensions to image meta data ([24bcbba](https://github.com/remihuigen/keukensenmeer/commit/24bcbba105129c8ae87aaa1dd38d98475bf9aabb))
+
 # [1.9.0](https://github.com/remihuigen/keukensenmeer/compare/v1.8.0...v1.9.0) (2025-12-12)
 
 
