@@ -64,7 +64,7 @@ jobs:
                   accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
                   command: deploy
                   packageManager: pnpm
-                  workingDirectory: ./output
+                  workingDirectory: .output
 
             - name: Mark Deployment as Successful
               if: ${{ success() }}
