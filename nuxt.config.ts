@@ -47,31 +47,8 @@ export default defineNuxtConfig({
     enabled: true,
     environment: workerMode,
     config: {
-      name: `${process.env.NUXT_HUB_WORKER_NAME!}-preview`,
-      observability: true,
-      kv_namespaces: [
-        {
-          binding: 'CACHE',
-          id: process.env.NUXT_HUB_CLOUDFLARE_PREVIEW_CACHE_NAMESPACE_ID!,
-        },
-        {
-          binding: 'KV',
-          id: process.env.NUXT_HUB_CLOUDFLARE_PREVIEW_KV_NAMESPACE_ID!,
-        }
-      ],
-      d1_databases: [
-        {
-          binding: 'DB',
-          database_id:
-            process.env.NUXT_HUB_CLOUDFLARE_PREVIEW_DB_ID!,
-        }
-      ],
-      r2_buckets: [
-        {
-          binding: 'BLOB',
-          bucket_name: `${process.env.NUXT_HUB_WORKER_NAME!}-preview`,
-        }
-      ]
+      name: process.env.NUXT_HUB_WORKER_NAME!,
+      observability: true
     }
   },
 
