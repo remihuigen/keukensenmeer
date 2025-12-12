@@ -41,13 +41,28 @@ export default defineNuxtModule<ModuleOptions>({
             return
         }
 
+        const { mode } = nuxt.options.runtimeConfig.public
+        const environment = options.environment ?? mode.value
+
+        if (!environment) {
+            log.warn('Could not detect the current environment. Worker config module will not generate wrangler config. Please set the "environment" option to override this.')
+            return
+        }
+
+        if (nuxt.options.dev && mode.isDev) {
+            log.info('Development environment detected. Worker config module will not generate wrangler config.')
+            return
+        }
+
+        // Validate required options
         checkOption({ key: 'config.name', message: 'Worker name is required', required: true })
+
 
         /** 
          * Set Nitro Cloudflare preset in environments other than dev
          * In dev we let Nuxthub resort to default (e.g. file system)
          */
-        if (!nuxt.options.dev) nuxt.options.nitro.preset = 'cloudflare_module'
+        nuxt.options.nitro.preset = 'cloudflare_module'
 
         // Ensure Cloudflare specific Nitro options are set
         nuxt.options.nitro.cloudflare = defu(
@@ -63,6 +78,7 @@ export default defineNuxtModule<ModuleOptions>({
             const wranglerConfig = buildWranglerConfig({
                 nuxt,
                 options,
+                environment
             })
 
             if (nuxt.options.runtimeConfig.public.mode.isDebug) {

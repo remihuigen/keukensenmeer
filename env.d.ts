@@ -1,10 +1,12 @@
 declare global {
+  type Mode = 'dev' | 'preview' | 'next' | 'production'
   namespace NodeJS {
     interface ProcessEnv {
       DISABLE_PRE_COMMIT_LINT?: 'true' | 'false'
       DISABLE_PRE_PUSH_TYPECHECK?: 'true' | 'false'
       DEBUG?: 'true' | 'false'
-      MODE: 'dev' | 'preview' | 'production'
+      MODE: Mode
+      WORKER_MODE: Mode
       CLOUDINARY_CLOUD_NAME: string
 
       PLAUSIBLE_DOMAIN: string
@@ -35,4 +37,5 @@ declare global {
     }
   }
 }
+
 export { }

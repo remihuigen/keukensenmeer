@@ -6,7 +6,11 @@ import { joinURL } from 'ufo'
 const isDebug = process.env.DEBUG === 'true' || false
 const isDev = process.env.MODE === 'dev'
 const isPreview = process.env.MODE === 'preview'
+const isNext = process.env.MODE === 'next'
 const isProd = process.env.MODE === 'production'
+// Determine worker mode, which can override the app mode. (useful in prelease states)
+const workerMode = process.env.WORKER_MODE ?? process.env.MODE
+
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -41,6 +45,7 @@ export default defineNuxtConfig({
 
   workerConfig: {
     enabled: true,
+    environment: workerMode,
     config: {
       name: `${process.env.NUXT_HUB_WORKER_NAME!}-preview`,
       observability: true,
@@ -138,6 +143,7 @@ export default defineNuxtConfig({
         isDebug,
         isDev,
         isPreview,
+        isNext,
         isProd,
       }
     }

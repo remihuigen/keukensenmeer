@@ -2,8 +2,9 @@ import type { Nuxt } from '@nuxt/schema'
 import type { ModuleOptions } from '../options'
 import type {
     WranglerConfig,
-    // WranglerEnvConfig,
 } from './types'
+
+import { appendEnviroment as append } from '../utils/environment'
 
 import { ensureBinding } from './ensureBinding'
 import { resolveCompatibilityDate } from '../utils/compatibilityDate'
@@ -11,20 +12,22 @@ import { resolveCompatibilityDate } from '../utils/compatibilityDate'
 interface BuildContext {
     nuxt: Nuxt
     options: ModuleOptions
+    environment: string
 }
 
 export function buildWranglerConfig({
     nuxt,
     options,
+    environment
 }: BuildContext): WranglerConfig {
     const hub = nuxt.options.hub ?? {}
 
-    // const previewEnv: WranglerEnvConfig =
-    //     options.config.env?.preview ?? {}
-
     const config: WranglerConfig = {
         $schema: 'node_modules/wrangler/config-schema.json',
-        name: options.config.name,
+        name: append(
+            options.config.name,
+            environment,
+        ),
         compatibility_date: resolveCompatibilityDate(nuxt),
         main: './.output/server/index.mjs',
 
@@ -57,7 +60,10 @@ export function buildWranglerConfig({
     if (hub.blob) {
         const bucket = {
             binding: 'BLOB',
-            bucket_name: options.config.name,
+            bucket_name: append(
+                options.config.name,
+                environment,
+            ),
         }
 
         config.r2_buckets = ensureBinding(
@@ -65,88 +71,48 @@ export function buildWranglerConfig({
             'BLOB',
             bucket,
         )
-
-        // previewEnv.r2_buckets = ensureBinding(
-        //     previewEnv.r2_buckets ?? [],
-        //     'BLOB',
-        //     {
-        //         binding: 'BLOB',
-        //         bucket_name: `${options.config.name}-preview`, // Preview bucket
-        //     },
-        // )
     }
 
     /**
      * KV / Cache
      */
-    if (hub.cache) {
+    const cache_namespace_id = options.resources?.kv?.cache_namespace_id ?? process.env.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID
+    if (hub.cache && cache_namespace_id) {
         config.kv_namespaces = ensureBinding(
             options.config.kv_namespaces ?? [],
             'CACHE',
             {
                 binding: 'CACHE',
-                id: process.env
-                    .NUXT_HUB_CLOUDFLARE_PROD_CACHE_NAMESPACE_ID!,
+                id: cache_namespace_id,
             },
         )
-
-        // previewEnv.kv_namespaces = ensureBinding(
-        //     previewEnv.kv_namespaces ?? [],
-        //     'CACHE',
-        //     {
-        //         binding: 'CACHE',
-        //         id: process.env
-        //             .NUXT_HUB_CLOUDFLARE_PREVIEW_CACHE_NAMESPACE_ID!,
-        //     },
-        // )
     }
 
-    if (hub.kv) {
+    const kv_namespace_id = options.resources?.kv?.kv_namespace_id ?? process.env.NUXT_HUB_CLOUDFLARE_KV_NAMESPACE_ID
+    if (hub.kv && kv_namespace_id) {
         config.kv_namespaces = ensureBinding(
             config.kv_namespaces ?? [],
             'KV',
             {
                 binding: 'KV',
-                id: process.env
-                    .NUXT_HUB_CLOUDFLARE_PROD_KV_NAMESPACE_ID!,
+                id: kv_namespace_id
             },
         )
-
-        // previewEnv.kv_namespaces = ensureBinding(
-        //     previewEnv.kv_namespaces ?? [],
-        //     'KV',
-        //     {
-        //         binding: 'KV',
-        //         id: process.env
-        //             .NUXT_HUB_CLOUDFLARE_PREVIEW_KV_NAMESPACE_ID!,
-        //     },
-        // )
     }
 
     /**
      * D1
      */
-    if (hub.db && hub.db === 'sqlite') {
+    const database_id = options.resources?.db?.database_id ?? process.env.NUXT_HUB_CLOUDFLARE_DB_ID
+    if (hub.db && hub.db === 'sqlite' && database_id) {
         config.d1_databases = ensureBinding(
             options.config.d1_databases ?? [],
             'DB',
             {
                 binding: 'DB',
-                database_id:
-                    process.env.NUXT_HUB_CLOUDFLARE_PROD_DB_ID!,
+                database_id: database_id
             },
         )
-
-        // previewEnv.d1_databases = ensureBinding(
-        //     previewEnv.d1_databases ?? [],
-        //     'DB',
-        //     {
-        //         binding: 'DB',
-        //         database_id:
-        //             process.env
-        //                 .NUXT_HUB_CLOUDFLARE_PREVIEW_DB_ID!,
-        //     },
-        // )
     }
 
     /**
@@ -155,9 +121,6 @@ export function buildWranglerConfig({
     if (options.config.vars && Object.keys(options.config.vars).length > 0) {
         config.vars = options.config.vars
     }
-    // if (Object.keys(previewEnv).length > 0) {
-    //     config.env = { preview: previewEnv }
-    // }
 
     return config
 }
