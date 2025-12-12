@@ -1,6 +1,6 @@
 import { ACCEPTED_IMAGE_TYPES } from '~~/shared/utils/blob'
-import { imageSize } from 'image-size'
-import { z } from 'zod'
+// import { imageSize } from 'image-size'
+// import { z } from 'zod'
 
 /**
  * API endpoint to handle file upload and store it as a Blob using Nuxt Hub Blob module.
