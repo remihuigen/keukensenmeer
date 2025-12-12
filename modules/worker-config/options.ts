@@ -48,6 +48,8 @@ export interface ModuleOptions {
 		d1_databases?: WranglerEnvConfig['d1_databases']
 
 		vars?: Record<string, string>
+
+		// TODO support additional bindings
 	}
 }
 
