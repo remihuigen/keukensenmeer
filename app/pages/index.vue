@@ -13,7 +13,6 @@
 					:once="true"
 					:duration="800"
 					:pan="true"
-					provider="ipx"
 				/>
 			</div>
 			<UContainer class="relative flex min-h-full items-center">
@@ -52,7 +51,6 @@
 					:once="true"
 					:duration="800"
 					:pan="true"
-					provider="ipx"
 				/>
 				<Fade class="col-span-5 space-y-6 py-12 md:py-20" :delay="150">
 					<h2 class="text-4xl font-bold"><Hand no-margin>Over onze studio</Hand></h2>
@@ -97,7 +95,6 @@
 						:once="true"
 						:duration="800"
 						:pan="true"
-						provider="ipx"
 					/>
 				</div>
 				<UContainer class="flex items-center">
