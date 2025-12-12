@@ -67,7 +67,7 @@ const loading = ref(false)
 const currentBlobId = ref<BlobObject['pathname']>('')
 const blobHistory = ref<BlobObject[]>([])
 
-const upload = useUpload('/api/blob', { method: 'POST' })
+const upload = useUpload('/api/blob', { method: 'PUT', headers: { Authorization: `Bearer ${useRuntimeConfig().public.apiToken}` } })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
