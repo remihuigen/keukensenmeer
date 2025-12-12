@@ -140,7 +140,7 @@ const { isDev } = useRuntimeConfig().public.mode
     </UForm>
     <div v-if="!!blobHistory.length" class="mt-8 p-4 py-6 bg-secondary-600 rounded-lg space-y-6">
       <h2 class="font-bold color=primary">Recent geüpload</h2>
-      <ul>
+      <ul class="space-y-3">
         <li 
           v-for="blob in blobHistory"
           :key="blob.pathname"
