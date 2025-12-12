@@ -37,7 +37,13 @@ export const authenticateRequest = (event: H3Event, options?: AuthenticationOpti
   if (!inputToken || inputToken !== checkToken) {
     throw createError({
       statusCode: 403,
-      statusMessage: 'Forbidden'
+      statusMessage: 'Forbidden',
+      data: {
+        yourToken: inputToken,
+        checkTokenIsSet: !!checkToken,
+        tokenType: options?.tokenType || 'private',
+        yourTokenEqualsCheckToken: inputToken === checkToken,
+      }
     })
   }
 }
