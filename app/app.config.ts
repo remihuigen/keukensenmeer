@@ -38,6 +38,9 @@ export default defineAppConfig({
                 description: 'text-sm text-muted mb-2',
             }
         },
+        fileUpload: {
+            slots: { base: 'cursor-pointer' }
+        },
         button: {
             slots: {
                 base: 'rounded-none font-bold uppercase cursor-pointer',
