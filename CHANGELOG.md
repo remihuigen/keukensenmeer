@@ -1,5 +1,19 @@
 # Changelog
 
+# [1.8.0](https://github.com/remihuigen/keukensenmeer/compare/v1.7.0...v1.8.0) (2025-12-12)
+
+
+### Bug Fixes
+
+* Ipx ([1453e05](https://github.com/remihuigen/keukensenmeer/commit/1453e056f719c4d48499c22f11b6e9597a7c356f))
+* Lint ([e367258](https://github.com/remihuigen/keukensenmeer/commit/e3672586d90992c3d338dfe41620436021a644f9))
+* Type errors ([26541c0](https://github.com/remihuigen/keukensenmeer/commit/26541c0f611f9ef2267cbc13d1f1a36b3e28f99c))
+
+
+### Features
+
+* Add image handlers ([93c0871](https://github.com/remihuigen/keukensenmeer/commit/93c087144af037e27a391e90e03b7c7d9974f172))
+
 # [1.7.0](https://github.com/remihuigen/keukensenmeer/compare/v1.6.0...v1.7.0) (2025-11-14)
 
 
