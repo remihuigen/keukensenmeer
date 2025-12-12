@@ -26,7 +26,7 @@ export default defineNuxtModule<ModuleOptions>({
     setup(userOptions, nuxt) {
         const log = useLogger(LOG_SCOPE)
 
-        const { start, end, isEnabled, options } =
+        const { start, end, isEnabled, options, checkOption } =
             moduleSetup<ModuleOptions>(
                 MODULE_NAME,
                 MODULE_KEY,
@@ -40,6 +40,8 @@ export default defineNuxtModule<ModuleOptions>({
         if (!isEnabled()) {
             return
         }
+
+        checkOption({ key: 'config.name', message: 'Worker name is required', required: true })
 
         /** Nitro Cloudflare preset */
         nuxt.options.nitro.preset = 'cloudflare_module'
