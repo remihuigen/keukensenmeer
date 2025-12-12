@@ -1,10 +1,4 @@
 <script lang="ts" setup>
-definePageMeta({
-  layout: 'default',
-  title: 'Upload afbeeldingen en bestanden',
-  description: 'Upload afbeeldingen en bestanden naar opslag.',
-})
-
 import { 
   ACCEPTED_IMAGE_TYPES,
   MAX_FILE_SIZE,
@@ -16,6 +10,14 @@ import {
 import { z } from 'zod'
 import type { BlobType, BlobObject } from '@nuxthub/core'
 import type { FormSubmitEvent } from '@nuxt/ui'
+import { useClipboard } from '@vueuse/core'
+import { UseClipboard } from '@vueuse/components'
+
+definePageMeta({
+  layout: 'default',
+  title: 'Upload afbeeldingen en bestanden',
+  description: 'Upload afbeeldingen en bestanden naar opslag.',
+})
 
 
 const schema = z.object({
@@ -60,8 +62,6 @@ const state = reactive<Partial<Schema>>({
 })
 
 const toast = useToast()
-import { useClipboard } from '@vueuse/core'
-import { UseClipboard } from '@vueuse/components'
 
 const loading = ref(false)
 const error = ref<string | null>(null)
