@@ -7,7 +7,7 @@ import { z } from 'zod'
  * Reads the file from FormData, validates, extracts dimensions, then uploads.
  * @see https://hub.nuxt.com/docs/features/blob#handleupload
  */
-export default eventHandler(async (event) => {
+export default defineEventHandler(async (event) => {
   // Only authenticated requests are allowed
   // authenticateRequest(event, { tokenType: 'public' })
 
