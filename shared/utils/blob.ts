@@ -18,3 +18,12 @@ export const formatBytes = (bytes: number, decimals = 2) => {
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
+
+/**
+ * Get image path for given filename
+ * @param filename 
+ * @returns image path
+ */
+export const getImagePath = (filename: string) => {
+    return `/images/${filename}`
+}
