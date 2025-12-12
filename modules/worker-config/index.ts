@@ -4,7 +4,7 @@ import fs from 'node:fs/promises'
 import type { DeepPartial } from '../../shared/types/utils'
 
 import { moduleSetup } from '../../shared/utils/modules'
-import type { ModuleOptions, ResolvedModuleOptions } from './options'
+import type { ModuleOptions } from './options'
 import { buildWranglerConfig } from './wrangler/buildConfig'
 
 const MODULE_NAME = '@remihuigen/worker-config'
@@ -27,7 +27,7 @@ export default defineNuxtModule<ModuleOptions>({
         const log = useLogger(LOG_SCOPE)
 
         const { start, end, isEnabled, options } =
-            moduleSetup<ResolvedModuleOptions>(
+            moduleSetup<ModuleOptions>(
                 MODULE_NAME,
                 MODULE_KEY,
                 userOptions,

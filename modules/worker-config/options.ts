@@ -23,4 +23,6 @@ export interface ModuleOptions {
 	}
 }
 
+
+/** Module options but with all keys resolved */
 export type ResolvedModuleOptions = DeepRequired<ModuleOptions>

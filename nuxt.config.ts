@@ -39,7 +39,7 @@ export default defineNuxtConfig({
   },
 
   workerConfig: {
-    enabled: false,
+    enabled: true,
     config: {
       name: process.env.NUXT_HUB_WORKER_NAME!,
       observability: true,
@@ -119,10 +119,9 @@ export default defineNuxtConfig({
   },
 
   hub: {
-    analytics: false,
     blob: true,
     cache: true,
-    database: true,
+    db: 'sqlite',
     kv: true,
   },
 

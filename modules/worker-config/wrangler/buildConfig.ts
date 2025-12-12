@@ -1,5 +1,5 @@
 import type { Nuxt } from '@nuxt/schema'
-import type { ResolvedModuleOptions } from '../options'
+import type { ModuleOptions } from '../options'
 import type {
     WranglerConfig,
     WranglerEnvConfig,
@@ -10,7 +10,7 @@ import { resolveCompatibilityDate } from '../utils/compatibilityDate'
 
 interface BuildContext {
     nuxt: Nuxt
-    options: ResolvedModuleOptions
+    options: ModuleOptions
 }
 
 export function buildWranglerConfig({
@@ -126,7 +126,7 @@ export function buildWranglerConfig({
     /**
      * D1
      */
-    if (hub.database) {
+    if (hub.db && hub.db === 'sqlite') {
         config.d1_databases = ensureBinding(
             options.config.d1_databases ?? [],
             'DB',
@@ -152,10 +152,9 @@ export function buildWranglerConfig({
     /**
      * Vars
      */
-    if (Object.keys(options.config.vars).length > 0) {
+    if (options.config.vars && Object.keys(options.config.vars).length > 0) {
         config.vars = options.config.vars
     }
-
     if (Object.keys(previewEnv).length > 0) {
         config.env = { preview: previewEnv }
     }
