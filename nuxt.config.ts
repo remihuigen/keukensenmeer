@@ -10,7 +10,7 @@ const isProd = process.env.MODE === 'production'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: "2025-12-12",
   devtools: { enabled: true },
 
   modules: [
@@ -37,6 +37,15 @@ export default defineNuxtConfig({
       openAPI: true
     }
   },
+
+  workerConfig: {
+    enabled: true,
+    config: {
+      name: process.env.NUXT_HUB_WORKER_NAME!,
+      observability: true,
+    }
+  },
+
   // List of debug options for various Nuxt subsystems
   debug: {
     nitro: isDebug,

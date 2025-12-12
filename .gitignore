@@ -8,6 +8,10 @@ dist
 .eslintcache
 .history
 
+wrangler.json
+wrangler.jsonc
+wrangler.toml
+
 # Node dependencies
 node_modules
 
