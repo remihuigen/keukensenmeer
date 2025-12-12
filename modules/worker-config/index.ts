@@ -43,8 +43,13 @@ export default defineNuxtModule<ModuleOptions>({
 
         checkOption({ key: 'config.name', message: 'Worker name is required', required: true })
 
-        /** Nitro Cloudflare preset */
-        nuxt.options.nitro.preset = 'cloudflare_module'
+        /** 
+         * Set Nitro Cloudflare preset in environments other than dev
+         * In dev we let Nuxthub resort to default (e.g. file system)
+         */
+        if (!nuxt.options.dev) nuxt.options.nitro.preset = 'cloudflare_module'
+
+        // Ensure Cloudflare specific Nitro options are set
         nuxt.options.nitro.cloudflare = defu(
             nuxt.options.nitro.cloudflare ?? {},
             {

@@ -14,11 +14,12 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
+    './modules/worker-config', // Needs to run before nuxthub core
+    '@nuxthub/core',
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/image',
     '@nuxt/ui',
-    '@nuxthub/core',
     '@nuxtjs/seo',
     '@vueuse/nuxt',
     '@nuxtjs/plausible'
