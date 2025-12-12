@@ -60,6 +60,11 @@ export default defineNuxtModule<ModuleOptions>({
                 options,
             })
 
+            if (nuxt.options.runtimeConfig.public.mode.isDebug) {
+                log.info('Generated Wrangler Config')
+                log.info(JSON.stringify(wranglerConfig, null, 2))
+            }
+
             const path = `${nuxt.options.rootDir}/wrangler.jsonc`
             log.info(`Writing generated wrangler config to ${path}`)
 
