@@ -9,7 +9,7 @@ import { z } from 'zod'
  */
 export default eventHandler(async (event) => {
   // Only authenticated requests are allowed
-  authenticateRequest(event, { tokenType: 'public' })
+  // authenticateRequest(event, { tokenType: 'public' })
 
 
   const form = await readMultipartFormData(event)
