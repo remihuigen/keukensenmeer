@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.9.0](https://github.com/remihuigen/keukensenmeer/compare/v1.8.0...v1.9.0) (2025-12-12)
+
+
+### Bug Fixes
+
+* Update provider config| ([f04293e](https://github.com/remihuigen/keukensenmeer/commit/f04293e79df8fe87ae2fad5f4307303467d23e2a))
+
+
+### Features
+
+* Enable db ([4516d05](https://github.com/remihuigen/keukensenmeer/commit/4516d058ceb8ce9643005199244b0f4114bd24ac))
+
 # [1.8.0](https://github.com/remihuigen/keukensenmeer/compare/v1.7.0...v1.8.0) (2025-12-12)
 
 
