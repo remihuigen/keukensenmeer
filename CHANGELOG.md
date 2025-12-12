@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.10.1](https://github.com/remihuigen/keukensenmeer/compare/v1.10.0...v1.10.1) (2025-12-12)
+
+
+### Bug Fixes
+
+* Disable cache for api and image routes ([ea59f50](https://github.com/remihuigen/keukensenmeer/commit/ea59f50f4f22ad1b2c39e5e8d867f10f0c78f5f2))
+* Header stripping issue ([97ee136](https://github.com/remihuigen/keukensenmeer/commit/97ee13660cb51749ba022964afa4610de3005fd9))
+
 # [1.10.0](https://github.com/remihuigen/keukensenmeer/compare/v1.9.0...v1.10.0) (2025-12-12)
 
 
