@@ -2,7 +2,10 @@
 
 # Load environment variables from .env file
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    set -o allexport
+    # shellcheck disable=SC1091
+    source .env
+    set +o allexport
 fi
 
 # Run typecheck unless explicitly disabled

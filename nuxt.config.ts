@@ -4,6 +4,7 @@ import projects from './data/projects'
 
 const isDebug = process.env.DEBUG === 'true' || false
 const isDev = process.env.MODE === 'dev'
+const isPreview = process.env.MODE === 'preview'
 const isProd = process.env.MODE === 'production'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -26,7 +27,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   nitro: {
-    minify: process.env.DEBUG !== 'true',
+    minify: !isDebug,
     prerender: {
       crawlLinks: true,
       failOnError: false,
@@ -35,13 +36,58 @@ export default defineNuxtConfig({
       openAPI: true
     }
   },
-  debug: isDebug,
+  // List of debug options for various Nuxt subsystems
+  debug: {
+    nitro: isDebug,
+    hydration: isDebug || isDev || isPreview,
+    watchers: isDebug || isDev,
+    router: isDebug,
+    templates: isDebug,
+    modules: isDebug,
+    hooks: {
+      server: isDebug,
+      client: isDebug,
+    },
+  },
+
   ssr: true,
+
+  // Disable caching in development to prevent confusion
+  $development: {
+    routeRules: {
+      '/**': { cache: false },
+    },
+  },
+
+  $production: {
+    routeRules: {
+      '/': {
+        ssr: true,
+        cache: {
+          maxAge: 60 * 60 * 24
+        }
+      },
+      '/**': {
+        ssr: true,
+        cache: {
+          maxAge: 60 * 60 * 24
+        }
+      },
+      '/projecten/**': {
+        ssr: true,
+        cache: {
+          maxAge: 60 * 60 * 24
+        }
+      },
+    },
+
+  },
 
 
   runtimeConfig: {
     apiToken: process.env.API_TOKEN,
     public: {
+      apiToken: process.env.PUBLIC_API_TOKEN,
       tracking: {
         disabled: process.env.DISABLE_TRACKING === 'true' || false,
       },
@@ -56,7 +102,7 @@ export default defineNuxtConfig({
 
   hub: {
     analytics: false,
-    blob: false,
+    blob: true,
     cache: true,
     database: false,
     kv: true,
@@ -73,7 +119,7 @@ export default defineNuxtConfig({
 
   ui: {
     theme: {
-      colors: ['primary', 'secondary']
+      colors: ['primary', 'secondary', 'neutral', 'info', 'warning', 'error', 'success',]
     }
   },
 
@@ -86,20 +132,16 @@ export default defineNuxtConfig({
   },
 
   image: {
-    provider: 'cloudinary',
-    cloudinary: {
-      baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUDNAME}/image/upload`,
-      modifiers: {
-        quality: '80',
-      }
-    },
+    // provider: 'none',
+
     providers: {
-      video: {
-        provider: 'cloudinary',
-        options: {
-          baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUDNAME}/video/upload`,
+      cloudinary: {
+        baseURL: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUDNAME}/image/upload`,
+        modifiers: {
+          quality: '80',
         }
-      }
+      },
+
     }
   },
 

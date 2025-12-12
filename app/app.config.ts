@@ -3,11 +3,11 @@ export default defineAppConfig({
         colors: {
             primary: 'primary',
             secondary: 'secondary',
-            info: 'info',
-            success: 'success',
-            warning: 'warn',
-            error: 'error',
-            neutral: 'gray'
+            info: 'blue',
+            success: 'green',
+            warning: 'orange',
+            error: 'red',
+            neutral: 'gray',
         },
         icons: {
             light: 'heroicons:sun-16-solid',
@@ -31,9 +31,16 @@ export default defineAppConfig({
             plus: 'heroicons:plus',
             search: 'heroicons:magnifying-glass'
         },
+        formField: {
+            slots: {
+                wrapper: 'space-y-1',
+                label: 'font-bold uppercase',
+                description: 'text-sm text-muted mb-2',
+            }
+        },
         button: {
             slots: {
-                base: 'rounded-none font-bold uppercase',
+                base: 'rounded-none font-bold uppercase cursor-pointer',
                 label: 'uppercase'
             },
             variants: {

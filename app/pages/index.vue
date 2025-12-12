@@ -5,7 +5,7 @@
 		<Fluid class="grid min-h-[calc(100dvh-var(--ui-header-height))]">
 			<div class="absolute inset-0 bottom-(--ui-header-height) left-1/3 grid">
 				<AnimatedImage
-					src="site/modern_hero_fxhydj"
+					src="/images/modern_hero_fxhydj.jpg"
 					sizes="800px"
 					alt="Modern kitchen with island"
 					direction="left"
@@ -13,6 +13,7 @@
 					:once="true"
 					:duration="800"
 					:pan="true"
+					provider="ipx"
 				/>
 			</div>
 			<UContainer class="relative flex min-h-full items-center">
@@ -43,7 +44,7 @@
 		<UContainer class="py-(--ui-section-padding)">
 			<div class="grid grid-cols-8 gap-12">
 				<AnimatedImage
-					src="site/modern_hero_fxhydj"
+					src="/images/modern_hero_fxhydj.jpg"
 					sizes="800px"
 					alt="Modern kitchen with island"
 					direction="down"
@@ -51,6 +52,7 @@
 					:once="true"
 					:duration="800"
 					:pan="true"
+					provider="ipx"
 				/>
 				<Fade class="col-span-5 space-y-6 py-12 md:py-20" :delay="150">
 					<h2 class="text-4xl font-bold"><Hand no-margin>Over onze studio</Hand></h2>
@@ -87,7 +89,7 @@
 			<section class="relative grid min-h-[80dvh]">
 				<div class="absolute inset-0 bottom-(--ui-header-height) left-[50%] grid">
 					<AnimatedImage
-						src="site/modern_hero_fxhydj"
+						src="/images/modern_hero_fxhydj.jpg"
 						sizes="800px"
 						alt="Modern kitchen with island"
 						direction="left"
@@ -95,6 +97,7 @@
 						:once="true"
 						:duration="800"
 						:pan="true"
+						provider="ipx"
 					/>
 				</div>
 				<UContainer class="flex items-center">

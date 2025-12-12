@@ -11,6 +11,7 @@ declare global {
       DISABLE_TRACKING?: 'true' | 'false'
       APP_URL: string
       API_TOKEN: string
+      PUBLIC_API_TOKEN: string
       BLOCK_NON_SEO_BOTS?: 'true' | 'false'
       BLOCK_AI_BOTS?: 'true' | 'false'
     }
