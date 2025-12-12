@@ -5,21 +5,14 @@ type AuthenticationOptions = {
   tokenType?: 'public' | 'private'
   /** A custom token to check against. Overrides the tokenType setting. @default undefined */
   token?: string
-  /** Which header to check against. Defaults to bearer token */
-  header?: string
 }
 
 export const authenticateRequest = (event: H3Event, options?: AuthenticationOptions) => {
-  let inputToken = ''
   let checkToken = ''
 
-  // First get the requests token. If bearer is used, we extract the token from the "Authorization" header
-  if (!options?.header || options.header === 'Authorization') {
-    const bearer = getRequestHeader(event, 'Authorization')
-    inputToken = bearer?.split(' ')[1] || ''
-  } else {
-    inputToken = getRequestHeader(event, options.header) || ''
-  }
+  // First get the token from the request header
+  const bearer = getRequestHeader(event, 'Authorization')
+  const inputToken = bearer?.split(' ')[1]
 
 
   // Now get the token to check against
