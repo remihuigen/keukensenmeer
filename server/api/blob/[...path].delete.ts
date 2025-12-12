@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   authenticateRequest(event)
 
   const { path } = getRouterParams(event)
-  await hubBlob().del(path)
+  await hubBlob().del(path as string)
 
   return sendNoContent(event)
 })

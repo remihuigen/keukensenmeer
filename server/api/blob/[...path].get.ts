@@ -5,5 +5,5 @@
 export default defineEventHandler(async (event) => {
   const { path } = getRouterParams(event)
   setHeader(event, 'Content-Security-Policy', 'default-src \'none\';')
-  return await hubBlob().get(path)
+  return await hubBlob().get(path as string)
 })
