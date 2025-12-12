@@ -5,6 +5,9 @@ import {
     integer,
 } from "drizzle-orm/sqlite-core";
 
+import { randomUUID } from "node:crypto";
+
+
 /** ------------------------------------------
  *   Domain Types (Strong & Explicit)
  * ------------------------------------------ */
@@ -30,7 +33,9 @@ export type ImageOrientation = (typeof orientationEnum)[number];
  * ------------------------------------------ */
 
 export const projects = sqliteTable("projects", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id", { length: 36 })
+        .primaryKey()
+        .$defaultFn(() => randomUUID()),
 
     title: text("title").notNull(),
     publicTitle: text("public_title").notNull(),

@@ -4,10 +4,14 @@ import {
     text,
     integer,
 } from "drizzle-orm/sqlite-core";
+import { randomUUID } from "node:crypto";
+
 import { projects, orientationEnum } from "./projects";
 
 export const projectImages = sqliteTable("project_images", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id", { length: 36 })
+        .primaryKey()
+        .$defaultFn(() => randomUUID()),
 
     /** FK to projects.id */
     projectId: integer("project_id")
