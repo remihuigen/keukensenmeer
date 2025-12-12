@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: ./.github/workflows/nuxthub.yml
+    uses: ./.github/workflows/deploy_worker.yml
     with:
       environment: production
     secrets: inherit # Important for environment variables to be passed to the workflow
