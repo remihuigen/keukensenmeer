@@ -64,7 +64,6 @@ const state = reactive<Partial<Schema>>({
 const toast = useToast()
 
 const loading = ref(false)
-const error = ref<string | null>(null)
 const currentBlobId = ref<BlobObject['pathname']>('')
 const blobHistory = ref<BlobObject[]>([])
 
@@ -75,7 +74,6 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
   try {
     const uploadedFile = await upload(event.data.image)
-    error.value = null
     blobHistory.value.push(uploadedFile)
     currentBlobId.value = uploadedFile.pathname
     const { copy } = useClipboard({ source: uploadedFile.pathname })
@@ -98,6 +96,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         }
       ]
     })
+    state.image = undefined
   } catch (err) {
     console.error('Upload failed:', err)
     toast.add({
@@ -107,7 +106,6 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     })
   } finally {
     loading.value = false
-    state.image = undefined
   }
 }
 
