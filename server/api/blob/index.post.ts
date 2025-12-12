@@ -11,23 +11,25 @@ export default defineEventHandler(async (event) => {
   // Only authenticated requests are allowed
   // authenticateRequest(event, { tokenType: 'public' })
 
+  console.log(event)
   const form = await readMultipartFormData(event)
-  if (!form) throw createError({ status: 400, message: 'Missing form data' })
+  console.log('form', form)
+  // if (!form) throw createError({ status: 400, message: 'Missing form data' })
 
-  const file = form.find(f => f.name === 'files')
-  if (!file || !file.data) throw createError({ status: 400, message: 'Missing file' })
+  // const file = form.find(f => f.name === 'files')
+  // if (!file || !file.data) throw createError({ status: 400, message: 'Missing file' })
 
-  // validate MIME type, otherwise we cant read dimensions
-  const typeSchema = z.enum(ACCEPTED_IMAGE_TYPES)
-  const { success } = typeSchema.safeParse(file.type)
+  // // validate MIME type, otherwise we cant read dimensions
+  // const typeSchema = z.enum(ACCEPTED_IMAGE_TYPES)
+  // const { success } = typeSchema.safeParse(file.type)
 
-  if (!success) {
-    throw createError({ status: 400, message: `Invalid file type. Accepted types: ${ACCEPTED_IMAGE_TYPES.join(', ')}` })
-  }
+  // if (!success) {
+  //   throw createError({ status: 400, message: `Invalid file type. Accepted types: ${ACCEPTED_IMAGE_TYPES.join(', ')}` })
+  // }
 
-  // get dimensions
-  const dimensions = imageSize(file.data) // file.data is Buffer
-  const { width, height } = dimensions
+  // // get dimensions
+  // const dimensions = imageSize(file.data) // file.data is Buffer
+  // const { width, height } = dimensions
 
   return hubBlob().handleUpload(event, {
     formKey: 'files', // read file or files form the `formKey` field of request body (body should be a `FormData` object)
@@ -37,11 +39,11 @@ export default defineEventHandler(async (event) => {
     },
     put: {
       addRandomSuffix: true,
-      customMetadata: {
-        width: width?.toString() ?? '',
-        height: height?.toString() ?? '',
-        type: file.type ?? 'unknown',
-      }
+      // customMetadata: {
+      //   width: width?.toString() ?? '',
+      //   height: height?.toString() ?? '',
+      //   type: file.type ?? 'unknown',
+      // }
     }
   })
 })
