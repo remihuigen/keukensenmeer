@@ -13,7 +13,7 @@ export const authenticateRequest = (event: H3Event, options?: AuthenticationOpti
   // First get the token from the request header
   const bearer = getRequestHeader(event, 'Authorization')
   const inputToken = bearer?.split(' ')[1]
-
+  console.log(event.headers.has('Authorization'))
   console.log(!!bearer)
   console.log(!!inputToken)
 
