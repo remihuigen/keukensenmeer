@@ -14,6 +14,11 @@ export const authenticateRequest = (event: H3Event, options?: AuthenticationOpti
   const bearer = getRequestHeader(event, 'Authorization')
   const inputToken = bearer?.split(' ')[1]
 
+  console.log(!!bearer)
+  console.log(!!inputToken)
+
+  console.log(`lowercase bearer: ${getRequestHeader(event, 'authorization')}`)
+
 
   // Now get the token to check against
   if (options?.token) {
@@ -32,7 +37,7 @@ export const authenticateRequest = (event: H3Event, options?: AuthenticationOpti
       statusCode: 403,
       statusMessage: 'Forbidden',
       data: {
-        yourToken: inputToken,
+        inputTokenMissing: !inputToken,
         checkTokenIsSet: !!checkToken,
         tokenType: options?.tokenType || 'private',
         yourTokenEqualsCheckToken: inputToken === checkToken,
