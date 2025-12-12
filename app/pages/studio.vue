@@ -9,13 +9,14 @@
 		>
 			<UContainer class="flex h-full flex-row items-center gap-16">
 				<AnimatedImage
-					src="site/modern_hero_fxhydj"
+					src="images/modern_hero_fxhydj"
 					sizes="800px"
 					alt="Modern kitchen with island"
 					direction="right"
 					class="sticky top-[calc(var(--ui-header-height)+2rem)] h-full basis-[40%] self-center"
 					:once="false"
 					:duration="800"
+					provider="ipx"
 				/>
 				<Fade class="basis-[60%] space-y-8 py-8" :delay="300">
 					<h1
@@ -52,7 +53,8 @@
 		>
 			<UContainer class="flex h-full flex-row items-center gap-16">
 				<AnimatedImage
-					src="site/modern_hero_fxhydj"
+					src="images/modern_hero_fxhydj"
+					provider="ipx"
 					sizes="800px"
 					alt="Modern kitchen with island"
 					direction="right"
@@ -95,7 +97,8 @@
 		>
 			<UContainer class="flex h-full flex-row items-center gap-16">
 				<AnimatedImage
-					src="site/modern_hero_fxhydj"
+					src="images/modern_hero_fxhydj"
+					provider="ipx"
 					sizes="800px"
 					alt="Modern kitchen with island"
 					direction="right"

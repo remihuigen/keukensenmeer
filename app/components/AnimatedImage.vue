@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ConfiguredImageProviders } from '@nuxt/image'
 import { useElementVisibility } from '@vueuse/core'
 
 /**
@@ -107,6 +108,8 @@ interface ImageConfig {
 	loading?: 'lazy' | 'eager'
 	/** Image quality percentage */
 	quality?: number
+	/** Provider */
+	provider?: keyof ConfiguredImageProviders
 }
 
 /**
@@ -296,6 +299,7 @@ const imageProps = computed(() => {
 				v-bind="imageProps"
 				class="absolute inset-0 block h-full w-full object-cover object-center"
 				:style="imageStyle"
+				:provider="provider"
 			/>
 		</div>
 	</div>

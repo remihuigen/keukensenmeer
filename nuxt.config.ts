@@ -59,25 +59,28 @@ export default defineNuxtConfig({
     },
   },
 
-  routeRules: {
-    '/': {
-      ssr: true,
-      cache: {
-        maxAge: 60 * 60 * 24
-      }
+  $production: {
+    routeRules: {
+      '/': {
+        ssr: true,
+        cache: {
+          maxAge: 60 * 60 * 24
+        }
+      },
+      '/**': {
+        ssr: true,
+        cache: {
+          maxAge: 60 * 60 * 24
+        }
+      },
+      '/projecten/**': {
+        ssr: true,
+        cache: {
+          maxAge: 60 * 60 * 24
+        }
+      },
     },
-    '/**': {
-      ssr: true,
-      cache: {
-        maxAge: 60 * 60 * 24
-      }
-    },
-    '/projecten/**': {
-      ssr: true,
-      cache: {
-        maxAge: 60 * 60 * 24
-      }
-    },
+
   },
 
 
@@ -138,6 +141,9 @@ export default defineNuxtConfig({
           quality: '80',
         }
       },
+      ipx: {
+
+      }
     }
   },
 
