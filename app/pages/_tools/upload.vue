@@ -64,18 +64,15 @@ const state = reactive<Partial<Schema>>({
 const toast = useToast()
 
 const loading = ref(false)
-const error = ref<string | null>(null)
 const currentBlobId = ref<BlobObject['pathname']>('')
 const blobHistory = ref<BlobObject[]>([])
 
-const { apiToken } = useRuntimeConfig().public
-const upload = useUpload('/api/blob', { method: 'PUT', headers: { Authorization: `Bearer ${apiToken}` } })
+const upload = useUpload('/api/blob', { method: 'POST' })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
   try {
     const uploadedFile = await upload(event.data.image)
-    error.value = null
     blobHistory.value.push(uploadedFile)
     currentBlobId.value = uploadedFile.pathname
     const { copy } = useClipboard({ source: uploadedFile.pathname })
@@ -98,6 +95,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         }
       ]
     })
+    state.image = undefined
   } catch (err) {
     console.error('Upload failed:', err)
     toast.add({
@@ -107,9 +105,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     })
   } finally {
     loading.value = false
-    state.image = undefined
   }
 }
+
+
+const { isDev } = useRuntimeConfig().public.mode
 </script>
 
 <template>
@@ -147,11 +147,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           class="flex gap-6 items-center"
         >
           <NuxtImg 
-            :src="`/images/${blob.pathname}`"
+            :src="isDev ? `/images/${blob.pathname}` : blob.pathname"
             class="rounded-full size-16"
             width="80"
             height="80"
-            provider="none"
+            :provider="isDev ? 'none' : 'cloudflare'"
           />
           <div class="flex gap-3 items-center">
             <span>{{ blob.pathname }}</span>

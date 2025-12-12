@@ -111,7 +111,7 @@
 	--color-blue-950: oklch(37.9% 0.14 266);
 }
 
-@base {
+@layer base {
 	.dark {
 		--ui-bg: var(--color-secondary-500);
 		--ui-bg-elevated: var(--color-secondary-500);

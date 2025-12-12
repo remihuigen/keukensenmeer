@@ -1,4 +1,4 @@
-export default eventHandler(async (event) => {
+export default defineEventHandler((event) => {
   const { path } = getRouterParams(event)
 
   setHeader(event, 'Content-Security-Policy', 'default-src \'none\';')
