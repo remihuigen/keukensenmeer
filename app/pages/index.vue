@@ -5,7 +5,7 @@
 		<Fluid class="grid min-h-[calc(100dvh-var(--ui-header-height))]">
 			<div class="absolute inset-0 bottom-(--ui-header-height) left-1/3 grid">
 				<AnimatedImage
-					src="/modern_hero_fxhydj.jpg"
+					src="/images/modern_hero_fxhydj.jpg"
 					sizes="800px"
 					alt="Modern kitchen with island"
 					direction="left"
@@ -44,7 +44,7 @@
 		<UContainer class="py-(--ui-section-padding)">
 			<div class="grid grid-cols-8 gap-12">
 				<AnimatedImage
-					src="images/modern_hero_fxhydj"
+					src="/images/modern_hero_fxhydj.jpg"
 					sizes="800px"
 					alt="Modern kitchen with island"
 					direction="down"
@@ -89,7 +89,7 @@
 			<section class="relative grid min-h-[80dvh]">
 				<div class="absolute inset-0 bottom-(--ui-header-height) left-[50%] grid">
 					<AnimatedImage
-						src="images/modern_hero_fxhydj"
+						src="/images/modern_hero_fxhydj.jpg"
 						sizes="800px"
 						alt="Modern kitchen with island"
 						direction="left"

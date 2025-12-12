@@ -132,7 +132,7 @@ export default defineNuxtConfig({
   },
 
   image: {
-    provider: 'none',
+    // provider: 'none',
 
     providers: {
       cloudinary: {
@@ -141,9 +141,7 @@ export default defineNuxtConfig({
           quality: '80',
         }
       },
-      ipx: {
 
-      }
     }
   },
 

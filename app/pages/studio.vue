@@ -9,7 +9,7 @@
 		>
 			<UContainer class="flex h-full flex-row items-center gap-16">
 				<AnimatedImage
-					src="images/modern_hero_fxhydj"
+					src="/images/modern_hero_fxhydj.jpg"
 					sizes="800px"
 					alt="Modern kitchen with island"
 					direction="right"
@@ -53,7 +53,7 @@
 		>
 			<UContainer class="flex h-full flex-row items-center gap-16">
 				<AnimatedImage
-					src="images/modern_hero_fxhydj"
+					src="/images/modern_hero_fxhydj.jpg"
 					provider="ipx"
 					sizes="800px"
 					alt="Modern kitchen with island"
@@ -97,7 +97,7 @@
 		>
 			<UContainer class="flex h-full flex-row items-center gap-16">
 				<AnimatedImage
-					src="images/modern_hero_fxhydj"
+					src="/images/modern_hero_fxhydj.jpg"
 					provider="ipx"
 					sizes="800px"
 					alt="Modern kitchen with island"
