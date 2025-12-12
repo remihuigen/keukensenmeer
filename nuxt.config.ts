@@ -1,6 +1,7 @@
 import identity from './data/identity'
 import { identity as coreIdentity } from './data/global'
 import projects from './data/projects'
+import { joinURL } from 'ufo'
 
 const isDebug = process.env.DEBUG === 'true' || false
 const isDev = process.env.MODE === 'dev'
@@ -150,7 +151,7 @@ export default defineNuxtConfig({
         }
       },
       cloudflare: {
-        baseURL: '/images/'
+        baseURL: joinURL(process.env.APP_URL!)
       },
       none: {}
     }
