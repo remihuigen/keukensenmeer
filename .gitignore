@@ -10,6 +10,7 @@ dist
 
 wrangler.json
 wrangler.jsonc
+wrangler.template.jsonc
 wrangler.toml
 
 # Node dependencies
