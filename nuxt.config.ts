@@ -39,7 +39,7 @@ export default defineNuxtConfig({
   },
 
   workerConfig: {
-    enabled: true,
+    enabled: false,
     config: {
       name: process.env.NUXT_HUB_WORKER_NAME!,
       observability: true,

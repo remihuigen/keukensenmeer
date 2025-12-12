@@ -1,3 +1,4 @@
+import { blob } from 'hub:blob'
 import { z } from 'zod'
 
 const QuerySchema = z.object({
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { blobs } = await hubBlob().list(data)
+  const { blobs } = await blob.list(data)
 
   return blobs
 })

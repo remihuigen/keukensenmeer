@@ -1,7 +1,7 @@
 import { ACCEPTED_IMAGE_TYPES } from '~~/shared/utils/blob'
 import { imageSize } from 'image-size'
 import { z } from 'zod'
-
+import { blob } from 'hub:blob'
 /**
  * API endpoint to handle file upload and store it as a Blob using Nuxt Hub Blob module.
  * Reads the file from FormData, validates, extracts dimensions, then uploads.
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
   const dimensions = imageSize(file.data) // file.data is Buffer
   const { width, height } = dimensions
 
-  return hubBlob().handleUpload(event, {
+  return blob.handleUpload(event, {
     formKey: 'files', // read file or files form the `formKey` field of request body (body should be a `FormData` object)
     multiple: false, // when `true`, the `formKey` field will be an array of `Blob` objects
     ensure: {

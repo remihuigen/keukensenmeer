@@ -46,7 +46,7 @@
 		"@nuxt/fonts": "0.12.1",
 		"@nuxt/image": "2.0.0",
 		"@nuxt/ui": "4.2.1",
-		"@nuxthub/core": "0.9.1",
+		"@nuxthub/core": "0.10.1",
 		"@nuxtjs/plausible": "2.0.1",
 		"@nuxtjs/seo": "3.3.0",
 		"@semantic-release/changelog": "6.0.3",

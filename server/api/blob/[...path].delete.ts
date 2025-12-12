@@ -1,5 +1,6 @@
+import { blob } from 'hub:blob'
 /**
- * Gets a blob from the hub blob storage.
+ * Delete a blob from the hub blob storage. Requires authentication.
  * @see https://hub.nuxt.com/docs/features/blob#get
  */
 export default defineEventHandler(async (event) => {
@@ -7,7 +8,7 @@ export default defineEventHandler(async (event) => {
   authenticateRequest(event)
 
   const { path } = getRouterParams(event)
-  await hubBlob().del(path as string)
+  await blob.del(path as string)
 
   return sendNoContent(event)
 })
