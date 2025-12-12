@@ -1,5 +1,25 @@
 # Changelog
 
+# [1.11.0](https://github.com/remihuigen/keukensenmeer/compare/v1.10.2...v1.11.0) (2025-12-12)
+
+
+### Bug Fixes
+
+* Add debug logs ([5b4d6c9](https://github.com/remihuigen/keukensenmeer/commit/5b4d6c985c244c524b4c9cb96ab5b44906c3db16))
+* Append missing return ([8f979e6](https://github.com/remihuigen/keukensenmeer/commit/8f979e6c26b43e54052ff13d9fa8a8754953bfaf))
+* Cleanup wrangler config module ([c89a726](https://github.com/remihuigen/keukensenmeer/commit/c89a726ddecef98fc18ab16f3acc6f565e8d0b8d))
+* Missing vars and db setup ([58550b7](https://github.com/remihuigen/keukensenmeer/commit/58550b750555a72ee7a1dcbd20dcc395b7b12a92))
+* Module loading order ([c5f19e6](https://github.com/remihuigen/keukensenmeer/commit/c5f19e6934d00a10dc786efb60f05a8a23454e81))
+* Type imports ([0970ea9](https://github.com/remihuigen/keukensenmeer/commit/0970ea9e2205f10ee3faebad0b89eccf4ab9734e))
+* Working dir ([e1bb11e](https://github.com/remihuigen/keukensenmeer/commit/e1bb11efebacc556bec50eeb4a0d7201894dd30c))
+* Working dir again ([ba0e29d](https://github.com/remihuigen/keukensenmeer/commit/ba0e29d703f6e739874fc4401902fc0da3593c43))
+
+
+### Features
+
+* Add worker deploy script ([78c6bfe](https://github.com/remihuigen/keukensenmeer/commit/78c6bfea45934d38c1c58f894a9b1bc9108ce0de))
+* Add wrangler generation ([2619361](https://github.com/remihuigen/keukensenmeer/commit/26193618f7c9d8e6649c83464267db554e17b795))
+
 ## [1.10.2](https://github.com/remihuigen/keukensenmeer/compare/v1.10.1...v1.10.2) (2025-12-12)
 
 
