@@ -1,5 +1,9 @@
 import type { Nuxt } from '@nuxt/schema'
 
+import { defu } from 'defu'
+import type { ConsolaInstance } from 'consola'
+import type { DeepPartial } from '../types/utils.ts'
+
 /**
  * Helper to check if we are in a prepare environment in
  * the CI/CD pipeline. This flag is set via `ci:` scripts in
@@ -25,10 +29,6 @@ export const usePrepareMode = (
 		isPrepareMode,
 	}
 }
-
-import { defu } from 'defu'
-import type { ConsolaInstance } from 'consola'
-import type { DeepPartial } from '../types/utils.ts'
 
 /**
  * Utility function to handle common module setup tasks.
