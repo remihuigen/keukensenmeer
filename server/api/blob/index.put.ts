@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
   // Only authenticated requests are allowed
   authenticateRequest(event, { tokenType: 'public' })
 
-  console.log(event)
   const form = await readMultipartFormData(event)
   if (!form) throw createError({ status: 400, message: 'Missing form data' })
 
