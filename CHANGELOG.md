@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.10.2](https://github.com/remihuigen/keukensenmeer/compare/v1.10.1...v1.10.2) (2025-12-12)
+
+
+### Bug Fixes
+
+* Add path wrapper to imasge ([d7c3738](https://github.com/remihuigen/keukensenmeer/commit/d7c37385f00503c65c0ba8159ec741bef05e2258))
+* Cf base url ([a8caf4b](https://github.com/remihuigen/keukensenmeer/commit/a8caf4b9d311741114929249ace211cca4672d05))
+* Lint ([8ca9071](https://github.com/remihuigen/keukensenmeer/commit/8ca9071b1c53a269ee0e960f6d8869981431c436))
+
 ## [1.10.1](https://github.com/remihuigen/keukensenmeer/compare/v1.10.0...v1.10.1) (2025-12-12)
 
 
