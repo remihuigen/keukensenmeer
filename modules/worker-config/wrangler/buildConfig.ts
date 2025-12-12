@@ -53,10 +53,6 @@ export function buildWranglerConfig({
 }: BuildContext): WranglerConfig {
     const hub = nuxt.options.hub ?? {}
 
-    console.log('worker name', options.config.name)
-    console.log('environment', environment)
-    console.log('append name', append(options.config.name, environment))
-
     const config: WranglerConfig = {
         $schema: 'node_modules/wrangler/config-schema.json',
         name: append(options.config.name, environment),
@@ -112,7 +108,7 @@ export function buildWranglerConfig({
     const cache_namespace_id =
         options.resources?.kv?.cache_namespace_id ??
         process.env.NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID
-    console.log('cache_namespace_id', cache_namespace_id)
+
     if (hub.cache && cache_namespace_id) {
         config.kv_namespaces = ensureBinding(
             options.config.kv_namespaces ?? [],
@@ -131,7 +127,7 @@ export function buildWranglerConfig({
     const kv_namespace_id =
         options.resources?.kv?.kv_namespace_id ??
         process.env.NUXT_HUB_CLOUDFLARE_KV_NAMESPACE_ID
-    console.log('kv_namespace_id', kv_namespace_id)
+
     if (hub.kv && kv_namespace_id) {
         config.kv_namespaces = ensureBinding(
             config.kv_namespaces ?? [],
@@ -150,7 +146,7 @@ export function buildWranglerConfig({
     const database_id =
         options.resources?.db?.database_id ??
         process.env.NUXT_HUB_CLOUDFLARE_DB_ID
-    console.log('database_id', database_id)
+
     if (hub.db && hub.db === 'sqlite' && database_id) {
         config.d1_databases = ensureBinding(
             options.config.d1_databases ?? [],
