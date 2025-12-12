@@ -110,6 +110,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     state.image = undefined
   }
 }
+
+
+const { isDev } = useRuntimeConfig().public.mode
 </script>
 
 <template>
@@ -147,11 +150,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           class="flex gap-6 items-center"
         >
           <NuxtImg 
-            :src="blob.pathname"
+            :src="isDev ? `/images/${blob.pathname}` : blob.pathname"
             class="rounded-full size-16"
             width="80"
             height="80"
-            provider="cloudflare"
+            :provider="isDev ? 'none' : 'cloudflare'"
           />
           <div class="flex gap-3 items-center">
             <span>{{ blob.pathname }}</span>
