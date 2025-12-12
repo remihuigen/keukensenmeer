@@ -2,11 +2,12 @@ name: Pull Request
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
-  id-token: write          # Required for OIDC authentication
+  id-token: write # Required for OIDC authentication
   contents: read
+  deployments: write
 
 concurrency:
   group: pr-${{ github.event.pull_request.head.ref }}

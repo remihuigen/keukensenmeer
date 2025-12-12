@@ -6,7 +6,10 @@ gitleaks git  --staged --config .gitleaks.toml --verbose  --exit-code 1
 
 # Load environment variables from .env file
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    set -o allexport
+    # shellcheck disable=SC1091
+    source .env
+    set +o allexport
 fi
 
 
