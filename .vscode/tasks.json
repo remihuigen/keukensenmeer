@@ -8,6 +8,13 @@
       "problemMatcher": [],
       "group": "build"
     },
+    {
+      "label": "🛠 Generate migrations",
+      "type": "shell",
+      "command": "npx nuxt db generate",
+      "problemMatcher": [],
+      "group": "build"
+    },
      {
       "label": "👀 Preview on edge",
       "type": "shell",

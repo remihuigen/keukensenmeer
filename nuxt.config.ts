@@ -6,19 +6,24 @@ import { joinURL } from 'ufo'
 const isDebug = process.env.DEBUG === 'true' || false
 const isDev = process.env.MODE === 'dev'
 const isPreview = process.env.MODE === 'preview'
+const isNext = process.env.MODE === 'next'
 const isProd = process.env.MODE === 'production'
+// Determine worker mode, which can override the app mode. (useful in prelease states)
+const workerMode = process.env.WORKER_MODE ?? process.env.MODE
+
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: "2025-12-12",
   devtools: { enabled: true },
 
   modules: [
+    './modules/worker-config', // Needs to run before nuxthub core
+    '@nuxthub/core',
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/image',
     '@nuxt/ui',
-    '@nuxthub/core',
     '@nuxtjs/seo',
     '@vueuse/nuxt',
     '@nuxtjs/plausible'
@@ -37,6 +42,16 @@ export default defineNuxtConfig({
       openAPI: true
     }
   },
+
+  workerConfig: {
+    enabled: true,
+    environment: workerMode,
+    config: {
+      name: process.env.NUXT_HUB_WORKER_NAME!,
+      observability: true
+    }
+  },
+
   // List of debug options for various Nuxt subsystems
   debug: {
     nitro: isDebug,
@@ -102,18 +117,19 @@ export default defineNuxtConfig({
       },
       mode: {
         value: process.env.MODE,
-        isDev: isDev,
-        isPreview: process.env.MODE === 'preview',
-        isProd: isProd,
+        isDebug,
+        isDev,
+        isPreview,
+        isNext,
+        isProd,
       }
     }
   },
 
   hub: {
-    analytics: false,
     blob: true,
     cache: true,
-    database: true,
+    db: 'sqlite',
     kv: true,
   },
 
