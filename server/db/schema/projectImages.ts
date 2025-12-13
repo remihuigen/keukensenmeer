@@ -4,7 +4,8 @@ import {
     integer,
     check,
 } from "drizzle-orm/sqlite-core";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
+
 
 import { primaryKey, timestamps } from "./fields/index";
 import { projects, orientationEnum } from "./projects";
@@ -58,3 +59,11 @@ export const projectImages = sqliteTable("project_images", {
         check("max_height", sql`${table.height} <= 6000`),
     ]
 );
+
+
+export const projectImagesRelations = relations(projectImages, ({ one }) => ({
+    project: one(projects, {
+        fields: [projectImages.projectId],
+        references: [projects.id],
+    }),
+}));

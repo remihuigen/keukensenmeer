@@ -4,9 +4,10 @@ import {
     integer,
     check
 } from "drizzle-orm/sqlite-core";
-import { sql } from "drizzle-orm";
+import { sql, relations } from "drizzle-orm";
 
 import { primaryKey, timestamps } from "./fields/index";
+import { projectImages } from "./projectImages";
 
 /** ------------------------------------------
  *   Domain Types
@@ -84,3 +85,8 @@ export const projects = sqliteTable("projects", {
         ),
     ]
 );
+
+
+export const projectRelations = relations(projects, ({ many }) => ({
+    images: many(projectImages),
+}));
