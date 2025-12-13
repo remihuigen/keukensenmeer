@@ -40,6 +40,20 @@ export default defineNuxtConfig({
     },
     experimental: {
       openAPI: true
+    },
+    openAPI: {
+      route: "/openapi.json",
+      production: "prerender",
+      ui: {
+        scalar: {
+          route: "/_docs/scalar"
+        },
+      },
+      meta: {
+        title: 'Keukens & Meer',
+        description: 'API endpoints for interacting with the Keukens & Meer platform',
+        version: '0.1'
+      }
     }
   },
 

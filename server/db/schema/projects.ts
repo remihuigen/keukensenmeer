@@ -1,12 +1,12 @@
-// drizzle/schema/projects.ts
 import {
     sqliteTable,
     text,
     integer,
+    check
 } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
 
-import { randomUUID } from "node:crypto";
-
+import { primaryKey, timestamps } from "./fields/index";
 
 /** ------------------------------------------
  *   Domain Types (Strong & Explicit)
@@ -33,42 +33,54 @@ export type ImageOrientation = (typeof orientationEnum)[number];
  * ------------------------------------------ */
 
 export const projects = sqliteTable("projects", {
-    id: text("id", { length: 36 })
-        .primaryKey()
-        .$defaultFn(() => randomUUID()),
+    id: primaryKey,
 
+    // The internal title of the project
     title: text("title").notNull(),
+    // The public title of the project, usuallu the families names like "Jasper en Mariska"
     publicTitle: text("public_title").notNull(),
-    slug: text("slug").notNull().unique(),
 
+    // The URL slug for the project page. 
+    // TODO this should preferably be a derived value
+    slug: text("slug")
+        .notNull()
+        .unique(),
+
+    // The publication status of the project
     status: text("status", { enum: statusEnum })
         .notNull()
         .default("draft"),
 
+    // Is this project featured on the homepage?
     isFeatured: integer("is_featured", { mode: "boolean" })
         .notNull()
         .default(false),
 
+    // The sorting priority for ordering projects. Values range from 0 (highest) to 100 (lowest)
     sortingPriority: integer("sorting_priority")
         .notNull()
-        .default(100),
+        .default(50),
 
+    // The design styles that apply to this project
     styles: text("styles", { mode: "json" })
         .$type<Style[]>()
         .notNull(),
 
+    // A short description of the project
+    description: text("description").notNull(),
+
+    // The main content body of the project page
     body: text("body", { mode: "json" })
         .$type<Node[]>()
         .notNull(),
 
-    /** Main image (single) */
-    mainImageUrl: text("main_image_url").notNull(),
-    mainImageWidth: integer("main_image_width").notNull(),
-    mainImageHeight: integer("main_image_height").notNull(),
-    mainImageMime: text("main_image_mime").notNull(),
-
-    description: text("description").notNull(),
-
-    createdAt: text("created_at").notNull(),
-    updatedAt: text("updated_at"),
-});
+    // Timestamps
+    ...timestamps,
+},
+    (table) => [
+        check(
+            "sorting_priority_range",
+            sql`${table.sortingPriority} >= 0 AND ${table.sortingPriority} <= 100`
+        ),
+    ]
+);
