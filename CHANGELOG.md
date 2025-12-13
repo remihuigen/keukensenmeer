@@ -1,5 +1,26 @@
 # Changelog
 
+# [1.12.0](https://github.com/remihuigen/keukensenmeer/compare/v1.11.0...v1.12.0) (2025-12-13)
+
+
+### Bug Fixes
+
+* Finetune db schemas ([2083108](https://github.com/remihuigen/keukensenmeer/commit/20831085a3f11343df865cfd79d739d557815fd1))
+* Img meta data extraction ([2256c17](https://github.com/remihuigen/keukensenmeer/commit/2256c175d5dbafe63b0fab6deb4bd97904f8940e))
+* Project id key ref ([3ceb0f8](https://github.com/remihuigen/keukensenmeer/commit/3ceb0f8b1523ed2e4fe1f1d805d42820f4439b18))
+* Structure success and error responses and add more validation ([dab230c](https://github.com/remihuigen/keukensenmeer/commit/dab230c7efc10ffed108557e5c95dd6c158df4d0))
+* Type errors ([edfe45b](https://github.com/remihuigen/keukensenmeer/commit/edfe45bef16679a7f9727e0ecc8f885fd521ffe3))
+
+
+### Features
+
+* Add drizzle relations ([8471b3f](https://github.com/remihuigen/keukensenmeer/commit/8471b3f0a37dbdf45ebabab1f7122ec8d2dc6b30))
+* Add migration ([19bbb77](https://github.com/remihuigen/keukensenmeer/commit/19bbb77557df1a347be88cf758283cd99afc601d))
+* Add open api specs ([91861be](https://github.com/remihuigen/keukensenmeer/commit/91861bec3f47f5cf51b46b2eb0cc2e85a2c9b7c0))
+* Add some project endpoints, drop miragtion for now ([660056d](https://github.com/remihuigen/keukensenmeer/commit/660056dd9491377e00a5afd87c7fe123af54a473))
+* Finish create endpoint and add proper mirgation ([e682aa3](https://github.com/remihuigen/keukensenmeer/commit/e682aa3cfa49458dce103497ab901e3cc4bb0de3))
+* Finish endpoints ([ec7167b](https://github.com/remihuigen/keukensenmeer/commit/ec7167b214c6ec16594a5a4e9e4948b11269dc8b))
+
 # [1.11.0](https://github.com/remihuigen/keukensenmeer/compare/v1.10.2...v1.11.0) (2025-12-12)
 
 
