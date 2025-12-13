@@ -9,6 +9,8 @@ import { sql, relations } from "drizzle-orm";
 import { primaryKey, timestamps } from "./fields/index";
 import { projectImages } from "./projectImages";
 
+import { statusEnum, type Style } from "./fields/enums";
+
 /** ------------------------------------------
  *   Domain Types
  * ------------------------------------------ */
@@ -20,14 +22,6 @@ export interface ParagraphNode {
 
 export type Node = ParagraphNode;
 
-export const statusEnum = ['draft', 'published', 'archived'] as const;
-export type Status = (typeof statusEnum)[number];
-
-export const styleEnum = ['robuust', 'modern', 'landelijk', 'klassiek'] as const;
-export type Style = (typeof styleEnum)[number];
-
-export const orientationEnum = ['landscape', 'portrait', 'square'] as const;
-export type ImageOrientation = (typeof orientationEnum)[number];
 
 /** ------------------------------------------
  *   PROJECTS TABLE

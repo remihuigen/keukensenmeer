@@ -8,13 +8,9 @@
 
 import { schema, db } from 'hub:db'
 import { and, eq } from 'drizzle-orm'
-import { z } from 'zod'
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 import { validateZodQuerySchema, validateZodBodySchema } from '~~/server/utils/validation'
-
-const deleteImageSchema = z.object({
-  pathname: z.string().min(1).describe('The pathname of the image to be removed from the project, as stored in the Cloudflare bucket')
-})
+import { deleteImageSchema } from '~~/server/utils/validation/payloads'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails

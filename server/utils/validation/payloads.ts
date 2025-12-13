@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { schema } from 'hub:db'
+import { statusEnum, styleEnum } from '../../db/schema/fields/enums'
 
 // ---------------------------------------------
 // Node / Body schema
@@ -69,7 +69,7 @@ const publicTitle = z
  * Defaults to "draft". Classic.
  */
 const status = z
-  .enum(schema.statusEnum)
+  .enum(statusEnum)
   .default('draft')
   .describe('Publication status of the project')
 
@@ -117,7 +117,7 @@ const body = z
  * Used for filtering, theming, and maybe vibes.
  */
 const styles = z
-  .array(z.enum(schema.styleEnum))
+  .array(z.enum(styleEnum))
   .min(1)
   .describe('List of design styles that apply to this project')
 
@@ -135,10 +135,10 @@ const styles = z
  */
 const stylesDelta = z
   .union([
-    z.array(z.enum(schema.styleEnum)).min(1),
+    z.array(z.enum(styleEnum)).min(1),
     z.object({
-      add: z.array(z.enum(schema.styleEnum)).optional(),
-      remove: z.array(z.enum(schema.styleEnum)).optional(),
+      add: z.array(z.enum(styleEnum)).optional(),
+      remove: z.array(z.enum(styleEnum)).optional(),
     }),
   ])
 
@@ -242,3 +242,25 @@ export const projectUpdateSchema = z
   .describe('Payload used to update an existing project')
 
 export type ProjectUpdateSchema = z.infer<typeof projectUpdateSchema>
+
+/**
+ * Schema for updating featured projects.
+ * Contains two optional arrays: one for additions and one for removals.
+ * At least one array must be provided with at least one slug.
+ * 
+ * - add: string[] (optional) - An array of project slugs to add to the featured list
+ * - remove: string[] (optional) - An array of project slugs to remove from the featured list
+ * 
+ */
+export const updateFeaturedProjectsQuerySchema = z.object({
+  add: z.array(z.string().min(1)).optional().describe('An array of project slugs to add to the featured list'),
+  remove: z.array(z.string().min(1)).optional().describe('An array of project slugs to remove from the featured list'),
+})
+
+/**
+ * Schema for deleting an image from a project.
+ * Contains the pathname of the image to be removed.
+ */
+export const deleteImageSchema = z.object({
+  pathname: z.string().min(1).describe('The pathname of the image to be removed from the project, as stored in the Cloudflare bucket')
+})

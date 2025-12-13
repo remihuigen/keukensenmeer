@@ -9,7 +9,7 @@
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 import { validateZodQuerySchema, validateZodBodySchema } from '~~/server/utils/validation'
 import { projectUpdateSchema } from '~~/server/utils/validation/payloads'
-import { getAllProjectSlugs } from '~~/server/utils/getAllProjectSlugs'
+import { getAllProjectSlugs } from '~~/server/utils/getAllProjectSlugs.ts'
 import { slugify } from '~~/server/utils/slugify'
 import { schema, db } from 'hub:db'
 import { eq } from 'drizzle-orm'

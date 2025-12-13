@@ -13,17 +13,12 @@ import { inArray } from 'drizzle-orm'
 
 import { validateNumberOfFeaturedProjects } from '~~/server/utils/validateNumberOfFeaturedProjects'
 import { validateZodBodySchema } from '~~/server/utils/validation'
-
-import { z } from 'zod'
-const UpdateFeaturedProjectsQuerySchema = z.object({
-  add: z.array(z.string().min(1)).optional().describe('An array of project slugs to add to the featured list'),
-  remove: z.array(z.string().min(1)).optional().describe('An array of project slugs to remove from the featured list'),
-})
+import { updateFeaturedProjectsQuerySchema } from '~~/server/utils/validation/payloads'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
 
-  const body = await validateZodBodySchema(event, UpdateFeaturedProjectsQuerySchema)
+  const body = await validateZodBodySchema(event, updateFeaturedProjectsQuerySchema)
 
   if (!body.add?.length && !body.remove?.length) {
     createErrorResponse({

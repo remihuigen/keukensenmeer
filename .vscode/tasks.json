@@ -15,6 +15,13 @@
       "problemMatcher": [],
       "group": "build"
     },
+    {
+      "label": "🌐 Generate openapi file",
+      "type": "shell",
+      "command": "pnpm generate:openapi",
+      "problemMatcher": [],
+      "group": "build"
+    },
      {
       "label": "👀 Preview on edge",
       "type": "shell",

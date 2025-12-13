@@ -8,7 +8,8 @@ import { sql, relations } from "drizzle-orm";
 
 
 import { primaryKey, timestamps } from "./fields/index";
-import { projects, orientationEnum } from "./projects";
+import { projects } from "./projects";
+import { orientationEnum } from "./fields/enums";
 
 import type { ACCEPTED_IMAGE_TYPES } from "../../../shared/utils/blob";
 
