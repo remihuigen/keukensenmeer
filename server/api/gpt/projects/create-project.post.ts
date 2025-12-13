@@ -62,8 +62,8 @@ export default defineEventHandler(async (event) => {
     const imagesWithoutValidMetaData = imageData
       .map((result, index) => ({ result, index }))
       .filter(({ result }) => result.status === 'fulfilled' && (
-        !result.value.blob.customMetadata.mime ||
-        !result.value.blob.customMetadata.size ||
+        !result.value.blob.size ||
+        !result.value.blob.customMetadata.type ||
         !result.value.blob.customMetadata.width ||
         !result.value.blob.customMetadata.height
       ))
@@ -113,17 +113,15 @@ export default defineEventHandler(async (event) => {
             alt: image.alt,
             isMainImage: image.isMainImage || false,
             size: image.blob.size,
-            mime: image.blob.customMetadata.mime ?? 'unknown',
+            mime: image.blob.customMetadata.type ?? 'unknown',
             width: image.blob.customMetadata.width ? parseInt(image.blob.customMetadata.width, 10) : 300, // use 300 as fallback. Should not happen due to validations
             height: image.blob.customMetadata.height ? parseInt(image.blob.customMetadata.height, 10) : 300, // use 300 as fallback. Should not happen due to validations
           }
         }) satisfies Array<typeof schema.projectImages.$inferInsert>
 
-        const res = await tx
+        await tx
           .insert(schema.projectImages)
           .values(imageRecords)
-
-        console.log('Inserted images:', res)
 
         return {
           project: insertedProject[0],
