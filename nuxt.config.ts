@@ -123,7 +123,8 @@ export default defineNuxtConfig({
 
 
   runtimeConfig: {
-    apiToken: process.env.API_TOKEN,
+    apiToken: process.env.API_TOKEN!,
+    gptToken: process.env.GPT_TOKEN!,
     public: {
       apiToken: process.env.PUBLIC_API_TOKEN,
       tracking: {

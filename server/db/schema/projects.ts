@@ -9,7 +9,7 @@ import { sql } from "drizzle-orm";
 import { primaryKey, timestamps } from "./fields/index";
 
 /** ------------------------------------------
- *   Domain Types (Strong & Explicit)
+ *   Domain Types
  * ------------------------------------------ */
 
 export interface ParagraphNode {
