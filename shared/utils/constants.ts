@@ -1,0 +1,2 @@
+export const MIN_FEATURED_PROJECTS = 3
+export const MAX_FEATURED_PROJECTS = 8

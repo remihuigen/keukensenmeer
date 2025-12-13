@@ -12,10 +12,12 @@ declare global {
       PLAUSIBLE_DOMAIN: string
       DISABLE_TRACKING?: 'true' | 'false'
       APP_URL: string
-      API_TOKEN: string
-      PUBLIC_API_TOKEN: string
       BLOCK_NON_SEO_BOTS?: 'true' | 'false'
       BLOCK_AI_BOTS?: 'true' | 'false'
+
+      API_TOKEN: string
+      GPT_TOKEN: string
+      PUBLIC_API_TOKEN: string
 
       NUXT_HUB_PROJECT_KEY: string
       NUXT_HUB_PROJECT_SECRET_KEY: string

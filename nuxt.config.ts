@@ -29,6 +29,9 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible'
   ],
 
+  experimental: {
+    asyncContext: true,
+  },
 
   css: ['~/assets/css/main.css'],
 
@@ -40,6 +43,20 @@ export default defineNuxtConfig({
     },
     experimental: {
       openAPI: true
+    },
+    openAPI: {
+      route: "/openapi.json",
+      production: "prerender",
+      ui: {
+        scalar: {
+          route: "/_docs/scalar"
+        },
+      },
+      meta: {
+        title: 'Keukens & Meer',
+        description: 'API endpoints for interacting with the Keukens & Meer platform',
+        version: '0.1'
+      }
     }
   },
 
@@ -109,7 +126,8 @@ export default defineNuxtConfig({
 
 
   runtimeConfig: {
-    apiToken: process.env.API_TOKEN,
+    apiToken: process.env.API_TOKEN!,
+    gptToken: process.env.GPT_TOKEN!,
     public: {
       apiToken: process.env.PUBLIC_API_TOKEN,
       tracking: {
