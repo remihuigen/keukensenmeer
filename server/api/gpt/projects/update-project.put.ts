@@ -13,6 +13,7 @@ import { getAllProjectSlugs } from '~~/server/utils/getAllProjectSlugs.ts'
 import { slugify } from '~~/server/utils/slugify'
 import { schema, db } from 'hub:db'
 import { eq } from 'drizzle-orm'
+import type { Style } from '~~/server/db/schema/fields/enums'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
@@ -23,7 +24,7 @@ export default defineEventHandler(async (event) => {
   try {
     // Generate new slug if publicTitle is updated
     const newSlug = payload.publicTitle ? slugify(payload.publicTitle) : null
-    const styles: typeof schema.styleEnum = []
+    const styles: Style[] = []
 
     // Handle styles additions/removals
     if (payload.styles && Array.isArray(payload.styles)) {
@@ -58,7 +59,7 @@ export default defineEventHandler(async (event) => {
 
       // Create a new unique set of the current styles
       /** Because of  @see https://github.com/nuxt-hub/core/issues/710 well use an assertion for now */
-      const currentStyles = new Set(project.styles as string[])
+      const currentStyles = new Set(project.styles as Style[])
 
       // Add new styles
       if (Array.isArray(add)) {
