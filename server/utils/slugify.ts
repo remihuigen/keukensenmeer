@@ -1,0 +1,4 @@
+import slug from 'slugify'
+export function slugify(text: string): string {
+  return slug(text, { lower: true, strict: true, locale: 'nl' })
+}
