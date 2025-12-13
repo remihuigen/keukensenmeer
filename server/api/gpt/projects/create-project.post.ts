@@ -48,7 +48,8 @@ export default defineEventHandler(async (event) => {
     const invalidImages = imageData
       .map((result, index) => ({ result, index }))
       .filter(({ result }) => result.status === 'rejected')
-      .map(({ index }) => images[index].pathname)
+      // TODO typescript is not aware that index is always valid here
+      .map(({ index }) => images[index]!.pathname)
 
     if (invalidImages.length > 0) {
       throw createError({
@@ -67,7 +68,8 @@ export default defineEventHandler(async (event) => {
         !result.value.blob.customMetadata.width ||
         !result.value.blob.customMetadata.height
       ))
-      .map(({ index }) => images[index].pathname)
+      // TODO typescript is not aware that index is always valid here
+      .map(({ index }) => images[index]!.pathname)
 
     if (imagesWithoutValidMetaData.length > 0) {
       throw createError({
@@ -101,9 +103,9 @@ export default defineEventHandler(async (event) => {
         })
         .returning()
 
+      const projectId = insertedProject[0]?.id
       // Second, insert related images if any
-      if (imagesWithBlob.length > 0) {
-        const projectId = insertedProject[0].id
+      if (imagesWithBlob.length > 0 && projectId) {
 
         // 4) Prepare image records for insertion
         const imageRecords = imagesWithBlob.map(image => {
