@@ -9,12 +9,7 @@ import { sql } from "drizzle-orm";
 import { primaryKey, timestamps } from "./fields/index";
 import { projects, orientationEnum } from "./projects";
 
-import type {
-    ACCEPTED_IMAGE_TYPES} from "../../../shared/utils/blob";
-import {
-    MIN_DIMENSIONS,
-    MAX_DIMENSIONS,
-} from "../../../shared/utils/blob";
+import type { ACCEPTED_IMAGE_TYPES } from "../../../shared/utils/blob";
 
 export const projectImages = sqliteTable("project_images", {
     id: primaryKey,
@@ -56,21 +51,10 @@ export const projectImages = sqliteTable("project_images", {
     ...timestamps,
 },
     (table) => [
-        check(
-            "min_width",
-            sql`${table.width} >= ${MIN_DIMENSIONS.width}`
-        ),
-        check(
-            "max_width",
-            sql`${table.width} <= ${MAX_DIMENSIONS.width}`
-        ),
-        check(
-            "min_height",
-            sql`${table.height} >= ${MIN_DIMENSIONS.height}`
-        ),
-        check(
-            "max_height",
-            sql`${table.height} <= ${MAX_DIMENSIONS.height}`
-        ),
+        // Hard-code constants so SQLite won't treat them as parameters
+        check("min_width", sql`${table.width} >= 300`),
+        check("max_width", sql`${table.width} <= 6000`),
+        check("min_height", sql`${table.height} >= 300`),
+        check("max_height", sql`${table.height} <= 6000`),
     ]
 );

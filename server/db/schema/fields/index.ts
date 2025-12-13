@@ -1,5 +1,15 @@
 import { text } from 'drizzle-orm/sqlite-core';
-import { randomUUID } from "node:crypto";
+import { v7 as uuidv7 } from 'uuid';
+
+/**
+ * Generate a UUID v7.
+ *
+ * @returns {string} UUID v7 string
+ */
+export const generateUuidV7 = (): string => {
+    // Use Web Crypto under the hood — no Node internals
+    return uuidv7();
+};
 
 /**
  * Primary key column definition for SQLite tables.
@@ -12,7 +22,7 @@ import { randomUUID } from "node:crypto";
 export const primaryKey =
     text("id", { length: 36 })
         .primaryKey()
-        .$defaultFn(() => randomUUID())
+        .$defaultFn(() => generateUuidV7())
 
 /**
  * Base timestamp columns for SQLite tables.

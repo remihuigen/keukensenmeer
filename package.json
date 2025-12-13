@@ -81,6 +81,7 @@
 		"tailwindcss-debug-screens": "3.0.1",
 		"tsx": "4.21.0",
 		"typescript": "5.9.3",
+		"uuid": "13.0.0",
 		"vue": "3.5.25",
 		"vue-router": "4.6.4",
 		"vue-tsc": "3.1.8",
