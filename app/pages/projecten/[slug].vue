@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const route = useRoute()
 
-const { data, error, status } = await useFetch(`/api/projects/${route.params.slug}`)
+const { data, error, status } = await useFetch(`/api/old/${route.params.slug}`)
 
 if (!data.value) {
 	throw createError({

@@ -38,9 +38,9 @@ export const authenticateRequest = (event: H3Event, options?: AuthenticationOpti
 
   // Finally compare the tokens
   if (!inputToken || (inputToken !== checkToken && inputToken !== adminToken)) {
-    throw createError({
+    createErrorResponse({
       statusCode: 403,
-      statusMessage: 'Forbidden'
+      message: 'Invalid or missing authentication token.'
     })
   }
 }

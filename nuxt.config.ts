@@ -29,6 +29,9 @@ export default defineNuxtConfig({
     '@nuxtjs/plausible'
   ],
 
+  experimental: {
+    asyncContext: true,
+  },
 
   css: ['~/assets/css/main.css'],
 

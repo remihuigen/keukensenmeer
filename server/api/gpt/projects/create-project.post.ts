@@ -10,13 +10,15 @@ import { blob } from 'hub:blob'
 
 import { projectCreateSchema, type ImageCreateSchema } from '~~/server/utils/validation/payloads';
 import { validateNumberOfFeaturedProjects } from '~~/server/utils/validateNumberOfFeaturedProjects'
+import { validateZodBodySchema } from '~~/server/utils/validation'
+import { validateBlobMetaData } from '~~/server/utils/validation/validateBlobMetaData';
 import { slugify } from '~~/server/utils/slugify'
 import type { BlobObject } from '@nuxthub/core/blob'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
 
-  const body = await readValidatedBody(event, projectCreateSchema.parse)
+  const body = await validateZodBodySchema(event, projectCreateSchema)
 
   // 1) Create a slug for the project
   const slug = slugify(body.publicTitle)
@@ -38,9 +40,10 @@ export default defineEventHandler(async (event) => {
     // 4a) Check if there are multiple main images (not allowed). Return an error if so.
     const mainImages = images.filter((img) => img.isMainImage)
     if (mainImages.length > 1) {
-      throw createError({
+      createErrorResponse({
         statusCode: 400,
-        statusMessage: 'Multiple main images provided. A project can have only one main image.',
+        message: 'Multiple main images provided. A project can have only one main image.',
+        data: { providedMainImages: mainImages.map((img) => img.pathname) }
       })
     }
 
@@ -59,28 +62,23 @@ export default defineEventHandler(async (event) => {
       .map(({ index }) => images[index]!.pathname)
 
     if (invalidImages.length > 0) {
-      throw createError({
+      createErrorResponse({
         statusCode: 400,
-        statusMessage: 'Some provided images do not exist in the Cloudflare bucket.',
+        message: 'Some provided images do not exist in the Cloudflare bucket. These images must be uploaded before they can be associated with a project.',
         data: { invalidImages }
       })
     }
 
     // 4d) If any of the images are missing required metadata, return an error
     const imagesWithoutValidMetaData = imageData
-      .filter((result) => result.status === 'fulfilled' && (
-        !result.value.blob.size ||
-        !result.value.blob.customMetadata.type ||
-        !result.value.blob.customMetadata.width ||
-        !result.value.blob.customMetadata.height
-      ))
+      .filter((result) => result.status === 'fulfilled' && !validateBlobMetaData(result.value.blob).isValid)
       .map((result, index) => ({ result, index }))
       .map(({ index }) => images[index]!.pathname)
 
     if (imagesWithoutValidMetaData.length > 0) {
-      throw createError({
+      createErrorResponse({
         statusCode: 400,
-        statusMessage: 'Some provided images are missing required metadata in the Cloudflare bucket. Please upload them again.',
+        message: 'Some provided images are missing required metadata in the Cloudflare bucket. Please upload them again.',
         data: { imagesWithoutValidMetaData }
       })
     }
@@ -120,31 +118,31 @@ export default defineEventHandler(async (event) => {
             pathname: image.pathname,
             alt: image.alt,
             isMainImage: image.isMainImage || false,
-            size: image.blob.size,
             mime: image.blob.customMetadata.type ?? 'unknown',
             width: image.blob.customMetadata.width ? parseInt(image.blob.customMetadata.width, 10) : 300, // use 300 as fallback. Should not happen due to validations
             height: image.blob.customMetadata.height ? parseInt(image.blob.customMetadata.height, 10) : 300, // use 300 as fallback. Should not happen due to validations
           }
         }) satisfies Array<typeof schema.projectImages.$inferInsert>
 
-        await tx
+        const images = await tx
           .insert(schema.projectImages)
           .values(imageRecords)
+          .returning()
 
         return {
           project: insertedProject[0],
-          images: imageRecords,
+          images: images,
         }
       }
     })
 
-    return { success: true, message: 'Project created successfully.', data: createdProject }
+    return createSuccessResponse(createdProject, 'Project created successfully.')
 
   } catch (error) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Failed to create project.',
-      data: { error }
+    createErrorResponse({
+      statusCode: 500,
+      message: 'Failed to create project.',
+      error
     })
   }
 })

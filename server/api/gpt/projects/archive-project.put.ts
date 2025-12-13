@@ -8,24 +8,26 @@
 
 import { schema, db } from 'hub:db'
 import { eq } from 'drizzle-orm'
+import { validateZodQuerySchema } from '~~/server/utils/validation'
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
-  const query = await getValidatedQuery(event, SlugQuerySchema.parse)
+  const { slug } = validateZodQuerySchema(event, SlugQuerySchema)
 
   try {
     const result = await db
       .update(schema.projects)
       .set({ status: 'archived' })
-      .where(eq(schema.projects.slug, query.slug))
+      .where(eq(schema.projects.slug, slug))
+      .returning()
 
-    return { success: true, message: `Project with slug "${query.slug}" has been archived.`, data: result }
+    return createSuccessResponse(result, `Project with slug "${slug}" has been archived.`)
   } catch (error) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: `Failed to archive project with slug "${query.slug}".`,
-      data: { error }
+    createErrorResponse({
+      statusCode: 500,
+      message: `Failed to archive project with slug "${slug}". Something went wrong during the database operation.`,
+      error
     })
   }
 })

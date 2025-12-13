@@ -10,37 +10,50 @@ import { blob } from 'hub:blob'
 import { and, eq } from 'drizzle-orm'
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 import { imageCreateSchema } from '~~/server/utils/validation/payloads'
+import { validateZodQuerySchema, validateZodBodySchema } from '~~/server/utils/validation'
+import { validateBlobMetaData } from '~~/server/utils/validation/validateBlobMetaData'
+import { getImageOrientation } from '~~/server/utils/getImageOrientation.ts'
 
-export default defineEventHandler(async (_event) => {
-  authenticateRequest(_event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
+export default defineEventHandler(async (event) => {
+  authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
 
-  const query = await getValidatedQuery(_event, SlugQuerySchema.parse)
-  const body = await readValidatedBody(_event, imageCreateSchema.parse)
+  const { slug } = validateZodQuerySchema(event, SlugQuerySchema)
+  const body = await validateZodBodySchema(event, imageCreateSchema)
 
   // Fetch image metadata from Cloudflare bucket (we need size, format, etc. to store in DB)
   try {
     const blobObject = await blob.head(body.pathname)
 
     if (!blobObject) {
-      throw createError({
+      createErrorResponse({
         statusCode: 404,
-        statusMessage: `Image with pathname "${body.pathname}" not found in Cloudflare bucket. Please upload the image again.`,
+        message: `Image with pathname "${body.pathname}" not found in Cloudflare bucket. Please upload the image again.`,
       })
     }
+    const validatedBlob = validateBlobMetaData(blobObject)
+
+    if (!validatedBlob.isValid) {
+      createErrorResponse({
+        statusCode: 400,
+        message: `Image with pathname "${body.pathname}" has invalid metadata. Please upload the image again.`,
+        data: { invalidFields: validatedBlob.invalidFields }
+      })
+    }
+
     // Fetch project to get its ID
     const project = await db
       .select({
         id: schema.projects.id
       })
       .from(schema.projects)
-      .where(eq(schema.projects.slug, query.slug))
+      .where(eq(schema.projects.slug, slug))
       .limit(1)
       .then((results) => results[0] || null)
 
     if (!project) {
-      throw createError({
+      createErrorResponse({
         statusCode: 404,
-        statusMessage: `Project with slug "${query.slug}" not found.`,
+        message: `Project with slug "${slug}" not found.`,
       })
     }
 
@@ -55,25 +68,24 @@ export default defineEventHandler(async (_event) => {
     // Insert new image record linked to the project 
     const newImage = await db
       .insert(schema.projectImages)
-      .values({
+      .values([{
         projectId: project.id,
         pathname: body.pathname,
+        mime: validatedBlob.data.type,
+        width: validatedBlob.data.width,
+        height: validatedBlob.data.height,
         alt: body.alt,
         position: body.position || 0,
         isMainImage: body.isMainImage || false,
-        url: blobObject.url,
-        size: blobObject.size,
-        mime: blobObject.customMetadata.mime || 'unknown',
-        width: blobObject.customMetadata.width ? parseInt(blobObject.customMetadata.width, 10) : 300, // Default to 300 if not provided
-        height: blobObject.customMetadata.height ? parseInt(blobObject.customMetadata.height, 10) : 300, // Default to 300 if not provided
-      })
+        orientation: getImageOrientation(validatedBlob.data.width, validatedBlob.data.height),
+      }])
 
-    return newImage
+    return createSuccessResponse(newImage, `Image "${body.pathname}" added to project with slug "${slug}" successfully.`)
   } catch (error) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: `Failed to add image to project with slug "${query.slug}".`,
-      data: { error }
+    createErrorResponse({
+      statusCode: 500,
+      message: `An unexpected error occurred while adding image to project with slug "${slug}".`,
+      error
     })
   }
 

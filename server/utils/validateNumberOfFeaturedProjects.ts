@@ -39,16 +39,28 @@ export const validateNumberOfFeaturedProjects = async (options: {
   const projectedCount = projectedFeaturedProjectsSet.size
 
   if (projectedCount < MIN_FEATURED_PROJECTS) {
-    throw createError({
+    createErrorResponse({
       statusCode: 400,
-      statusMessage: `At least ${MIN_FEATURED_PROJECTS} featured projects are required. Current: ${currentFeaturedProjects.length}, After update: ${projectedCount}.`,
+      message: `At least ${MIN_FEATURED_PROJECTS} featured projects are required.`,
+      data: {
+        currentFeaturedCount: currentFeaturedProjects.length,
+        projectedFeaturedCount: projectedCount,
+        attemptedAdditions: toAdd,
+        attemtedDeletions: toRemove,
+      }
     })
   }
 
   if (projectedCount > MAX_FEATURED_PROJECTS) {
-    throw createError({
+    createErrorResponse({
       statusCode: 400,
-      statusMessage: `A maximum of ${MAX_FEATURED_PROJECTS} featured projects are allowed. Current: ${currentFeaturedProjects.length}, After update: ${projectedCount}.`,
+      message: `A maximum of ${MAX_FEATURED_PROJECTS} featured projects are allowed.`,
+      data: {
+        currentFeaturedCount: currentFeaturedProjects.length,
+        projectedFeaturedCount: projectedCount,
+        attemptedAdditions: toAdd,
+        attemtedDeletions: toRemove,
+      }
     })
   }
 

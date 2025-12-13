@@ -1,6 +1,6 @@
 import type { BlobType } from '@nuxthub/core/blob'
 export const ACCEPTED_IMAGE_TYPES: BlobType[] = ['image/jpeg', 'image/png', 'image/webp']
-export const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
+export const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 export const MIN_DIMENSIONS = { width: 200, height: 200 }
 export const MAX_DIMENSIONS = { width: 4096, height: 4096 }
 

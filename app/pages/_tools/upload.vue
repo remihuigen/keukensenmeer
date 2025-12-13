@@ -128,14 +128,14 @@ const { isDev } = useRuntimeConfig().public.mode
 				<UFormField
 					name="image"
 					label="Afbeelding uploaden"
-					description="JPG, WEBP of PNG. 2MB Max."
+					description="JPG, WEBP of PNG. 5MB Max."
 				>
 					<UFileUpload
 						v-model="state.image"
 						accept="image/*"
 						icon="i-lucide-image"
 						label="Sleep je afbeelding hier in"
-						description="PNG, JPG of WebP (max. 2MB)"
+						description="PNG, JPG of WebP (max. 5MB)"
 						class="min-h-60 w-full"
 						highlight
 						:ui="{

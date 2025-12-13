@@ -8,16 +8,27 @@
 import { schema, db } from 'hub:db'
 import { eq } from 'drizzle-orm'
 import { StatusQuerySchema } from '~~/server/utils/validation/queries'
+import { validateZodQuerySchema } from '~~/server/utils/validation'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
 
-  const query = await getValidatedQuery(event, StatusQuerySchema.parse)
-
-  return await db.query.projects.findMany({
-    where: query.status ? eq(schema.projects.status, query.status) : undefined,
-    with: {
-      images: true,
-    }
-  })
+  const query = validateZodQuerySchema(event, StatusQuerySchema)
+  try {
+    return createSuccessResponse(
+      await db.query.projects.findMany({
+        where: query.status ? eq(schema.projects.status, query.status) : undefined,
+        with: {
+          images: true,
+        }
+      }),
+      'Projects retrieved successfully.'
+    )
+  } catch (error) {
+    createErrorResponse({
+      statusCode: 500,
+      message: 'An unexpected error occurred while retrieving projects. Please try again later.',
+      error
+    })
+  }
 })

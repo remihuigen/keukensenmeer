@@ -12,6 +12,7 @@ import { schema, db } from 'hub:db'
 import { inArray } from 'drizzle-orm'
 
 import { validateNumberOfFeaturedProjects } from '~~/server/utils/validateNumberOfFeaturedProjects'
+import { validateZodBodySchema } from '~~/server/utils/validation'
 
 import { z } from 'zod'
 const UpdateFeaturedProjectsQuerySchema = z.object({
@@ -22,12 +23,13 @@ const UpdateFeaturedProjectsQuerySchema = z.object({
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
 
-  const body = await readValidatedBody(event, UpdateFeaturedProjectsQuerySchema.parse)
+  const body = await validateZodBodySchema(event, UpdateFeaturedProjectsQuerySchema)
 
   if (!body.add?.length && !body.remove?.length) {
-    throw createError({
+    createErrorResponse({
       statusCode: 400,
-      statusMessage: 'At least one of "add" or "remove" arrays must be provided and contain at least one slug.',
+      message: 'At least one of "add" or "remove" arrays must be provided and contain at least one slug.',
+      data: { receivedBody: body }
     })
   }
 
@@ -40,31 +42,44 @@ export default defineEventHandler(async (event) => {
 
   // Proceed with the updates
   try {
+    const added = []
+    const removed = []
+
     // Add featured flag
     if (toAdd.length > 0) {
-      await db
+      const newFeaturedProjects = await db
         .update(schema.projects)
         .set({ isFeatured: true })
         .where(inArray(schema.projects.slug, toAdd))
+        .returning({ slug: schema.projects.slug })
+
+      for (const project of newFeaturedProjects) {
+        added.push(project.slug)
+      }
     }
     // Remove featured flag
     if (toRemove.length > 0) {
-      await db
+      const removedFeaturedProject = await db
         .update(schema.projects)
         .set({ isFeatured: false })
         .where(inArray(schema.projects.slug, toRemove))
+        .returning({ slug: schema.projects.slug })
+
+      for (const project of removedFeaturedProject) {
+        removed.push(project.slug)
+      }
     }
 
-    return {
-      success: true,
-      message: `Featured projects updated successfully. Total featured projects now: ${projectedCount}.`,
-    }
+    return createSuccessResponse({
+      added,
+      removed,
+      projectedCount,
+    }, `Featured projects updated successfully. Total featured projects now: ${projectedCount}.`)
   } catch (error) {
-    throw createError({
+    createErrorResponse({
       statusCode: 500,
-      statusMessage: 'Failed to update featured projects.',
-      data: { error }
+      message: 'An unexpected error occurred while updating featured projects.',
+      error
     })
   }
-
 })

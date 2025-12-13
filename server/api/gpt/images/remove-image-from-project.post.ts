@@ -10,6 +10,7 @@ import { schema, db } from 'hub:db'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
+import { validateZodQuerySchema, validateZodBodySchema } from '~~/server/utils/validation'
 
 const deleteImageSchema = z.object({
   pathname: z.string().min(1).describe('The pathname of the image to be removed from the project, as stored in the Cloudflare bucket')
@@ -18,8 +19,8 @@ const deleteImageSchema = z.object({
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
 
-  const query = await getValidatedQuery(event, SlugQuerySchema.parse)
-  const body = await readValidatedBody(event, deleteImageSchema.parse)
+  const query = validateZodQuerySchema(event, SlugQuerySchema)
+  const body = await validateZodBodySchema(event, deleteImageSchema)
 
   try {
     const project = await db
@@ -30,9 +31,9 @@ export default defineEventHandler(async (event) => {
       .then((results) => results[0] || null)
 
     if (!project) {
-      throw createError({
+      createErrorResponse({
         statusCode: 404,
-        statusMessage: `Project with slug "${query.slug}" not found.`,
+        message: `Project with slug "${query.slug}" not found.`,
       })
     }
 
@@ -44,13 +45,14 @@ export default defineEventHandler(async (event) => {
           eq(schema.projectImages.pathname, body.pathname)
         )
       )
+      .returning()
 
-    return { success: true, message: `Image "${body.pathname}" has been removed from project "${query.slug}".`, data: result }
+    return createSuccessResponse(result, `Image "${body.pathname}" has been removed from project "${query.slug}".`)
   } catch (error) {
-    throw createError({
+    createErrorResponse({
       statusCode: 400,
-      statusMessage: `Failed to remove image "${body.pathname}" from project "${query.slug}".`,
-      data: { error }
+      message: `An unexpected error occurred while removing image "${body.pathname}" from project "${query.slug}".`,
+      error
     })
   }
 })
