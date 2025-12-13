@@ -16,7 +16,7 @@ export const projectImages = sqliteTable("project_images", {
     id: primaryKey,
 
     /** FK to projects.id */
-    projectId: integer("project_id")
+    projectId: text("project_id")
         .notNull()
         .references(() => projects.id, { onDelete: "cascade" }),
 
@@ -60,10 +60,14 @@ export const projectImages = sqliteTable("project_images", {
     ]
 );
 
-
+/** Declare relations to projects for Drizzle type safety */
 export const projectImagesRelations = relations(projectImages, ({ one }) => ({
     project: one(projects, {
         fields: [projectImages.projectId],
         references: [projects.id],
     }),
 }));
+
+
+export type ProjectImage = typeof projectImages.$inferSelect;
+export type NewProjectImage = typeof projectImages.$inferInsert;

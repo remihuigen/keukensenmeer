@@ -86,7 +86,11 @@ export const projects = sqliteTable("projects", {
     ]
 );
 
-
+/** Declare relations to project images for Drizzle type safety */
 export const projectRelations = relations(projects, ({ many }) => ({
     images: many(projectImages),
 }));
+
+
+export type Project = typeof projects.$inferSelect;
+export type NewProject = typeof projects.$inferInsert;

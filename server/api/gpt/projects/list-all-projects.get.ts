@@ -14,15 +14,10 @@ export default defineEventHandler(async (event) => {
 
   const query = await getValidatedQuery(event, StatusQuerySchema.parse)
 
-  const projects = await db
-    .select()
-    .from(schema.projects)
-    .where(query.status ? eq(schema.projects.status, query.status) : undefined)
-    // Join projectImages to get related images
-    .leftJoin(
-      schema.projectImages,
-      eq(schema.projects.id, schema.projectImages.projectId)
-    )
-
-  return projects
+  return await db.query.projects.findMany({
+    where: query.status ? eq(schema.projects.status, query.status) : undefined,
+    with: {
+      images: true,
+    }
+  })
 })
