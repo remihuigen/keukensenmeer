@@ -18,6 +18,7 @@ export default defineEventHandler(async (event) => {
   const { slug } = validateZodQuerySchema(event, SlugQuerySchema)
   const body = await validateZodBodySchema(event, deleteImageSchema)
 
+  // First, get the project ID based on the slug
   const { result: project, error: projectError } = await safeAsync(async () => {
     return await db
       .select({
@@ -63,7 +64,7 @@ export default defineEventHandler(async (event) => {
     return createSuccessResponse(result, message)
   } catch (error) {
     createErrorResponse({
-      statusCode: 400,
+      statusCode: 500,
       message: `An unexpected error occurred while removing images from project "${slug}".`,
       error
     })

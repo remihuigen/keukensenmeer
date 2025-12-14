@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
     // Return the first error with context about total failures
     createErrorResponse({
       statusCode: 400,
-      message: errors.length === 1 
+      message: errors.length === 1
         ? errors[0]
         : `${errors.length} images failed validation.`,
       data: {
@@ -113,9 +113,21 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+
+  // If more than one new image is marked as main image, throw an error
+  const newMainImages = validatedImages.filter(img => img.isMainImage)
+  if (newMainImages.length > 1) {
+    createErrorResponse({
+      statusCode: 400,
+      message: `Only one image can be marked as the main image for a project. Please adjust the input.`,
+      data: {
+        newMainImages
+      }
+    })
+  }
+
   // If any new image is marked as main image, ensure no other main image exists for this project
-  const hasMainImage = validatedImages.some(img => img.isMainImage)
-  if (hasMainImage) {
+  if (newMainImages.length === 1) {
     try {
       await db.update(schema.projectImages).set({ isMainImage: false }).where(and(
         eq(schema.projectImages.projectId, project.id),
@@ -148,7 +160,7 @@ export default defineEventHandler(async (event) => {
       .returning()
 
     const imageCount = newImages.length
-    const message = imageCount === 1 
+    const message = imageCount === 1
       ? `Image "${validatedImages[0]?.pathname}" added to project with slug "${slug}" successfully.`
       : `${imageCount} images added to project with slug "${slug}" successfully.`
 
