@@ -91,58 +91,67 @@ export default defineEventHandler(async (event) => {
   }
 
   // 6) Create the project record and related images in the database
-  try {
-    const createdProject = await db.transaction(async (tx) => {
-      // 6a) insert the project
-      const insertedProject = await tx
-        .insert(schema.projects)
-        .values({
-          title: body.title,
-          publicTitle: body.publicTitle,
-          slug,
-          status: body.status,
-          body: body.body,
-          description: body.description,
-          styles: body.styles,
-        })
-        .returning()
+  const { result: project, error } = await safeAsync(async () => {
+    return await db
+      .insert(schema.projects)
+      .values({
+        title: body.title,
+        publicTitle: body.publicTitle,
+        slug,
+        status: body.status,
+        body: body.body,
+        description: body.description,
+        styles: body.styles,
+      })
+      .returning()
+  })
 
-      const projectId = insertedProject[0]?.id
-      // 6b) insert related images if any
-      if (imagesWithBlob.length > 0 && projectId) {
-
-        // Prepare image records for insertion
-        const imageRecords = imagesWithBlob.map(image => {
-          return {
-            projectId,
-            pathname: image.pathname,
-            alt: image.alt,
-            isMainImage: image.isMainImage || false,
-            mime: image.blob.customMetadata.type ?? 'unknown',
-            width: image.blob.customMetadata.width ? parseInt(image.blob.customMetadata.width, 10) : 300, // use 300 as fallback. Should not happen due to validations
-            height: image.blob.customMetadata.height ? parseInt(image.blob.customMetadata.height, 10) : 300, // use 300 as fallback. Should not happen due to validations
-          }
-        }) satisfies Array<typeof schema.projectImages.$inferInsert>
-
-        const images = await tx
-          .insert(schema.projectImages)
-          .values(imageRecords)
-          .returning()
-
-        return {
-          project: insertedProject[0],
-          images: images,
-        }
-      }
-    })
-
-    return createSuccessResponse(createdProject, 'Project created successfully.')
-
-  } catch (error) {
+  if (error || !project[0]) {
     createErrorResponse({
       statusCode: 500,
-      message: 'Failed to create project.',
+      message: 'An error occurred while creating the project in the database.',
       error
     })
   }
+
+  const projectId = project[0].id
+  const insertedImages = []
+
+  // 6b) insert related images if any
+  if (imagesWithBlob.length > 0 && projectId) {
+
+    // Prepare image records for insertion
+    const imageRecords = imagesWithBlob.map(image => {
+      return {
+        projectId,
+        pathname: image.pathname,
+        alt: image.alt,
+        isMainImage: image.isMainImage || false,
+        mime: image.blob.customMetadata.type ?? 'unknown',
+        width: image.blob.customMetadata.width ? parseInt(image.blob.customMetadata.width, 10) : 300, // use 300 as fallback. Should not happen due to validations
+        height: image.blob.customMetadata.height ? parseInt(image.blob.customMetadata.height, 10) : 300, // use 300 as fallback. Should not happen due to validations
+      }
+    }) satisfies Array<typeof schema.projectImages.$inferInsert>
+
+    const { result: images, error: imagesError } = await safeAsync(async () => {
+      return await db
+        .insert(schema.projectImages)
+        .values(imageRecords)
+        .returning()
+    })
+
+    if (imagesError) {
+      createErrorResponse({
+        statusCode: 500,
+        message: 'An error occurred while inserting related images into the database.',
+        error: imagesError
+      })
+    }
+
+    insertedImages.push(...(images || []))
+  }
+
+  return createSuccessResponse({ project, images: insertedImages }, 'Project created successfully.')
+
+
 })
