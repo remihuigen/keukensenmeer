@@ -1,5 +1,10 @@
 // https://unstorage.unjs.io/guide#clearbase-opts
 
+
+/**
+ * API endpoint to invalidate cache for specified bases.
+ * If no bases are provided, defaults to common bases.
+ */
 export default defineEventHandler(async (event) => {
   authenticateRequest(event)
 
