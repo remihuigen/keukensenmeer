@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.13.0](https://github.com/remihuigen/keukensenmeer/compare/v1.12.1...v1.13.0) (2025-12-14)
+
+
+### Features
+
+* Implement safe async ([96f5184](https://github.com/remihuigen/keukensenmeer/commit/96f5184ac8a7aa0ac643b2a21617c592507ba26f))
+
 ## [1.12.1](https://github.com/remihuigen/keukensenmeer/compare/v1.12.0...v1.12.1) (2025-12-14)
 
 
