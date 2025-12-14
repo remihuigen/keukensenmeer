@@ -56,6 +56,9 @@ jobs:
             - name: Build Nuxt Application
               run: pnpm build
 
+            - name: Apply Database Migrations
+              run: npx nuxt db migrate
+
             - name: Deploy Worker
               id: deploy
               uses: cloudflare/wrangler-action@v3
