@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Load nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
 # Run gitleaks to scan for secrets in staged files
 # Using globally installed gitleaks via Homebrew
 gitleaks protect --staged --config .gitleaks.toml --verbose --exit-code 1
