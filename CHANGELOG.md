@@ -1,5 +1,32 @@
 # Changelog
 
+# [1.14.0](https://github.com/remihuigen/keukensenmeer/compare/v1.13.1...v1.14.0) (2025-12-14)
+
+
+### Bug Fixes
+
+* Finetune and rename image routes ([e3d82dc](https://github.com/remihuigen/keukensenmeer/commit/e3d82dc09be80b6b8cafa2dc062f9246fef2dd64))
+* Finetune upload ui ([5117cd5](https://github.com/remihuigen/keukensenmeer/commit/5117cd5f27fa3e78e9740d657e7869c0ab9182e4))
+* Improve error handling consistency ([5a33469](https://github.com/remihuigen/keukensenmeer/commit/5a33469d527e91329e04f9a903f8dde0158b27dd))
+* OrderBy ([78792ed](https://github.com/remihuigen/keukensenmeer/commit/78792eddd47e419e3ab83a1f1cec06d155378ecf))
+* Remove nvm stuff from commit hooks, update zod errors ([c551ec0](https://github.com/remihuigen/keukensenmeer/commit/c551ec091a85300501cff5945b3e88d8f20f1621))
+* Restore README and LICENSE, improve error messages in blob handler ([d14fdee](https://github.com/remihuigen/keukensenmeer/commit/d14fdeeefa3cae5b62378e20ede9cf7aca80616a))
+* Type error ([1407803](https://github.com/remihuigen/keukensenmeer/commit/14078031e8992bd14fe79b7406bd65ab9bd107c2))
+
+
+### Features
+
+* Add delete project route ([e14266d](https://github.com/remihuigen/keukensenmeer/commit/e14266de772587cf74fe9a5937874bc7184bd87f))
+* Add new project api routes ([f6f69a9](https://github.com/remihuigen/keukensenmeer/commit/f6f69a9f1713d609e5b629a064ed8e79cf637428))
+* Add some cache utility routes ([0d41f4d](https://github.com/remihuigen/keukensenmeer/commit/0d41f4de3729c44ba246000eb701cc068d72497e))
+* Implement multiple file uploads across app ([5d201a8](https://github.com/remihuigen/keukensenmeer/commit/5d201a88ef9d0f5091831e6eb63d8b4152fe81b2))
+* Update project page routes ([34f3ffb](https://github.com/remihuigen/keukensenmeer/commit/34f3ffb98047ea5d4a616e465e6231871f58a5fc))
+
+
+### Performance Improvements
+
+* Validate blobs concurrently in add-image endpoint ([384f677](https://github.com/remihuigen/keukensenmeer/commit/384f6777e40ab932fdcee7109d6784ed3fb48bb4))
+
 ## [1.13.1](https://github.com/remihuigen/keukensenmeer/compare/v1.13.0...v1.13.1) (2025-12-14)
 
 
