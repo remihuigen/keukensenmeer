@@ -1,12 +1,7 @@
 <script lang="ts" setup>
-import type { ProjectImage } from '~~/server/db/schema/projectImages'
-import type { Project } from '~~/server/db/schema/projects'
-
 const route = useRoute()
 
-const { data, error, status } = await useFetch<{ data: Project & { images: ProjectImage[] } }>(
-	`/api/projecten/${route.params.slug}`,
-)
+const { data, error, status } = await useFetch(`/api/projects/${route.params.slug}`)
 
 if (!data.value) {
 	throw createError({
