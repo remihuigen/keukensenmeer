@@ -12,7 +12,8 @@ import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 import { addImagesSchema } from '~~/server/utils/validation/payloads'
 import { validateZodQuerySchema, validateZodBodySchema } from '~~/server/utils/validation'
 import { validateBlobMetaData } from '~~/server/utils/validation/validateBlobMetaData'
-import { getImageOrientation } from '~~/server/utils/getImageOrientation.ts'
+import { getImageOrientation } from '~~/server/utils/getImageOrientation'
+import { invalidateProjectCaches } from '~~/server/utils/invalidateCacheBases'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
@@ -163,6 +164,9 @@ export default defineEventHandler(async (event) => {
     const message = imageCount === 1
       ? `Image "${validatedImages[0]?.pathname}" added to project with slug "${slug}" successfully.`
       : `${imageCount} images added to project with slug "${slug}" successfully.`
+
+    // Invalidate relevant caches
+    await invalidateProjectCaches()
 
     return createSuccessResponse(newImages, message)
   } catch (error) {

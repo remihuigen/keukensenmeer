@@ -26,7 +26,8 @@ export default defineCachedEventHandler(async (_event) => {
     })
   }
 }, {
-  maxAge: 1000 * 60 * 60 * 24 * 0,
-  staleMaxAge: 1000 * 60 * 60 * 24 * 7 * 0,
+  maxAge: 1000 * 60 * 60 * 24, // 1 day
+  group: 'api',
+  name: 'projects',
   getKey: () => 'projects_index'
 })

@@ -11,6 +11,7 @@ import { and, eq, inArray } from 'drizzle-orm'
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 import { validateZodQuerySchema, validateZodBodySchema } from '~~/server/utils/validation'
 import { deleteImageSchema } from '~~/server/utils/validation/payloads'
+import { invalidateProjectCaches } from '~~/server/utils/invalidateCacheBases'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
@@ -60,6 +61,9 @@ export default defineEventHandler(async (event) => {
     const message = imageCount === 1
       ? `Image "${body.pathnames[0]}" has been removed from project "${slug}".`
       : `${imageCount} images have been removed from project "${slug}".`
+
+    // Invalidate relevant caches
+    await invalidateProjectCaches()
 
     return createSuccessResponse(result, message)
   } catch (error) {

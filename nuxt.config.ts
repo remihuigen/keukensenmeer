@@ -86,6 +86,27 @@ export default defineNuxtConfig({
   ssr: true,
 
   // Disable caching in development to prevent confusion
+  routeRules: {
+    '/': {
+      cache: {
+        group: 'routes',
+        name: 'home'
+      }
+    },
+    '/projecten': {
+      cache: {
+        group: 'routes',
+        name: 'projects'
+      }
+    },
+    '/projecten/**': {
+      cache: {
+        group: 'routes',
+        name: 'projects'
+      }
+    }
+  },
+
   $development: {
     routeRules: {
       '/**': { cache: false },
@@ -97,7 +118,7 @@ export default defineNuxtConfig({
       '/': {
         ssr: true,
         cache: {
-          maxAge: 60 * 60 * 24
+          maxAge: 60 * 60 * 24,
         }
       },
       '/**': {
@@ -106,10 +127,16 @@ export default defineNuxtConfig({
           maxAge: 60 * 60 * 24
         }
       },
+      '/projecten': {
+        ssr: true,
+        cache: {
+          maxAge: 60 * 60 * 24,
+        }
+      },
       '/projecten/**': {
         ssr: true,
         cache: {
-          maxAge: 60 * 60 * 24
+          maxAge: 60 * 60 * 24,
         }
       },
       '/api/**': {
