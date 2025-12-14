@@ -15,7 +15,7 @@ export default defineCachedEventHandler(async (event) => {
     })
   }
 
-  return await db.query.projects.findFirst({
+  const project = await db.query.projects.findFirst({
     columns: {
       title: false, // Strip title field from payload since its for internal use only
     },
@@ -24,6 +24,15 @@ export default defineCachedEventHandler(async (event) => {
       images: true,
     }
   })
+
+  if (!project) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Project met slug "${slug}" niet gevonden.`
+    })
+  }
+
+  return { data: project }
 }, {
   maxAge: 1000 * 60 * 60 * 24 * 5 * 0,
   staleMaxAge: 1000 * 60 * 60 * 24 * 10 * 0,
