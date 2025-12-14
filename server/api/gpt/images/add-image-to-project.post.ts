@@ -29,28 +29,17 @@ export default defineEventHandler(async (event) => {
       })
 
       if (blobError) {
-        throw createError({
-          statusCode: 500,
-          message: `An error occurred while retrieving the image "${imageInput.pathname}" from Cloudflare bucket.`,
-          data: { error: blobError }
-        })
+        throw new Error(`An error occurred while retrieving the image "${imageInput.pathname}" from Cloudflare bucket.`)
       }
 
       if (!blobObject) {
-        throw createError({
-          statusCode: 404,
-          message: `Image with pathname "${imageInput.pathname}" not found in Cloudflare bucket. Please upload the image again.`,
-        })
+        throw new Error(`Image with pathname "${imageInput.pathname}" not found in Cloudflare bucket. Please upload the image again.`)
       }
 
       const validatedBlob = validateBlobMetaData(blobObject)
 
       if (!validatedBlob.isValid) {
-        throw createError({
-          statusCode: 400,
-          message: `Image with pathname "${imageInput.pathname}" has invalid metadata. Please upload the image again.`,
-          data: { invalidFields: validatedBlob.invalidFields }
-        })
+        throw new Error(`Image with pathname "${imageInput.pathname}" has invalid metadata: ${validatedBlob.invalidFields.map(f => f.field).join(', ')}. Please upload the image again.`)
       }
 
       return {
@@ -68,19 +57,18 @@ export default defineEventHandler(async (event) => {
   // Collect all errors if any
   const errors = validationResults
     .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-    .map(result => result.reason)
+    .map(result => result.reason.message)
 
   if (errors.length > 0) {
     // Return the first error with context about total failures
-    const firstError = errors[0]
     createErrorResponse({
-      statusCode: firstError.statusCode || 500,
+      statusCode: 400,
       message: errors.length === 1 
-        ? firstError.message 
-        : `${errors.length} images failed validation. First error: ${firstError.message}`,
+        ? errors[0]
+        : `${errors.length} images failed validation.`,
       data: {
         totalErrors: errors.length,
-        errors: errors.map(e => ({ message: e.message, pathname: e.data?.pathname }))
+        errors: errors
       }
     })
   }

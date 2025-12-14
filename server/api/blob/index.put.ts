@@ -14,10 +14,10 @@ export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'public' })
 
   const form = await readMultipartFormData(event)
-  if (!form) throw createError({ status: 400, message: 'Missing form data' })
+  if (!form) throw createError({ statusCode: 400, message: 'Missing form data' })
 
   const files = form.filter(f => f.name === 'files')
-  if (!files.length) throw createError({ status: 400, message: 'Missing files' })
+  if (!files.length) throw createError({ statusCode: 400, message: 'Missing files' })
 
   // Process each file: validate MIME type, extract dimensions, and upload
   const typeSchema = z.enum(ACCEPTED_IMAGE_TYPES)
@@ -27,13 +27,13 @@ export default defineEventHandler(async (event) => {
     const filename = file.filename || 'unknown file'
     
     if (!file.data) {
-      throw createError({ status: 400, message: `Missing file data for "${filename}"` })
+      throw createError({ statusCode: 400, message: `Missing file data for "${filename}"` })
     }
 
     const { success } = typeSchema.safeParse(file.type)
     if (!success) {
       throw createError({ 
-        status: 400, 
+        statusCode: 400, 
         message: `Invalid file type for "${filename}". Accepted types: ${ACCEPTED_IMAGE_TYPES.join(', ')}` 
       })
     }
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
     if (!width || !height) {
       throw createError({ 
-        status: 400, 
+        statusCode: 400, 
         message: `Could not extract image dimensions for "${filename}"` 
       })
     }
