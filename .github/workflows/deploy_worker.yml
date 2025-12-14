@@ -90,9 +90,11 @@ jobs:
                   echo "APP_URL: $APP_URL"
                   echo "API_TOKEN is set: $([[ -n \"$API_TOKEN\" ]] && echo \"true\" || echo \"false\")"
 
-                  RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X POST $APP_URL/api/_cache/invalidate \
-                      -H "Content-Type: application/json" \
-                      -H "Authorization: Bearer $API_TOKEN")
+                  RESPONSE=$(curl -s -o response.json -w "%{http_code}" \
+                    -X POST "$APP_URL/api/_cache/invalidate?bases=nitro:routes&bases=pages&bases=routes" \
+                    -H "Content-Type: application/json" \
+                    -H "Authorization: Bearer $API_TOKEN")
+
 
                   echo "HTTP Status Code: $RESPONSE"
                   echo "Response Body:"
