@@ -21,27 +21,39 @@ export default defineEventHandler(async (event) => {
   const body = await validateZodBodySchema(event, imageCreateSchema)
 
   // Fetch image metadata from Cloudflare bucket (we need size, format, etc. to store in DB)
-  try {
-    const blobObject = await blob.head(body.pathname)
+  const { result: blobObject, error: blobError } = await safeAsync(async () => {
+    return await blob.head(body.pathname)
+  })
 
-    if (!blobObject) {
-      createErrorResponse({
-        statusCode: 404,
-        message: `Image with pathname "${body.pathname}" not found in Cloudflare bucket. Please upload the image again.`,
-      })
-    }
-    const validatedBlob = validateBlobMetaData(blobObject)
+  if (blobError) {
+    createErrorResponse({
+      statusCode: 500,
+      message: `An error occurred while retrieving the image "${body.pathname}" from Cloudflare bucket.`,
+      error: blobError
+    })
+  }
 
-    if (!validatedBlob.isValid) {
-      createErrorResponse({
-        statusCode: 400,
-        message: `Image with pathname "${body.pathname}" has invalid metadata. Please upload the image again.`,
-        data: { invalidFields: validatedBlob.invalidFields }
-      })
-    }
+  if (!blobObject) {
+    createErrorResponse({
+      statusCode: 404,
+      message: `Image with pathname "${body.pathname}" not found in Cloudflare bucket. Please upload the image again.`,
+    })
+  }
 
-    // Fetch project to get its ID
-    const project = await db
+
+  const validatedBlob = validateBlobMetaData(blobObject)
+
+  if (!validatedBlob.isValid) {
+    createErrorResponse({
+      statusCode: 400,
+      message: `Image with pathname "${body.pathname}" has invalid metadata. Please upload the image again.`,
+      data: { invalidFields: validatedBlob.invalidFields }
+    })
+  }
+
+  // Fetch project to get its ID
+  const { result: project, error: projectError } = await safeAsync(async () => {
+    return await db
       .select({
         id: schema.projects.id
       })
@@ -49,22 +61,38 @@ export default defineEventHandler(async (event) => {
       .where(eq(schema.projects.slug, slug))
       .limit(1)
       .then((results) => results[0] || null)
+  })
 
-    if (!project) {
-      createErrorResponse({
-        statusCode: 404,
-        message: `Project with slug "${slug}" not found.`,
-      })
-    }
+  if (projectError) {
+    createErrorResponse({
+      statusCode: 500,
+      message: 'An error occurred while retrieving the project from the database.',
+      error: projectError
+    })
+  }
 
-    // If the new image is marked as main image, ensure no other main image exists for this project
-    if (body.isMainImage) {
+  if (!project) {
+    createErrorResponse({
+      statusCode: 404,
+      message: `Project with slug "${slug}" not found.`,
+    })
+  }
+
+  // If the new image is marked as main image, ensure no other main image exists for this project
+  if (body.isMainImage) {
+    try {
       await db.update(schema.projectImages).set({ isMainImage: false }).where(and(
         eq(schema.projectImages.projectId, project.id),
         eq(schema.projectImages.isMainImage, true)
       ))
+    } catch (error) {
+      console.error('Error unsetting previous main image')
+      console.error(error)
     }
+  }
 
+
+  try {
     // Insert new image record linked to the project 
     const newImage = await db
       .insert(schema.projectImages)

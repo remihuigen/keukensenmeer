@@ -15,24 +15,36 @@ import { deleteImageSchema } from '~~/server/utils/validation/payloads'
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
 
-  const query = validateZodQuerySchema(event, SlugQuerySchema)
+  const { slug } = validateZodQuerySchema(event, SlugQuerySchema)
   const body = await validateZodBodySchema(event, deleteImageSchema)
 
-  try {
-    const project = await db
-      .select({ id: schema.projects.id })
+  const { result: project, error: projectError } = await safeAsync(async () => {
+    return await db
+      .select({
+        id: schema.projects.id
+      })
       .from(schema.projects)
-      .where(eq(schema.projects.slug, query.slug))
+      .where(eq(schema.projects.slug, slug))
       .limit(1)
       .then((results) => results[0] || null)
+  })
 
-    if (!project) {
-      createErrorResponse({
-        statusCode: 404,
-        message: `Project with slug "${query.slug}" not found.`,
-      })
-    }
+  if (projectError) {
+    createErrorResponse({
+      statusCode: 500,
+      message: 'An error occurred while retrieving the project from the database.',
+      error: projectError
+    })
+  }
 
+  if (!project) {
+    createErrorResponse({
+      statusCode: 404,
+      message: `Project with slug "${slug}" not found.`,
+    })
+  }
+
+  try {
     const result = await db
       .delete(schema.projectImages)
       .where(
@@ -43,11 +55,11 @@ export default defineEventHandler(async (event) => {
       )
       .returning()
 
-    return createSuccessResponse(result, `Image "${body.pathname}" has been removed from project "${query.slug}".`)
+    return createSuccessResponse(result, `Image "${body.pathname}" has been removed from project "${slug}".`)
   } catch (error) {
     createErrorResponse({
       statusCode: 400,
-      message: `An unexpected error occurred while removing image "${body.pathname}" from project "${query.slug}".`,
+      message: `An unexpected error occurred while removing image "${body.pathname}" from project "${slug}".`,
       error
     })
   }
