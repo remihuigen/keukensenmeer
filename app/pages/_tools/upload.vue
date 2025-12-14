@@ -19,6 +19,12 @@ definePageMeta({
 	description: 'Upload afbeeldingen en bestanden naar opslag.',
 })
 
+/**
+ * Zod schema for validating uploaded files.
+ * Includes checks for file type, size, and dimensions,
+ * based on predefined constants.
+ * Provides user-friendly error messages.
+ */
 const fileValidator = z
 	.instanceof(File, {
 		message: 'Kies een afbeelding...',
@@ -67,6 +73,8 @@ const toast = useToast()
 const loading = ref(false)
 const blobHistory = ref<BlobObject[]>([])
 
+const fullBlobList = computed(() => blobHistory.value.map((blob) => blob.pathname).join('\n'))
+
 const upload = useUpload('/api/blob', {
 	method: 'PUT',
 	multiple: true,
@@ -77,20 +85,23 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 	loading.value = true
 	try {
 		const uploadedFiles = await upload(event.data.images)
-		
+
+		console.log('Uploaded files:', uploadedFiles)
+
 		// uploadedFiles is an array of BlobObject
 		const filesArray = Array.isArray(uploadedFiles) ? uploadedFiles : [uploadedFiles]
 		blobHistory.value.push(...filesArray)
-		
+
 		// Create newline-separated list of pathnames for copying
-		const pathnames = filesArray.map(f => f.pathname).join('\n')
+		const pathnames = filesArray.map((f) => f.pathname).join('\n')
 		const { copy } = useClipboard({ source: pathnames })
-		
+
 		const fileCount = filesArray.length
-		const description = fileCount === 1
-			? 'Je afbeelding is succesvol geüpload. Zorg ervoor je de bestandsnaam kopieert.'
-			: `${fileCount} afbeeldingen zijn succesvol geüpload. Zorg ervoor je de bestandsnamen kopieert.`
-		
+		const description =
+			fileCount === 1
+				? 'Je afbeelding is succesvol geüpload. Zorg ervoor je de bestandsnaam kopieert.'
+				: `${fileCount} afbeeldingen zijn succesvol geüpload. Zorg ervoor je de bestandsnamen kopieert.`
+
 		toast.add({
 			color: 'success',
 			title: 'Upload geslaagd',
@@ -104,9 +115,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 						toast.add({
 							color: 'info',
 							title: 'Gekopieerd',
-							description: fileCount === 1 
-								? 'De bestandsnaam is naar je klembord gekopieerd.'
-								: 'De bestandsnamen zijn naar je klembord gekopieerd.',
+							description:
+								fileCount === 1
+									? 'De bestandsnaam is naar je klembord gekopieerd.'
+									: 'De bestandsnamen zijn naar je klembord gekopieerd.',
 						})
 					},
 				},
@@ -138,19 +150,15 @@ const { isDev } = useRuntimeConfig().public.mode
 				Upload
 				<Hand>afbeeldingen</Hand>
 			</h1>
-			<UForm :schema="schema" :state="state" class="w-96 space-y-4" @submit="onSubmit">
-				<UFormField
-					name="images"
-					label="Afbeeldingen uploaden"
-					description="JPG, WEBP of PNG. 5MB Max per bestand."
-				>
+			<UForm :schema="schema" :state="state" class="w-full space-y-4" @submit="onSubmit">
+				<UFormField name="images">
 					<UFileUpload
 						v-model="state.images"
 						accept="image/*"
 						icon="i-lucide-image"
 						label="Sleep je afbeeldingen hier in"
 						description="PNG, JPG of WebP (max. 5MB per bestand)"
-						class="min-h-60 w-full"
+						class="max-h-[70vh] min-h-[50vh] w-full"
 						multiple
 						highlight
 						:ui="{
@@ -162,7 +170,7 @@ const { isDev } = useRuntimeConfig().public.mode
 			</UForm>
 			<div
 				v-if="!!blobHistory.length"
-				class="bg-secondary-600 mt-8 space-y-6 rounded-lg p-4 py-6"
+				class="bg-secondary-600 relative mt-8 space-y-6 rounded-lg p-4 py-6"
 			>
 				<h2 class="color=primary font-bold">Recent geüpload</h2>
 				<ul class="space-y-3">
@@ -193,11 +201,21 @@ const { isDev } = useRuntimeConfig().public.mode
 				</ul>
 
 				<UAlert
-					color="neutral"
+					color="warning"
 					icon="lucide:info"
 					description="Let op: zodra je de pagina verlaat is deze lijst van uploads verdwenen. Zorg dat je de bestandsnamen kopieert vóórdat je de pagina verlaat!"
 					variant="subtle"
 				/>
+				<UseClipboard v-slot="{ copy, copied }" :source="fullBlobList">
+					<UButton
+						size="xs"
+						variant="soft"
+						label="Kopieer alles"
+						:icon="copied ? 'lucide:check' : 'lucide:copy'"
+						class="absolute top-5 right-5"
+						@click="copy()"
+					/>
+				</UseClipboard>
 			</div>
 		</UContainer>
 	</Section>
