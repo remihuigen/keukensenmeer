@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/remihuigen/keukensenmeer/compare/v1.15.0...v1.15.1) (2025-12-14)
+
+
+### Bug Fixes
+
+* Remove cacheinvalidation from get routes ([c16ac71](https://github.com/remihuigen/keukensenmeer/commit/c16ac71bea7cd85988f93a58ba69592be21efff4))
+
 # [1.15.0](https://github.com/remihuigen/keukensenmeer/compare/v1.14.2...v1.15.0) (2025-12-14)
 
 
