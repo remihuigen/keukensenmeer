@@ -1,52 +1,44 @@
 openapi: 3.1.0
-
 info:
   title: Keukens & Meer Content API
   version: 1.0.0
   description: |
     API for managing projects, images, and content used by Keukens & Meer.
     All responses follow a standard Success / Error wrapper format.
-
 servers:
   - url: https://dev.keukensenmeer.nl
     description: Production API
-
 security:
   - BearerAuth: []
-
 tags:
   - name: Projects
     description: Project management endpoints
   - name: Images
     description: Image management endpoints
-
 paths:
   /api/gpt/projects/list-all-projects:
     get:
       operationId: listProjects
-      tags: [Projects]
+      tags:
+        - Projects
       summary: List all projects
       description: |
         Retrieves all projects, optionally filtered by publication status.
         Includes associated project images.
-
       x-ai-hint: |
         Use this endpoint to fetch an overview of all available projects.
         This endpoint is especially useful when your user's instructions are ambiguous.
         Listing all projects provides a reference set from which you can choose the correct project
         before creating, updating, or modifying anything.
-
       x-ai-risk: |
         If the dataset grows too large, paging will likely become necessary.
         Avoid loading the full list unless the user intent requires it.
-
       x-ai-expected-followups:
         - GET /api/gpt/projects/get-project?slug={slug}
         - PUT /api/gpt/projects/update-project?slug={slug}
         - PUT /api/gpt/projects/archive-project?slug={slug}
         - PUT /api/gpt/projects/update-featured-projects
         - GET /api/gpt/images/list-images-for-project?slug={slug}
-
       parameters:
         - name: status
           in: query
@@ -54,8 +46,10 @@ paths:
           description: Filter projects by publication status.
           schema:
             type: string
-            enum: ['draft', 'published', 'archived']
-
+            enum:
+              - draft
+              - published
+              - archived
       responses:
         '200':
           description: A list of projects was returned successfully.
@@ -68,51 +62,45 @@ paths:
                   summary: Successful retrieval
                   value:
                     success: true
-                    message: 'Projects retrieved successfully.'
+                    message: Projects retrieved successfully.
                     data:
                       - $ref: '#/components/examples/ExampleProjectWithImages/value'
-
         '400':
           description: Invalid query parameters
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
         '500':
           description: Unexpected server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
   /api/gpt/projects/get-project:
     get:
       operationId: getProjectBySlug
-      tags: [Projects]
+      tags:
+        - Projects
       summary: Get a project by slug
       description: |
         Retrieves a single project using its unique slug.  
         If the project cannot be found, a list of all available slugs is returned
         inside the 404 error response to help disambiguate user intent.
-
       x-ai-hint: |
         Use this endpoint whenever the user refers to a specific project.
         If the user's request is ambiguous, first call
         `list-all-projects` to determine the correct slug.
         If this endpoint returns a 404, inspect the `availableSlugs`
         field to choose the closest match and ask the user to confirm.
-
       x-ai-risk: |
         A project might not exist or may have been archived.  
         Always handle 404 responses and adjust user flow accordingly.
-
       x-ai-expected-followups:
         - GET /api/gpt/images/list-images-for-project?slug={slug}
         - PUT /api/gpt/projects/update-project?slug={slug}
         - PUT /api/gpt/projects/archive-project?slug={slug}
         - PUT /api/gpt/projects/update-featured-projects
-
       parameters:
         - name: slug
           in: query
@@ -120,7 +108,6 @@ paths:
           description: The unique slug of the requested project.
           schema:
             type: string
-
       responses:
         '200':
           description: The requested project was retrieved successfully.
@@ -133,10 +120,9 @@ paths:
                   summary: Successful project lookup
                   value:
                     success: true
-                    message: 'Project with slug "jasper-en-mariska" retrieved successfully.'
+                    message: Project with slug "jasper-en-mariska" retrieved successfully.
                     data:
                       $ref: '#/components/examples/ExampleProject/value'
-
         '404':
           description: Project not found — includes available slugs to help AI choose alternatives.
           content:
@@ -158,31 +144,29 @@ paths:
                   summary: Project not found
                   value:
                     statusCode: 404
-                    statusMessage: 'Not Found'
-                    message: 'Project with slug "kitchen-xyz" not found.'
+                    statusMessage: Not Found
+                    message: Project with slug "kitchen-xyz" not found.
                     data:
-                      x-ai-remarks: 'Slug not found — here is a list of valid slugs.'
+                      x-ai-remarks: Slug not found — here is a list of valid slugs.
                       availableSlugs:
                         - warm-oak-kitchen
                         - modern-white
                         - classic-country
-
         '500':
           description: Unexpected database or server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
   /api/gpt/projects/create-project:
     post:
       operationId: createProject
-      tags: [Projects]
+      tags:
+        - Projects
       summary: Create a new project
       description: |
         Creates a new project and optionally associates uploaded images.
         All provided images must already exist in the Cloudflare bucket.
-
       x-ai-hint: |
         Use this endpoint when the user wants to create a brand new project.
         The user must provide all important fields — title, publicTitle, styles,
@@ -196,18 +180,15 @@ paths:
 
         If the user does not know the pathname or provides a wrong one,
         first guide them to upload or verify the image.
-
       x-ai-risk: |
         - Multiple main images in the request cause a 400 error.
         - Any image not uploaded to Cloudflare will cause a 400 error.
         - Missing metadata inside Cloudflare images also triggers a 400 error.
         - If isFeatured = true, the limit of featured projects may be exceeded.
-
       x-ai-expected-followups:
         - GET /api/gpt/projects/get-project?slug={slug}
         - PUT /api/gpt/projects/update-project?slug={slug}
         - POST /api/gpt/images/add-image-to-project?slug={slug}
-
       requestBody:
         required: true
         content:
@@ -218,20 +199,20 @@ paths:
               basic-project:
                 summary: Minimal project creation payload
                 value:
-                  title: 'Warm Oak Kitchen'
-                  publicTitle: 'Jasper en Mariska'
-                  status: 'draft'
-                  styles: ['modern']
-                  description: 'A modern oak kitchen with warm tones.'
+                  title: Warm Oak Kitchen
+                  publicTitle: Jasper en Mariska
+                  status: draft
+                  styles:
+                    - modern
+                  description: A modern oak kitchen with warm tones.
                   body:
                     - type: paragraph
                       children:
-                        - text: 'This is a beautiful project description.'
+                        - text: This is a beautiful project description.
                   images:
-                    - pathname: 'kitchen-1.jpg'
-                      alt: 'A warm oak kitchen'
+                    - pathname: kitchen-1.jpg
+                      alt: A warm oak kitchen
                       isMainImage: true
-
       responses:
         '200':
           description: Project created successfully.
@@ -244,13 +225,12 @@ paths:
                   summary: Example successful creation response
                   value:
                     success: true
-                    message: 'Project created successfully.'
+                    message: Project created successfully.
                     data:
                       project:
                         $ref: '#/components/examples/ExampleProject/value'
                       images:
                         - $ref: '#/components/examples/ExampleProjectImage/value'
-
         '400':
           description:
             Validation error (multiple main images, missing metadata, invalid images, featured
@@ -264,54 +244,49 @@ paths:
                   summary: Multiple main images error
                   value:
                     statusCode: 400
-                    statusMessage: 'Bad Request'
-                    message:
-                      'Multiple main images provided. A project can have only one main image.'
+                    statusMessage: Bad Request
+                    message: Multiple main images provided. A project can have only one main image.
                     data:
-                      x-ai-remarks: 'Only one main image is allowed per project.'
+                      x-ai-remarks: Only one main image is allowed per project.
                       providedMainImages:
-                        - 'kitchen-1.jpg'
-                        - 'kitchen-2.jpg'
-
+                        - kitchen-1.jpg
+                        - kitchen-2.jpg
                 image-not-found:
                   summary: Cloudflare image not found
                   value:
                     statusCode: 400
-                    statusMessage: 'Bad Request'
-                    message: 'Some provided images do not exist in the Cloudflare bucket.'
+                    statusMessage: Bad Request
+                    message: Some provided images do not exist in the Cloudflare bucket.
                     data:
-                      x-ai-remarks: 'Upload missing images first.'
+                      x-ai-remarks: Upload missing images first.
                       invalidImages:
-                        - 'missing-image.jpg'
-
+                        - missing-image.jpg
                 invalid-metadata:
                   summary: Image missing required metadata
                   value:
                     statusCode: 400
-                    statusMessage: 'Bad Request'
+                    statusMessage: Bad Request
                     message:
-                      'Some provided images are missing required metadata in the Cloudflare bucket.'
+                      Some provided images are missing required metadata in the Cloudflare bucket.
                     data:
-                      x-ai-remarks: 'Metadata must include width, height, and type.'
+                      x-ai-remarks: Metadata must include width, height, and type.
                       imagesWithoutValidMetaData:
-                        - 'bad-meta.jpg'
-
+                        - bad-meta.jpg
         '500':
           description: Unexpected server/database error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
   /api/gpt/projects/update-project:
     put:
       operationId: updateProject
-      tags: [Projects]
+      tags:
+        - Projects
       summary: Update an existing project
       description: |
         Updates fields of a project identified by its slug.
         Supports full and partial updates.
-
       x-ai-hint: |
         Use this endpoint whenever the user wants to change information
         about an existing project. You may update one field or many fields.
@@ -327,19 +302,16 @@ paths:
         - If styles are updated, handle both full arrays and { add/remove } mutation.
         - If the project cannot be found, a list of all available slugs is returned.  
           Use this list to pick the closest match or ask the user to clarify.
-
       x-ai-risk: |
         - If neither "add" nor "remove" includes at least one item, a 400 error occurs.
         - If the slug is incorrect, you will receive a 404 and a list of valid slugs.
         - Updating the slug may break follow-up calls unless you update your internal reference.
         - Styles must remain within allowed enum values.
-
       x-ai-expected-followups:
         - GET /api/gpt/projects/get-project?slug={newSlugOrOldSlug}
         - GET /api/gpt/projects/list-all-projects
         - PUT /api/gpt/projects/archive-project?slug={slug}
         - POST /api/gpt/images/add-image-to-project?slug={slug}
-
       parameters:
         - name: slug
           in: query
@@ -347,7 +319,6 @@ paths:
           description: Slug identifying the project to update.
           schema:
             type: string
-
       requestBody:
         required: true
         content:
@@ -358,14 +329,15 @@ paths:
               update-title:
                 summary: Update only the project title
                 value:
-                  publicTitle: 'Sander & Mirthe'
+                  publicTitle: Sander & Mirthe
               update-styles:
                 summary: Incremental style update
                 value:
                   styles:
-                    add: ['modern']
-                    remove: ['landelijk']
-
+                    add:
+                      - modern
+                    remove:
+                      - landelijk
       responses:
         '200':
           description: Project updated successfully.
@@ -378,10 +350,9 @@ paths:
                   summary: Successful update
                   value:
                     success: true
-                    message: 'Project with slug "jasper-en-mariska" has been updated.'
+                    message: Project with slug "jasper-en-mariska" has been updated.
                     data:
                       - $ref: '#/components/examples/ExampleProject/value'
-
         '400':
           description: Validation error or incorrect style mutation
           content:
@@ -393,16 +364,15 @@ paths:
                   summary: No valid add/remove entries
                   value:
                     statusCode: 400
-                    statusMessage: 'Bad Request'
+                    statusMessage: Bad Request
                     message:
-                      'At least one of "add" or "remove" arrays must be provided and contain at
-                      least one style.'
+                      At least one of "add" or "remove" arrays must be provided and contain at least
+                      one style.
                     data:
-                      x-ai-remarks: 'Provide at least one style in add/remove.'
+                      x-ai-remarks: Provide at least one style in add/remove.
                       receivedStyles:
                         add: []
                         remove: []
-
         '404':
           description: Project not found — includes list of available slugs
           content:
@@ -424,33 +394,31 @@ paths:
                   summary: Project not located
                   value:
                     statusCode: 404
-                    statusMessage: 'Not Found'
-                    message: 'Project with slug "foo-bar" not found.'
+                    statusMessage: Not Found
+                    message: Project with slug "foo-bar" not found.
                     data:
-                      x-ai-remarks: 'Use available slugs to correct user intent.'
+                      x-ai-remarks: Use available slugs to correct user intent.
                       availableSlugs:
                         - warm-oak-kitchen
                         - modern-white
                         - classic-country
-
         '500':
           description: Unexpected server/database error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
   /api/gpt/projects/update-featured-projects:
     put:
       operationId: updateFeaturedProjects
-      tags: [Projects]
+      tags:
+        - Projects
       summary: Update featured projects
       description: |
         Adds or removes one or more project slugs from the list of featured projects
         displayed on the homepage.
 
         At least one of `add` or `remove` must contain at least one slug.
-
       x-ai-hint: |
         Use this endpoint when the user wants to update which projects appear
         as "featured" on the homepage.
@@ -467,18 +435,15 @@ paths:
         1. If user says "feature this project" ➜ call GET get-project, confirm slug.
         2. Call this endpoint with { add: [slug] }.
         3. Confirm new count in the response.
-
       x-ai-risk: |
         - A 400 error occurs if both `add` and `remove` are missing or empty.
         - The maximum/minimum number of featured projects is validated server-side.
         - Slugs that do not exist will not match anything.
         - Always verify slugs with list-all-projects to avoid errors.
-
       x-ai-expected-followups:
         - GET /api/gpt/projects/list-all-projects
         - GET /api/gpt/projects/get-project?slug={slug}
         - PUT /api/gpt/projects/update-project?slug={slug}
-
       requestBody:
         required: true
         content:
@@ -489,17 +454,21 @@ paths:
               add-projects:
                 summary: Add multiple featured projects
                 value:
-                  add: ['warm-oak-kitchen', 'family-white-interior']
+                  add:
+                    - warm-oak-kitchen
+                    - family-white-interior
               remove-projects:
                 summary: Remove a project from featured list
                 value:
-                  remove: ['modern-bathroom']
+                  remove:
+                    - modern-bathroom
               add-and-remove:
                 summary: Swap featured projects
                 value:
-                  add: ['kitchen-redesign']
-                  remove: ['classic-country']
-
+                  add:
+                    - kitchen-redesign
+                  remove:
+                    - classic-country
       responses:
         '200':
           description: Featured projects updated successfully.
@@ -515,10 +484,11 @@ paths:
                     message:
                       'Featured projects updated successfully. Total featured projects now: 3.'
                     data:
-                      added: ['warm-oak-kitchen']
-                      removed: ['classic-country']
+                      added:
+                        - warm-oak-kitchen
+                      removed:
+                        - classic-country
                       projectedCount: 3
-
         '400':
           description: Body missing valid add/remove entries or violates featured limit
           content:
@@ -530,42 +500,39 @@ paths:
                   summary: Invalid body
                   value:
                     statusCode: 400
-                    statusMessage: 'Bad Request'
+                    statusMessage: Bad Request
                     message:
-                      'At least one of "add" or "remove" arrays must be provided and contain at
-                      least one slug.'
+                      At least one of "add" or "remove" arrays must be provided and contain at least
+                      one slug.
                     data:
-                      x-ai-remarks: 'Provide at least one slug in add/remove.'
+                      x-ai-remarks: Provide at least one slug in add/remove.
                       receivedBody:
                         add: []
                         remove: []
-
                 exceeds-limit:
                   summary: Featured projects limit exceeded
                   value:
                     statusCode: 400
-                    statusMessage: 'Bad Request'
+                    statusMessage: Bad Request
                     message:
-                      'Adding these slugs would exceed the maximum number of featured projects.'
+                      Adding these slugs would exceed the maximum number of featured projects.
                     data:
-                      x-ai-remarks: 'Try removing some featured projects first.'
-
+                      x-ai-remarks: Try removing some featured projects first.
         '500':
           description: Unexpected server/database error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
   /api/gpt/projects/archive-project:
     put:
       operationId: archiveProject
-      tags: [Projects]
+      tags:
+        - Projects
       summary: Archive a project
       description: |
         Archives a project by updating its status to `"archived"` based on the provided slug.
         Returns the updated project as an array (even though exactly one item is expected).
-
       x-ai-hint: |
         Use this endpoint when the user explicitly wants to archive or retire a project.
         Archiving sets the project's `status` field to `"archived"`.
@@ -574,17 +541,14 @@ paths:
         1. If the user refers to a project ambiguously, call list-all-projects first.
         2. Confirm the correct slug.
         3. Call this endpoint.
-
       x-ai-risk: |
         - If the slug is incorrect or no project matches it, the response may be an empty list.
         - This endpoint does NOT validate existence before updating.
         - Consider performing a GET lookup before archiving to avoid silent failures.
-
       x-ai-expected-followups:
         - GET /api/gpt/projects/get-project?slug={slug}
         - GET /api/gpt/projects/list-all-projects
         - PUT /api/gpt/projects/update-project?slug={slug}
-
       parameters:
         - name: slug
           in: query
@@ -592,7 +556,6 @@ paths:
           description: Slug identifying the project to archive.
           schema:
             type: string
-
       responses:
         '200':
           description: The project was archived successfully.
@@ -605,21 +568,20 @@ paths:
                   summary: Successful archive operation
                   value:
                     success: true
-                    message: 'Project with slug "jasper-en-mariska" has been archived.'
+                    message: Project with slug "jasper-en-mariska" has been archived.
                     data:
                       - $ref: '#/components/examples/ExampleProject/value'
-
         '500':
           description: Unexpected server/database error occurred while archiving the project.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
   /api/gpt/images/list-images-for-project:
     get:
       operationId: listProjectImages
-      tags: [Images]
+      tags:
+        - Images
       summary: List all images for a project
       description: |
         Lists all images associated with a project identified by its slug,
@@ -627,7 +589,6 @@ paths:
 
         This endpoint is useful when determining which images already exist for a project,
         or when validating whether the user needs to upload additional images.
-
       x-ai-hint: |
         Use this endpoint whenever the user asks:
         - “Which images does this project have?”
@@ -641,18 +602,15 @@ paths:
            https://keukensenmeer.nl/_tools/upload
         3. After uploading, the user receives the image pathname.
         4. Use that pathname in the add-image endpoint.
-
       x-ai-risk: |
         - If the slug is incorrect, this returns a 404.
         - The returned list may be empty even for valid projects.
         - Image metadata comes from Cloudflare and may change after re-uploads.
         - Do not assume the order of images; use `position` if needed.
-
       x-ai-expected-followups:
         - POST /api/gpt/images/add-image-to-project
         - POST /api/gpt/images/remove-image-from-project
         - GET /api/gpt/projects/get-project?slug={slug}
-
       parameters:
         - name: slug
           in: query
@@ -660,7 +618,6 @@ paths:
           description: The slug of the project whose images you want to retrieve.
           schema:
             type: string
-
       responses:
         '200':
           description: Image list fetched successfully.
@@ -674,10 +631,9 @@ paths:
                   value:
                     success: true
                     message:
-                      'Images for project with slug "jasper-en-mariska" retrieved successfully.'
+                      Images for project with slug "jasper-en-mariska" retrieved successfully.
                     data:
                       - $ref: '#/components/examples/ExampleProjectImage/value'
-
         '404':
           description: Project slug does not exist.
           content:
@@ -689,26 +645,24 @@ paths:
                   summary: Unknown slug
                   value:
                     statusCode: 404
-                    statusMessage: 'Not Found'
-                    message: 'Project with slug "unknown-slug" not found.'
-
+                    statusMessage: Not Found
+                    message: Project with slug "unknown-slug" not found.
         '500':
           description: Unexpected server/database error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
-  /api/gpt/images/add-image-to-project:
+  /api/gpt/images/add-images-to-project:
     post:
       operationId: addProjectImages
-      tags: [Images]
+      tags:
+        - Images
       summary: Add one or more images to a project
       description: |
         Adds one or more images to a project using its slug.
-        The images must already exist in the Cloudflare bucket.  
+        The images must already exist in the Cloudflare bucket (i.e. have been uploaded by the user).  
         Metadata from Cloudflare is validated and used to populate width, height, mime type, and orientation.
-
       x-ai-hint: |
         Use this endpoint when the user wants to attach one or more images to an existing project.
 
@@ -723,19 +677,16 @@ paths:
         4. If any image has isMainImage = true, this endpoint automatically clears the previous main image.
 
         Use GET /list-images-for-project before adding to avoid duplicates or confusion.
-
       x-ai-risk: |
         - 404 if any image does not exist in Cloudflare.
         - 400 if metadata is missing (width, height, mime, etc.).
         - 404 if the project slug does not exist.
         - Setting isMainImage = true on any image overrides the current main image.
         - The return value is ALWAYS an array of inserted images.
-
       x-ai-expected-followups:
         - GET /api/gpt/images/list-images-for-project?slug={slug}
         - POST /api/gpt/images/remove-image-from-project
         - GET /api/gpt/projects/get-project?slug={slug}
-
       parameters:
         - name: slug
           in: query
@@ -743,7 +694,6 @@ paths:
           description: Slug of the project to which the images will be added.
           schema:
             type: string
-
       requestBody:
         required: true
         content:
@@ -755,21 +705,20 @@ paths:
                 summary: Add a single image
                 value:
                   images:
-                    - pathname: 'kitchen-1.jpg'
-                      alt: 'A warm oak kitchen interior'
+                    - pathname: kitchen-1.jpg
+                      alt: A warm oak kitchen interior
                       isMainImage: true
               add-multiple-images:
                 summary: Add multiple images at once
                 value:
                   images:
-                    - pathname: 'kitchen-1.jpg'
-                      alt: 'A warm oak kitchen interior'
+                    - pathname: kitchen-1.jpg
+                      alt: A warm oak kitchen interior
                       isMainImage: true
                       position: 0
-                    - pathname: 'kitchen-2.jpg'
-                      alt: 'Kitchen detail shot'
+                    - pathname: kitchen-2.jpg
+                      alt: Kitchen detail shot
                       position: 1
-
       responses:
         '200':
           description: Images were added successfully.
@@ -783,30 +732,29 @@ paths:
                   value:
                     success: true
                     message:
-                      'Image "kitchen-1.jpg" added to project with slug "jasper-en-mariska"
-                      successfully.'
+                      Image "kitchen-1.jpg" added to project with slug "jasper-en-mariska"
+                      successfully.
                     data:
                       - $ref: '#/components/examples/ExampleProjectImage/value'
                 added-multiple:
                   summary: Successful multiple images addition
                   value:
                     success: true
-                    message: '2 images added to project with slug "jasper-en-mariska" successfully.'
+                    message: 2 images added to project with slug "jasper-en-mariska" successfully.
                     data:
                       - $ref: '#/components/examples/ExampleProjectImage/value'
-                      - id: 'img-2'
-                        projectId: '018f26da-45b7-7f40-b2ac-8d17fd2e1a30'
-                        pathname: 'kitchen-2.jpg'
-                        orientation: 'landscape'
-                        alt: 'Kitchen detail shot'
+                      - id: img-2
+                        projectId: 018f26da-45b7-7f40-b2ac-8d17fd2e1a30
+                        pathname: kitchen-2.jpg
+                        orientation: landscape
+                        alt: Kitchen detail shot
                         width: 1920
                         height: 1080
-                        mime: 'image/jpeg'
+                        mime: image/jpeg
                         position: 1
                         isMainImage: false
-                        createdAt: '2024-01-01T10:00:00Z'
-                        updatedAt: '2024-01-01T10:00:00Z'
-
+                        createdAt: 2024-01-01T10:00:00Z
+                        updatedAt: 2024-01-01T10:00:00Z
         '400':
           description: Invalid metadata or validation failures.
           content:
@@ -818,22 +766,21 @@ paths:
                   summary: Missing or invalid Cloudflare metadata
                   value:
                     statusCode: 400
-                    statusMessage: 'Bad Request'
+                    statusMessage: Bad Request
                     message:
-                      'Image with pathname "broken.jpg" has invalid metadata. Please upload the
-                      image again.'
+                      Image with pathname "broken.jpg" has invalid metadata. Please upload the image
+                      again.
                     data:
-                      x-ai-remarks: 'Image metadata is incomplete or malformed.'
+                      x-ai-remarks: Image metadata is incomplete or malformed.
                       invalidFields:
-                        - 'width'
-                        - 'height'
+                        - width
+                        - height
                 wrong-type:
                   summary: No such image exists in Cloudflare
                   value:
                     statusCode: 404
-                    statusMessage: 'Not Found'
-                    message: 'Image with pathname "unknown.jpg" not found in Cloudflare bucket.'
-
+                    statusMessage: Not Found
+                    message: Image with pathname "unknown.jpg" not found in Cloudflare bucket.
         '404':
           description: Project not found.
           content:
@@ -845,20 +792,19 @@ paths:
                   summary: Unknown project slug
                   value:
                     statusCode: 404
-                    statusMessage: 'Not Found'
-                    message: 'Project with slug "unknown-slug" not found.'
-
+                    statusMessage: Not Found
+                    message: Project with slug "unknown-slug" not found.
         '500':
           description: Server/database error while adding the image.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
-  /api/gpt/images/remove-image-from-project:
+  /api/gpt/images/remove-images-from-project:
     post:
       operationId: removeProjectImages
-      tags: [Images]
+      tags:
+        - Images
       summary: Remove one or more images from a project
       description: |
         Removes one or more images from a project based on the images' pathnames.
@@ -866,28 +812,25 @@ paths:
 
         The pathnames are the same values provided to the user after uploading images via:
         https://keukensenmeer.nl/_tools/upload
-
       x-ai-hint: |
         Use this endpoint when the user wants to delete or replace one or more images attached to a project.
 
         Recommended AI workflow:
         1. First call: GET /api/gpt/images/list-images-for-project?slug={slug}
            → This gives the full list of valid pathnames.
+           → This gives you the alt text for each image, so you can describe them to the user.
         2. Confirm the correct pathnames with the user.
         3. Call this endpoint with those pathnames as an array.
         4. If removing a main image, ensure another image is marked as the new main image (if required by user intent).
-
       x-ai-risk: |
         - 404 if the project slug does not exist.
         - If no images match the provided pathnames, the result may be an empty array.
         - The backend does *not* currently return a 404 for "image not found".
         - Removing the main image may leave the project without a main image unless replaced manually.
-
       x-ai-expected-followups:
         - GET /api/gpt/images/list-images-for-project?slug={slug}
         - POST /api/gpt/images/add-image-to-project?slug={slug}
         - GET /api/gpt/projects/get-project?slug={slug}
-
       parameters:
         - name: slug
           in: query
@@ -895,7 +838,6 @@ paths:
           description: Slug of the project from which the images will be removed.
           schema:
             type: string
-
       requestBody:
         required: true
         content:
@@ -906,12 +848,15 @@ paths:
               remove-single-image:
                 summary: Remove a single image by pathname
                 value:
-                  pathnames: ['kitchen-1.jpg']
+                  pathnames:
+                    - kitchen-1.jpg
               remove-multiple-images:
                 summary: Remove multiple images at once
                 value:
-                  pathnames: ['kitchen-1.jpg', 'kitchen-2.jpg', 'kitchen-3.jpg']
-
+                  pathnames:
+                    - kitchen-1.jpg
+                    - kitchen-2.jpg
+                    - kitchen-3.jpg
       responses:
         '200':
           description: Images removed successfully.
@@ -925,43 +870,28 @@ paths:
                   value:
                     success: true
                     message:
-                      'Image "kitchen-1.jpg" has been removed from project "jasper-en-mariska".'
+                      Image "kitchen-1.jpg" has been removed from project "jasper-en-mariska".
                     data:
                       - $ref: '#/components/examples/ExampleProjectImage/value'
                 removed-multiple:
                   summary: Successful multiple images removal
                   value:
                     success: true
-                    message: '2 images have been removed from project "jasper-en-mariska".'
+                    message: 2 images have been removed from project "jasper-en-mariska".
                     data:
                       - $ref: '#/components/examples/ExampleProjectImage/value'
-                      - id: 'img-2'
-                        projectId: '018f26da-45b7-7f40-b2ac-8d17fd2e1a30'
-                        pathname: 'kitchen-2.jpg'
-                        orientation: 'landscape'
-                        alt: 'Kitchen detail shot'
+                      - id: img-2
+                        projectId: 018f26da-45b7-7f40-b2ac-8d17fd2e1a30
+                        pathname: kitchen-2.jpg
+                        orientation: landscape
+                        alt: Kitchen detail shot
                         width: 1920
                         height: 1080
-                        mime: 'image/jpeg'
+                        mime: image/jpeg
                         position: 1
                         isMainImage: false
-                        createdAt: '2024-01-01T10:00:00Z'
-                        updatedAt: '2024-01-01T10:00:00Z'
-
-        '404':
-          description: Project not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                project-not-found:
-                  summary: No such project
-                  value:
-                    statusCode: 404
-                    statusMessage: 'Not Found'
-                    message: 'Project with slug "unknown" not found.'
-
+                        createdAt: 2024-01-01T10:00:00Z
+                        updatedAt: 2024-01-01T10:00:00Z
         '400':
           description: Unexpected removal error or db failure.
           content:
@@ -973,20 +903,31 @@ paths:
                   summary: Removal failed due to database issue
                   value:
                     statusCode: 400
-                    statusMessage: 'Bad Request'
+                    statusMessage: Bad Request
                     message:
-                      'An unexpected error occurred while removing image "bad.jpg" from project
-                      "foo".'
+                      An unexpected error occurred while removing image "bad.jpg" from project
+                      "foo".
                     data:
-                      x-ai-remarks: 'An unexpected DB error occurred.'
-
+                      x-ai-remarks: An unexpected DB error occurred.
+        '404':
+          description: Project not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                project-not-found:
+                  summary: No such project
+                  value:
+                    statusCode: 404
+                    statusMessage: Not Found
+                    message: Project with slug "unknown" not found.
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
   parameters:
     AuthorizationHeader:
       name: Authorization
@@ -997,67 +938,68 @@ components:
         Format: `Authorization: Bearer <token>`.
       schema:
         type: string
-
   examples:
     ExampleProject:
       summary: Example project
       value:
-        id: '018f26da-45b7-7f40-b2ac-8d17fd2e1a30'
-        title: 'Warm Oak Kitchen'
-        publicTitle: 'Jasper en Mariska'
-        slug: 'jasper-en-mariska'
-        status: 'published'
+        id: 018f26da-45b7-7f40-b2ac-8d17fd2e1a30
+        title: Warm Oak Kitchen
+        publicTitle: Jasper en Mariska
+        slug: jasper-en-mariska
+        status: published
         isFeatured: true
         sortingPriority: 20
-        styles: ['modern']
-        description: 'A modern and warm oak interior design project.'
+        styles:
+          - modern
+        description: A modern and warm oak interior design project.
         body: []
-        createdAt: '2024-01-01T10:00:00Z'
-        updatedAt: '2024-01-10T12:00:00Z'
+        createdAt: 2024-01-01T10:00:00Z
+        updatedAt: 2024-01-10T12:00:00Z
     ExampleProjectImage:
       summary: Example project image
       value:
-        id: 'img-1'
-        projectId: '018f26da-45b7-7f40-b2ac-8d17fd2e1a30'
-        pathname: 'kitchen-1.jpg'
-        orientation: 'landscape'
-        alt: 'A warm oak kitchen'
+        id: img-1
+        projectId: 018f26da-45b7-7f40-b2ac-8d17fd2e1a30
+        pathname: kitchen-1.jpg
+        orientation: landscape
+        alt: A warm oak kitchen
         width: 1920
         height: 1080
-        mime: 'image/jpeg'
+        mime: image/jpeg
         position: 0
         isMainImage: true
-        createdAt: '2024-01-01T10:00:00Z'
-        updatedAt: '2024-01-01T10:00:00Z'
+        createdAt: 2024-01-01T10:00:00Z
+        updatedAt: 2024-01-01T10:00:00Z
     ExampleProjectWithImages:
       summary: Example project with images
       value:
-        id: '018f26da-45b7-7f40-b2ac-8d17fd2e1a30'
-        title: 'Warm Oak Kitchen'
-        publicTitle: 'Jasper en Mariska'
-        slug: 'jasper-en-mariska'
-        status: 'published'
+        id: 018f26da-45b7-7f40-b2ac-8d17fd2e1a30
+        title: Warm Oak Kitchen
+        publicTitle: Jasper en Mariska
+        slug: jasper-en-mariska
+        status: published
         isFeatured: true
         sortingPriority: 20
-        styles: ['modern']
-        description: 'A modern and warm oak interior design project.'
+        styles:
+          - modern
+        description: A modern and warm oak interior design project.
         body: []
-        createdAt: '2024-01-01T10:00:00Z'
-        updatedAt: '2024-01-10T12:00:00Z'
+        createdAt: 2024-01-01T10:00:00Z
+        updatedAt: 2024-01-10T12:00:00Z
         images:
           - $ref: '#/components/examples/ExampleProjectImage/value'
-  ##############################################
-  # SUCCESS / ERROR WRAPPERS
-  ##############################################
-
   schemas:
     SuccessResponse:
       type: object
-      required: [success, message, data]
+      required:
+        - success
+        - message
+        - data
       properties:
         success:
           type: boolean
-          enum: [true]
+          enum:
+            - true
         message:
           type: string
         data:
@@ -1065,7 +1007,9 @@ components:
       description: Standard success wrapper returned by all endpoints
     ErrorResponse:
       type: object
-      required: [statusCode, message]
+      required:
+        - statusCode
+        - message
       properties:
         statusCode:
           type: integer
@@ -1089,11 +1033,6 @@ components:
             data:
               nullable: true
       description: Standard structured error response
-
-    ##############################################
-    # DOMAIN: PROJECT
-    ##############################################
-
     Project:
       type: object
       required:
@@ -1121,7 +1060,10 @@ components:
           type: string
         status:
           type: string
-          enum: ['draft', 'published', 'archived']
+          enum:
+            - draft
+            - published
+            - archived
         isFeatured:
           type: boolean
         sortingPriority:
@@ -1132,7 +1074,11 @@ components:
           type: array
           items:
             type: string
-            enum: ['robuust', 'modern', 'landelijk', 'klassiek']
+            enum:
+              - robuust
+              - modern
+              - landelijk
+              - klassiek
         description:
           type: string
         body:
@@ -1145,12 +1091,10 @@ components:
         updatedAt:
           type: string
           format: date-time
-
     ProjectList:
       type: array
       items:
         $ref: '#/components/schemas/Project'
-
     ProjectCreate:
       type: object
       required:
@@ -1170,8 +1114,10 @@ components:
           description: Slug is generated automatically on the server.
         status:
           type: string
-          enum: ['draft', 'published']
-          default: 'draft'
+          enum:
+            - draft
+            - published
+          default: draft
         isFeatured:
           type: boolean
           nullable: true
@@ -1184,7 +1130,11 @@ components:
           type: array
           items:
             type: string
-            enum: ['robuust', 'modern', 'landelijk', 'klassiek']
+            enum:
+              - robuust
+              - modern
+              - landelijk
+              - klassiek
         description:
           type: string
         body:
@@ -1196,7 +1146,6 @@ components:
           nullable: true
           items:
             $ref: '#/components/schemas/ImageCreate'
-
     ProjectUpdate:
       type: object
       description: Payload used to update an existing project.
@@ -1211,7 +1160,10 @@ components:
           maximum: 100
         status:
           type: string
-          enum: ['draft', 'published', 'archived']
+          enum:
+            - draft
+            - published
+            - archived
         description:
           type: string
         body:
@@ -1223,20 +1175,31 @@ components:
             - type: array
               items:
                 type: string
-                enum: ['robuust', 'modern', 'landelijk', 'klassiek']
+                enum:
+                  - robuust
+                  - modern
+                  - landelijk
+                  - klassiek
             - type: object
               properties:
                 add:
                   type: array
                   items:
                     type: string
-                    enum: ['robuust', 'modern', 'landelijk', 'klassiek']
+                    enum:
+                      - robuust
+                      - modern
+                      - landelijk
+                      - klassiek
                 remove:
                   type: array
                   items:
                     type: string
-                    enum: ['robuust', 'modern', 'landelijk', 'klassiek']
-
+                    enum:
+                      - robuust
+                      - modern
+                      - landelijk
+                      - klassiek
     Success_ProjectList:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
@@ -1244,7 +1207,6 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/ProjectList'
-
     Success_Project:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
@@ -1252,7 +1214,6 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/Project'
-
     Success_ProjectWithImagesList:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
@@ -1267,7 +1228,6 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/ProjectImage'
-
     ProjectCreateResponseObject:
       type: object
       properties:
@@ -1278,7 +1238,6 @@ components:
           items:
             $ref: '#/components/schemas/ProjectImage'
       description: The created project and any inserted images.
-
     Success_ProjectCreateResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
@@ -1286,7 +1245,6 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/ProjectCreateResponseObject'
-
     UpdateFeaturedProjectsRequest:
       type: object
       description: |
@@ -1305,7 +1263,6 @@ components:
             type: string
           nullable: true
           description: Slugs to remove from featured list.
-
     UpdateFeaturedProjectsResult:
       type: object
       properties:
@@ -1319,7 +1276,6 @@ components:
             type: string
         projectedCount:
           type: integer
-
     Success_UpdateFeaturedProjects:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
@@ -1327,12 +1283,10 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/UpdateFeaturedProjectsResult'
-
     ProjectImageList:
       type: array
       items:
         $ref: '#/components/schemas/ProjectImage'
-
     Success_ProjectImageList:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
@@ -1340,10 +1294,6 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/ProjectImageList'
-    ##############################################
-    # DOMAIN: IMAGE
-    ##############################################
-
     ProjectImage:
       type: object
       required:
@@ -1368,7 +1318,10 @@ components:
           type: string
         orientation:
           type: string
-          enum: ['landscape', 'portrait', 'square']
+          enum:
+            - landscape
+            - portrait
+            - square
         alt:
           type: string
         width:
@@ -1385,10 +1338,11 @@ components:
           type: string
         updatedAt:
           type: string
-
     ImageCreate:
       type: object
-      required: [pathname, alt]
+      required:
+        - pathname
+        - alt
       properties:
         pathname:
           type: string
@@ -1402,10 +1356,10 @@ components:
           nullable: true
       description:
         Initial image data provided by the user. Metadata is validated against Cloudflare.
-
     AddImages:
       type: object
-      required: [images]
+      required:
+        - images
       properties:
         images:
           type: array
@@ -1413,18 +1367,18 @@ components:
             $ref: '#/components/schemas/ImageCreate'
           minItems: 1
           description: Array of one or more images to add to the project.
-
     DeleteImage:
       type: object
-      required: [pathname]
+      required:
+        - pathname
       properties:
         pathname:
           type: string
           description: The pathname of the image to remove from the project.
-
     DeleteImages:
       type: object
-      required: [pathnames]
+      required:
+        - pathnames
       properties:
         pathnames:
           type: array
@@ -1432,31 +1386,28 @@ components:
             type: string
           minItems: 1
           description: Array of pathnames of images to remove from the project.
-
-    ##############################################
-    # BODY NODE SCHEMAS
-    ##############################################
-
     BodyNode:
       oneOf:
         - $ref: '#/components/schemas/ParagraphNode'
       description: A single node in the project body.
-
     ParagraphNode:
       type: object
-      required: [type, children]
+      required:
+        - type
+        - children
       properties:
         type:
           type: string
-          enum: ['paragraph']
+          enum:
+            - paragraph
         children:
           type: array
           items:
             $ref: '#/components/schemas/TextNode'
-
     TextNode:
       type: object
-      required: [text]
+      required:
+        - text
       description: A plain text node within a paragraph.
       properties:
         text:
