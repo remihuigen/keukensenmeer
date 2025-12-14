@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.1](https://github.com/remihuigen/keukensenmeer/compare/v1.12.0...v1.12.1) (2025-12-14)
+
+
+### Bug Fixes
+
+* Type issue ([007a9a9](https://github.com/remihuigen/keukensenmeer/commit/007a9a9ae745bd279d1f4b416818b5f4116745d1))
+
 # [1.12.0](https://github.com/remihuigen/keukensenmeer/compare/v1.11.0...v1.12.0) (2025-12-13)
 
 
