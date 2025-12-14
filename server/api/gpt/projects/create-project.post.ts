@@ -14,6 +14,7 @@ import { validateZodBodySchema } from '~~/server/utils/validation'
 import { validateBlobMetaData } from '~~/server/utils/validation/validateBlobMetaData';
 import { slugify } from '~~/server/utils/slugify'
 import type { BlobObject } from '@nuxthub/core/blob'
+import { invalidateProjectCaches } from '~~/server/utils/invalidateCacheBases'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
@@ -151,7 +152,8 @@ export default defineEventHandler(async (event) => {
     insertedImages.push(...(images || []))
   }
 
+  // Invalidate relevant caches
+  await invalidateProjectCaches()
+
   return createSuccessResponse({ project, images: insertedImages }, 'Project created successfully.')
-
-
 })

@@ -14,6 +14,7 @@ import { inArray } from 'drizzle-orm'
 import { validateNumberOfFeaturedProjects } from '~~/server/utils/validateNumberOfFeaturedProjects'
 import { validateZodBodySchema } from '~~/server/utils/validation'
 import { updateFeaturedProjectsQuerySchema } from '~~/server/utils/validation/payloads'
+import { invalidateProjectCaches } from '~~/server/utils/invalidateCacheBases'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
@@ -64,6 +65,10 @@ export default defineEventHandler(async (event) => {
         removed.push(project.slug)
       }
     }
+
+    // Invalidate relevant caches
+    await invalidateProjectCaches()
+
 
     return createSuccessResponse({
       added,

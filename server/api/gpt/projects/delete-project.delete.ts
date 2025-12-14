@@ -11,6 +11,7 @@ import { schema, db } from 'hub:db'
 import { eq } from 'drizzle-orm'
 import { validateZodQuerySchema } from '~~/server/utils/validation'
 import { SlugQuerySchema, ConfirmationPasswordSchema } from '~~/server/utils/validation/queries'
+import { invalidateProjectCaches } from '~~/server/utils/invalidateCacheBases'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
@@ -32,6 +33,9 @@ export default defineEventHandler(async (event) => {
       .delete(schema.projects)
       .where(eq(schema.projects.slug, slug))
       .returning()
+
+    // Invalidate relevant caches
+    await invalidateProjectCaches()
 
     return createSuccessResponse(result, `Project with slug "${slug}" has been deleted.`)
   } catch (error) {

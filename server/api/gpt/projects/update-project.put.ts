@@ -9,8 +9,10 @@
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 import { validateZodQuerySchema, validateZodBodySchema } from '~~/server/utils/validation'
 import { projectUpdateSchema } from '~~/server/utils/validation/payloads'
-import { getAllProjectSlugs } from '~~/server/utils/getAllProjectSlugs.ts'
+import { getAllProjectSlugs } from '~~/server/utils/getAllProjectSlugs'
 import { slugify } from '~~/server/utils/slugify'
+import { invalidateProjectCaches } from '~~/server/utils/invalidateCacheBases'
+
 import { schema, db } from 'hub:db'
 import { eq } from 'drizzle-orm'
 import type { Style } from '~~/server/db/schema/fields/enums'
@@ -107,6 +109,9 @@ export default defineEventHandler(async (event) => {
       .set(resolvedPayload)
       .where(eq(schema.projects.slug, slug))
       .returning()
+
+    // Invalidate relevant caches
+    await invalidateProjectCaches()
 
     return createSuccessResponse(result, `Project with slug "${slug}" has been updated.`)
   } catch (error) {
