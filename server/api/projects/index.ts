@@ -3,7 +3,7 @@
  */
 
 import { schema, db } from 'hub:db'
-import { eq } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 
 export default defineCachedEventHandler(async (_event) => {
   try {
@@ -15,7 +15,7 @@ export default defineCachedEventHandler(async (_event) => {
             where: eq(schema.projectImages.isMainImage, true)
           }
         },
-        orderBy: (project, { desc }) => [desc(project.sortingPriority)]
+        orderBy: [desc(schema.projects.sortingPriority)],
       })
     }
   } catch (error) {
