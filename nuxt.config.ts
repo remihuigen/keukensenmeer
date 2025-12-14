@@ -85,7 +85,6 @@ export default defineNuxtConfig({
 
   ssr: true,
 
-  // Disable caching in development to prevent confusion
   routeRules: {
     '/': {
       cache: {
@@ -107,6 +106,7 @@ export default defineNuxtConfig({
     }
   },
 
+  // Disable caching in development to prevent confusion
   $development: {
     routeRules: {
       '/**': { cache: false },
@@ -148,7 +148,6 @@ export default defineNuxtConfig({
         cache: false
       },
     },
-
   },
 
 
