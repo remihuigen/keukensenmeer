@@ -922,6 +922,90 @@ paths:
                     statusCode: 404
                     statusMessage: Not Found
                     message: Project with slug "unknown" not found.
+  /api/gpt/projects/delete-project:
+    delete:
+      operationId: deleteProject
+      tags: [Projects]
+      summary: Permanently delete a project
+      description: |
+        Permanently deletes a project and all associated data.
+        Requires an explicit confirmation password to authorize deletion.
+
+      x-ai-hint: |
+        Use this action ONLY when the user explicitly asks to permanently delete a project.
+
+        This operation is irreversible.
+        Always ask the user for clear confirmation AND the confirmation password
+        before executing this action. Their password will mzke them think of their grandchild.
+
+      x-ai-risk: |
+        - This action cannot be undone.
+        - An invalid confirmation password results in a 403 error.
+        - If the slug does not exist, an empty list is returned.
+        - Never execute this action without explicit user confirmation.
+
+      x-ai-expected-followups:
+        - GET /api/gpt/projects/list-all-projects
+
+      security:
+        - BearerAuth: []
+
+      parameters:
+        - name: slug
+          in: query
+          required: true
+          description: The unique slug of the project to delete.
+          schema:
+            type: string
+
+        - name: confirmationPassword
+          in: query
+          required: true
+          description: Confirmation password required to authorize permanent deletion.
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Project was deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success_ProjectList'
+              examples:
+                deleted:
+                  summary: Project deleted
+                  value:
+                    success: true
+                    message: 'Project with slug "jasper-en-mariska" has been deleted.'
+                    data:
+                      - $ref: '#/components/examples/ExampleProject/value'
+
+        '403':
+          description: Invalid confirmation password.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid-password:
+                  summary: Invalid confirmation password
+                  value:
+                    statusCode: 403
+                    statusMessage: 'Forbidden'
+                    message: 'Invalid confirmation password. Project deletion is not authorized.'
+                    data:
+                      x-ai-remarks: 'The confirmation password is incorrect.'
+                      hint:
+                        'The confirmation password should make the user think of their grandchild.'
+
+        '500':
+          description: Database error occurred while deleting the project.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   securitySchemes:
     BearerAuth:

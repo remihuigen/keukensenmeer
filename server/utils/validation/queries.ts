@@ -8,3 +8,7 @@ export const SlugQuerySchema = z.object({
 export const StatusQuerySchema = z.object({
   status: z.enum(statusEnum).optional().describe('The publication status of the project'),
 })
+
+export const ConfirmationPasswordSchema = z.object({
+  confirmationPassword: z.string().min(1, 'A confirmation password is required. The user should think of their grand child.').describe('The confirmation password to authorize the operation'),
+})
