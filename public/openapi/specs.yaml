@@ -701,35 +701,35 @@ paths:
 
   /api/gpt/images/add-image-to-project:
     post:
-      operationId: addProjectImage
+      operationId: addProjectImages
       tags: [Images]
-      summary: Add an image to a project
+      summary: Add one or more images to a project
       description: |
-        Adds a new image to a project using its slug.
-        The image must already exist in the Cloudflare bucket.  
+        Adds one or more images to a project using its slug.
+        The images must already exist in the Cloudflare bucket.  
         Metadata from Cloudflare is validated and used to populate width, height, mime type, and orientation.
 
       x-ai-hint: |
-        Use this endpoint when the user wants to attach a new image to an existing project.
+        Use this endpoint when the user wants to attach one or more images to an existing project.
 
         The user obtains valid image pathnames by uploading images via:
         **https://keukensenmeer.nl/_tools/upload**
 
         IMAGE WORKFLOW FOR AI AGENTS:
-        1. Ask the user to upload the image via:
+        1. Ask the user to upload the images via:
            https://keukensenmeer.nl/_tools/upload
-        2. The UI provides a **pathname** (e.g. "kitchen-1.jpg").
-        3. Pass that pathname into this endpoint.
-        4. If isMainImage = true, this endpoint automatically clears the previous main image.
+        2. The UI provides pathnames (e.g. "kitchen-1.jpg", "kitchen-2.jpg").
+        3. Pass those pathnames as an array into this endpoint.
+        4. If any image has isMainImage = true, this endpoint automatically clears the previous main image.
 
         Use GET /list-images-for-project before adding to avoid duplicates or confusion.
 
       x-ai-risk: |
-        - 404 if the image does not exist in Cloudflare.
+        - 404 if any image does not exist in Cloudflare.
         - 400 if metadata is missing (width, height, mime, etc.).
         - 404 if the project slug does not exist.
-        - Setting isMainImage = true overrides the current main image.
-        - The return value is ALWAYS an array, even for a single inserted image.
+        - Setting isMainImage = true on any image overrides the current main image.
+        - The return value is ALWAYS an array of inserted images.
 
       x-ai-expected-followups:
         - GET /api/gpt/images/list-images-for-project?slug={slug}
@@ -740,7 +740,7 @@ paths:
         - name: slug
           in: query
           required: true
-          description: Slug of the project to which the image will be added.
+          description: Slug of the project to which the images will be added.
           schema:
             type: string
 
@@ -749,25 +749,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ImageCreate'
+              $ref: '#/components/schemas/AddImages'
             examples:
-              add-basic-image:
-                summary: Minimal valid image creation payload
+              add-single-image:
+                summary: Add a single image
                 value:
-                  pathname: 'kitchen-1.jpg'
-                  alt: 'A warm oak kitchen interior'
-                  isMainImage: true
+                  images:
+                    - pathname: 'kitchen-1.jpg'
+                      alt: 'A warm oak kitchen interior'
+                      isMainImage: true
+              add-multiple-images:
+                summary: Add multiple images at once
+                value:
+                  images:
+                    - pathname: 'kitchen-1.jpg'
+                      alt: 'A warm oak kitchen interior'
+                      isMainImage: true
+                      position: 0
+                    - pathname: 'kitchen-2.jpg'
+                      alt: 'Kitchen detail shot'
+                      position: 1
 
       responses:
         '200':
-          description: Image was added successfully.
+          description: Images were added successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success_ProjectImageList'
               examples:
-                added:
-                  summary: Successful image addition
+                added-single:
+                  summary: Successful single image addition
                   value:
                     success: true
                     message:
@@ -775,6 +787,25 @@ paths:
                       successfully.'
                     data:
                       - $ref: '#/components/examples/ExampleProjectImage/value'
+                added-multiple:
+                  summary: Successful multiple images addition
+                  value:
+                    success: true
+                    message: '2 images added to project with slug "jasper-en-mariska" successfully.'
+                    data:
+                      - $ref: '#/components/examples/ExampleProjectImage/value'
+                      - id: 'img-2'
+                        projectId: '018f26da-45b7-7f40-b2ac-8d17fd2e1a30'
+                        pathname: 'kitchen-2.jpg'
+                        orientation: 'landscape'
+                        alt: 'Kitchen detail shot'
+                        width: 1920
+                        height: 1080
+                        mime: 'image/jpeg'
+                        position: 1
+                        isMainImage: false
+                        createdAt: '2024-01-01T10:00:00Z'
+                        updatedAt: '2024-01-01T10:00:00Z'
 
         '400':
           description: Invalid metadata or validation failures.
@@ -826,29 +857,29 @@ paths:
 
   /api/gpt/images/remove-image-from-project:
     post:
-      operationId: removeProjectImage
+      operationId: removeProjectImages
       tags: [Images]
-      summary: Remove an image from a project
+      summary: Remove one or more images from a project
       description: |
-        Removes a specific image from a project based on the image's pathname.
-        The project must exist, and the pathname must match an image currently linked to the project.
+        Removes one or more images from a project based on the images' pathnames.
+        The project must exist, and the pathnames must match images currently linked to the project.
 
-        The pathname is the same value provided to the user after uploading images via:
+        The pathnames are the same values provided to the user after uploading images via:
         https://keukensenmeer.nl/_tools/upload
 
       x-ai-hint: |
-        Use this endpoint when the user wants to delete or replace an image attached to a project.
+        Use this endpoint when the user wants to delete or replace one or more images attached to a project.
 
         Recommended AI workflow:
         1. First call: GET /api/gpt/images/list-images-for-project?slug={slug}
            → This gives the full list of valid pathnames.
-        2. Confirm the correct pathname with the user.
-        3. Call this endpoint with that pathname.
+        2. Confirm the correct pathnames with the user.
+        3. Call this endpoint with those pathnames as an array.
         4. If removing a main image, ensure another image is marked as the new main image (if required by user intent).
 
       x-ai-risk: |
         - 404 if the project slug does not exist.
-        - If no image matches the provided pathname, the result may be an empty array.
+        - If no images match the provided pathnames, the result may be an empty array.
         - The backend does *not* currently return a 404 for "image not found".
         - Removing the main image may leave the project without a main image unless replaced manually.
 
@@ -861,7 +892,7 @@ paths:
         - name: slug
           in: query
           required: true
-          description: Slug of the project from which the image will be removed.
+          description: Slug of the project from which the images will be removed.
           schema:
             type: string
 
@@ -870,29 +901,52 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteImage'
+              $ref: '#/components/schemas/DeleteImages'
             examples:
-              remove-image:
-                summary: Remove a specific image by pathname
+              remove-single-image:
+                summary: Remove a single image by pathname
                 value:
-                  pathname: 'kitchen-1.jpg'
+                  pathnames: ['kitchen-1.jpg']
+              remove-multiple-images:
+                summary: Remove multiple images at once
+                value:
+                  pathnames: ['kitchen-1.jpg', 'kitchen-2.jpg', 'kitchen-3.jpg']
 
       responses:
         '200':
-          description: Image removed successfully.
+          description: Images removed successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success_ProjectImageList'
               examples:
-                removed:
-                  summary: Successful removal
+                removed-single:
+                  summary: Successful single image removal
                   value:
                     success: true
                     message:
                       'Image "kitchen-1.jpg" has been removed from project "jasper-en-mariska".'
                     data:
                       - $ref: '#/components/examples/ExampleProjectImage/value'
+                removed-multiple:
+                  summary: Successful multiple images removal
+                  value:
+                    success: true
+                    message: '2 images have been removed from project "jasper-en-mariska".'
+                    data:
+                      - $ref: '#/components/examples/ExampleProjectImage/value'
+                      - id: 'img-2'
+                        projectId: '018f26da-45b7-7f40-b2ac-8d17fd2e1a30'
+                        pathname: 'kitchen-2.jpg'
+                        orientation: 'landscape'
+                        alt: 'Kitchen detail shot'
+                        width: 1920
+                        height: 1080
+                        mime: 'image/jpeg'
+                        position: 1
+                        isMainImage: false
+                        createdAt: '2024-01-01T10:00:00Z'
+                        updatedAt: '2024-01-01T10:00:00Z'
 
         '404':
           description: Project not found.
@@ -1349,6 +1403,17 @@ components:
       description:
         Initial image data provided by the user. Metadata is validated against Cloudflare.
 
+    AddImages:
+      type: object
+      required: [images]
+      properties:
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageCreate'
+          minItems: 1
+          description: Array of one or more images to add to the project.
+
     DeleteImage:
       type: object
       required: [pathname]
@@ -1356,6 +1421,17 @@ components:
         pathname:
           type: string
           description: The pathname of the image to remove from the project.
+
+    DeleteImages:
+      type: object
+      required: [pathnames]
+      properties:
+        pathnames:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: Array of pathnames of images to remove from the project.
 
     ##############################################
     # BODY NODE SCHEMAS

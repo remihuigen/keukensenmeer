@@ -258,9 +258,21 @@ export const updateFeaturedProjectsQuerySchema = z.object({
 })
 
 /**
- * Schema for deleting an image from a project.
- * Contains the pathname of the image to be removed.
+ * Schema for deleting one or more images from a project.
+ * Contains an array of pathnames of images to be removed.
  */
 export const deleteImageSchema = z.object({
-  pathname: z.string().min(1).describe('The pathname of the image to be removed from the project, as stored in the Cloudflare bucket')
+  pathnames: z.array(z.string().min(1)).min(1).describe('Array of pathnames of images to be removed from the project, as stored in the Cloudflare bucket')
 })
+
+export type DeleteImageSchema = z.infer<typeof deleteImageSchema>
+
+/**
+ * Schema for adding one or more images to a project.
+ * Contains an array of image data.
+ */
+export const addImagesSchema = z.object({
+  images: z.array(imageCreateSchema).min(1).describe('Array of images to add to the project')
+})
+
+export type AddImagesSchema = z.infer<typeof addImagesSchema>
