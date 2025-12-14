@@ -24,13 +24,17 @@ export default defineEventHandler(async (event) => {
   const uploadedBlobs: BlobObject[] = []
 
   for (const file of files) {
-    if (!file.data) throw createError({ status: 400, message: 'Missing file data' })
+    const filename = file.filename || 'unknown file'
+    
+    if (!file.data) {
+      throw createError({ status: 400, message: `Missing file data for "${filename}"` })
+    }
 
     const { success } = typeSchema.safeParse(file.type)
     if (!success) {
       throw createError({ 
         status: 400, 
-        message: `Invalid file type. Accepted types: ${ACCEPTED_IMAGE_TYPES.join(', ')}` 
+        message: `Invalid file type for "${filename}". Accepted types: ${ACCEPTED_IMAGE_TYPES.join(', ')}` 
       })
     }
 
@@ -39,7 +43,10 @@ export default defineEventHandler(async (event) => {
     const { width, height } = dimensions
 
     if (!width || !height) {
-      throw createError({ status: 400, message: 'Could not extract image dimensions' })
+      throw createError({ 
+        status: 400, 
+        message: `Could not extract image dimensions for "${filename}"` 
+      })
     }
 
     // Upload single file with metadata
