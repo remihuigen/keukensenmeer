@@ -20,58 +20,83 @@ export default defineEventHandler(async (event) => {
   const { slug } = validateZodQuerySchema(event, SlugQuerySchema)
   const body = await validateZodBodySchema(event, addImagesSchema)
 
-  // Validate all blobs exist and have valid metadata
-  const validatedImages: Array<{
-    pathname: string
-    alt: string
-    position: number
-    isMainImage: boolean
-    width: number
-    height: number
-    type: string
-  }> = []
+  // Validate all blobs exist and have valid metadata (concurrently for performance)
+  const validationResults = await Promise.allSettled(
+    body.images.map(async (imageInput) => {
+      // Fetch image metadata from Cloudflare bucket
+      const { result: blobObject, error: blobError } = await safeAsync(async () => {
+        return await blob.head(imageInput.pathname)
+      })
 
-  for (const imageInput of body.images) {
-    // Fetch image metadata from Cloudflare bucket
-    const { result: blobObject, error: blobError } = await safeAsync(async () => {
-      return await blob.head(imageInput.pathname)
+      if (blobError) {
+        throw createError({
+          statusCode: 500,
+          message: `An error occurred while retrieving the image "${imageInput.pathname}" from Cloudflare bucket.`,
+          data: { error: blobError }
+        })
+      }
+
+      if (!blobObject) {
+        throw createError({
+          statusCode: 404,
+          message: `Image with pathname "${imageInput.pathname}" not found in Cloudflare bucket. Please upload the image again.`,
+        })
+      }
+
+      const validatedBlob = validateBlobMetaData(blobObject)
+
+      if (!validatedBlob.isValid) {
+        throw createError({
+          statusCode: 400,
+          message: `Image with pathname "${imageInput.pathname}" has invalid metadata. Please upload the image again.`,
+          data: { invalidFields: validatedBlob.invalidFields }
+        })
+      }
+
+      return {
+        pathname: imageInput.pathname,
+        alt: imageInput.alt,
+        position: imageInput.position || 0,
+        isMainImage: imageInput.isMainImage || false,
+        width: validatedBlob.data.width,
+        height: validatedBlob.data.height,
+        type: validatedBlob.data.type
+      }
     })
+  )
 
-    if (blobError) {
-      createErrorResponse({
-        statusCode: 500,
-        message: `An error occurred while retrieving the image "${imageInput.pathname}" from Cloudflare bucket.`,
-        error: blobError
-      })
-    }
+  // Collect all errors if any
+  const errors = validationResults
+    .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+    .map(result => result.reason)
 
-    if (!blobObject) {
-      createErrorResponse({
-        statusCode: 404,
-        message: `Image with pathname "${imageInput.pathname}" not found in Cloudflare bucket. Please upload the image again.`,
-      })
-    }
-
-    const validatedBlob = validateBlobMetaData(blobObject)
-
-    if (!validatedBlob.isValid) {
-      createErrorResponse({
-        statusCode: 400,
-        message: `Image with pathname "${imageInput.pathname}" has invalid metadata. Please upload the image again.`,
-        data: { invalidFields: validatedBlob.invalidFields }
-      })
-    }
-
-    validatedImages.push({
-      pathname: imageInput.pathname,
-      alt: imageInput.alt,
-      position: imageInput.position || 0,
-      isMainImage: imageInput.isMainImage || false,
-      width: validatedBlob.data.width,
-      height: validatedBlob.data.height,
-      type: validatedBlob.data.type
+  if (errors.length > 0) {
+    // Return the first error with context about total failures
+    const firstError = errors[0]
+    createErrorResponse({
+      statusCode: firstError.statusCode || 500,
+      message: errors.length === 1 
+        ? firstError.message 
+        : `${errors.length} images failed validation. First error: ${firstError.message}`,
+      data: {
+        totalErrors: errors.length,
+        errors: errors.map(e => ({ message: e.message, pathname: e.data?.pathname }))
+      }
     })
   }
+
+  // Extract validated images from successful results
+  const validatedImages = validationResults
+    .filter((result) => result.status === 'fulfilled')
+    .map(result => (result as PromiseFulfilledResult<{
+      pathname: string
+      alt: string
+      position: number
+      isMainImage: boolean
+      width: number
+      height: number
+      type: string
+    }>).value)
 
   // Fetch project to get its ID
   const { result: project, error: projectError } = await safeAsync(async () => {
