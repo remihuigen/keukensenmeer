@@ -10,7 +10,6 @@ import { schema, db } from 'hub:db'
 import { eq } from 'drizzle-orm'
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 import { validateZodQuerySchema } from '~~/server/utils/validation'
-import { invalidateProjectCaches } from '~~/server/utils/invalidateCacheBases'
 
 export default defineEventHandler(async (event) => {
   authenticateRequest(event, { tokenType: 'gpt' }) // Returns a 403 if authentication fails
@@ -47,9 +46,6 @@ export default defineEventHandler(async (event) => {
     const data = await db.query.projectImages.findMany({
       where: eq(schema.projectImages.projectId, project.id),
     })
-
-    // Invalidate relevant caches
-    await invalidateProjectCaches()
 
     return createSuccessResponse(
       data,
