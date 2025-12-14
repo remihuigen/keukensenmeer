@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.1](https://github.com/remihuigen/keukensenmeer/compare/v1.13.0...v1.13.1) (2025-12-14)
+
+
+### Bug Fixes
+
+* Drop transaction ([8add123](https://github.com/remihuigen/keukensenmeer/commit/8add123232e2927bc4610dd8d5409c921bc853dc))
+
 # [1.13.0](https://github.com/remihuigen/keukensenmeer/compare/v1.12.1...v1.13.0) (2025-12-14)
 
 
