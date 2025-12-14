@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.2](https://github.com/remihuigen/keukensenmeer/compare/v1.15.1...v1.15.2) (2025-12-14)
+
+
+### Bug Fixes
+
+* Add proper cache invalidation on deploy ([b7df6c3](https://github.com/remihuigen/keukensenmeer/commit/b7df6c367772f89bfdfbfc85ffa65c89aa8fc392))
+
 ## [1.15.1](https://github.com/remihuigen/keukensenmeer/compare/v1.15.0...v1.15.1) (2025-12-14)
 
 
