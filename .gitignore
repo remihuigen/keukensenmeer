@@ -43,8 +43,8 @@ nuxt.d.ts
 .secrets
 .secret
 
-keukensenmeer.code-workspace
-
+# VS Code workspace files
+*.code-workspace
 
 # Auto generated data files
 data/projects/index.ts
