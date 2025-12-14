@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.1](https://github.com/remihuigen/keukensenmeer/compare/v1.14.0...v1.14.1) (2025-12-14)
+
+
+### Bug Fixes
+
+* Disable prerendering ([242ca22](https://github.com/remihuigen/keukensenmeer/commit/242ca22105d30f44024e05ed295888ad32c45392))
+
 # [1.14.0](https://github.com/remihuigen/keukensenmeer/compare/v1.13.1...v1.14.0) (2025-12-14)
 
 
