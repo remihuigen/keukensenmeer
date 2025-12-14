@@ -16,8 +16,9 @@ export default defineEventHandler(async (event) => {
 
   const { slug } = validateZodQuerySchema(event, SlugQuerySchema)
 
-  try {
-    const project = await db
+  // Fetch project to get its ID
+  const { result: project, error } = await safeAsync(async () => {
+    return await db
       .select({
         id: schema.projects.id
       })
@@ -25,14 +26,22 @@ export default defineEventHandler(async (event) => {
       .where(eq(schema.projects.slug, slug))
       .limit(1)
       .then((results) => results[0] || null)
+  })
+  if (error) {
+    createErrorResponse({
+      statusCode: 500,
+      message: `An error occurred while retrieving the project with slug "${slug}" from the database.`,
+      error
+    })
+  }
+  if (!project) {
+    createErrorResponse({
+      statusCode: 404,
+      message: `Project with slug "${slug}" not found.`,
+    })
+  }
 
-    if (!project) {
-      createErrorResponse({
-        statusCode: 404,
-        message: `Project with slug "${slug}" not found.`,
-      })
-    }
-
+  try {
     return createSuccessResponse(
       await db.query.projectImages.findMany({
         where: eq(schema.projectImages.projectId, project.id),

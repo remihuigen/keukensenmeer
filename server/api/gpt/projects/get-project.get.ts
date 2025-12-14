@@ -17,33 +17,36 @@ export default defineEventHandler(async (event) => {
 
   const query = validateZodQuerySchema(event, SlugQuerySchema)
 
-  try {
-    const project = await db
+  const { result: project, error } = await safeAsync(async () => {
+    return await db
       .select()
       .from(schema.projects)
       .where(eq(schema.projects.slug, query.slug))
       .limit(1)
       .then((results) => results[0] || null)
+  })
 
-    if (!project) {
-      // Help GPT by listing all available slugs
-      const slugs = await getAllProjectSlugs()
-
-      createErrorResponse({
-        statusCode: 404,
-        message: `Project with slug "${query.slug}" not found.`,
-        data: {
-          availableSlugs: slugs,
-        }
-      })
-    }
-
-    return createSuccessResponse(project, `Project with slug "${query.slug}" retrieved successfully.`)
-  } catch (error) {
+  if (error) {
     createErrorResponse({
       statusCode: 500,
-      message: 'An unexpected error occurred during database operations. Please try again later.',
+      message: 'An error occurred while retrieving the project from the database.',
       error
     })
   }
+
+  if (!project) {
+    // Help GPT by listing all available slugs
+    const slugs = await getAllProjectSlugs()
+
+    createErrorResponse({
+      statusCode: 404,
+      message: `Project with slug "${query.slug}" not found.`,
+      data: {
+        availableSlugs: slugs,
+      }
+    })
+  }
+
+  return createSuccessResponse(project, `Project with slug "${query.slug}" retrieved successfully.`)
+
 })
