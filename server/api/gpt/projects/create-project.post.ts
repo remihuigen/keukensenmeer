@@ -106,7 +106,7 @@ export default defineEventHandler(async (event) => {
       .returning()
   })
 
-  if (error || !project[0]) {
+  if (error || !project?.[0]) {
     createErrorResponse({
       statusCode: 500,
       message: 'An error occurred while creating the project in the database.',

@@ -1,5 +1,5 @@
 /**
- * Removes a related image object from a project
+ * Removes one or more related image objects from a project
  * * Query Parameters:
  * - slug: string (required) - The unique identifier for the project
  * 
@@ -7,7 +7,7 @@
  */
 
 import { schema, db } from 'hub:db'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { SlugQuerySchema } from '~~/server/utils/validation/queries'
 import { validateZodQuerySchema, validateZodBodySchema } from '~~/server/utils/validation'
 import { deleteImageSchema } from '~~/server/utils/validation/payloads'
@@ -18,6 +18,7 @@ export default defineEventHandler(async (event) => {
   const { slug } = validateZodQuerySchema(event, SlugQuerySchema)
   const body = await validateZodBodySchema(event, deleteImageSchema)
 
+  // First, get the project ID based on the slug
   const { result: project, error: projectError } = await safeAsync(async () => {
     return await db
       .select({
@@ -50,16 +51,21 @@ export default defineEventHandler(async (event) => {
       .where(
         and(
           eq(schema.projectImages.projectId, project.id),
-          eq(schema.projectImages.pathname, body.pathname)
+          inArray(schema.projectImages.pathname, body.pathnames)
         )
       )
       .returning()
 
-    return createSuccessResponse(result, `Image "${body.pathname}" has been removed from project "${slug}".`)
+    const imageCount = result.length
+    const message = imageCount === 1
+      ? `Image "${body.pathnames[0]}" has been removed from project "${slug}".`
+      : `${imageCount} images have been removed from project "${slug}".`
+
+    return createSuccessResponse(result, message)
   } catch (error) {
     createErrorResponse({
-      statusCode: 400,
-      message: `An unexpected error occurred while removing image "${body.pathname}" from project "${slug}".`,
+      statusCode: 500,
+      message: `An unexpected error occurred while removing images from project "${slug}".`,
       error
     })
   }

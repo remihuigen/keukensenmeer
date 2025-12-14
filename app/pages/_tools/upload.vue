@@ -19,86 +19,112 @@ definePageMeta({
 	description: 'Upload afbeeldingen en bestanden naar opslag.',
 })
 
-const schema = z.object({
-	image: z
-		.instanceof(File, {
-			message: 'Kies een afbeelding...',
-		})
-		.refine((file) => file.size <= MAX_FILE_SIZE, {
-			message: `De afbeelding is te groot. Kies een afbeelding kleiner dan ${formatBytes(MAX_FILE_SIZE)}.`,
-		})
-		.refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type as BlobType), {
-			message: `Kies een geldig afbeeldingstype (${ACCEPTED_IMAGE_TYPES.map((type) => type.split('/')[0])}).`,
-		})
-		.refine(
-			(file) =>
-				new Promise((resolve) => {
-					const reader = new FileReader()
-					reader.onload = (e) => {
-						const img = new Image()
-						img.onload = () => {
-							const meetsDimensions =
-								img.width >= MIN_DIMENSIONS.width &&
-								img.height >= MIN_DIMENSIONS.height &&
-								img.width <= MAX_DIMENSIONS.width &&
-								img.height <= MAX_DIMENSIONS.height
-							resolve(meetsDimensions)
-						}
-						img.src = e.target?.result as string
+/**
+ * Zod schema for validating uploaded files.
+ * Includes checks for file type, size, and dimensions,
+ * based on predefined constants.
+ * Provides user-friendly error messages.
+ */
+const fileValidator = z
+	.instanceof(File, {
+		message: 'Kies een afbeelding...',
+	})
+	.refine((file) => file.size <= MAX_FILE_SIZE, {
+		message: `De afbeelding is te groot. Kies een afbeelding kleiner dan ${formatBytes(MAX_FILE_SIZE)}.`,
+	})
+	.refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type as BlobType), {
+		message: `Kies een geldig afbeeldingstype (${ACCEPTED_IMAGE_TYPES.map((type) => type.split('/')[0])}).`,
+	})
+	.refine(
+		(file) =>
+			new Promise((resolve) => {
+				const reader = new FileReader()
+				reader.onload = (e) => {
+					const img = new Image()
+					img.onload = () => {
+						const meetsDimensions =
+							img.width >= MIN_DIMENSIONS.width &&
+							img.height >= MIN_DIMENSIONS.height &&
+							img.width <= MAX_DIMENSIONS.width &&
+							img.height <= MAX_DIMENSIONS.height
+						resolve(meetsDimensions)
 					}
-					reader.readAsDataURL(file)
-				}),
-			{
-				message: `Het formaat van de afbeelding is ongeldig. Kies een grootte tussen ${MIN_DIMENSIONS.width}x${MIN_DIMENSIONS.height} en ${MAX_DIMENSIONS.width}x${MAX_DIMENSIONS.height} pixels.`,
-			},
-		),
+					img.src = e.target?.result as string
+				}
+				reader.readAsDataURL(file)
+			}),
+		{
+			message: `Het formaat van de afbeelding is ongeldig. Kies een grootte tussen ${MIN_DIMENSIONS.width}x${MIN_DIMENSIONS.height} en ${MAX_DIMENSIONS.width}x${MAX_DIMENSIONS.height} pixels.`,
+		},
+	)
+
+const schema = z.object({
+	images: z.array(fileValidator).min(1, 'Selecteer minimaal één afbeelding'),
 })
 
 type Schema = z.output<typeof schema>
 
 const state = reactive<Partial<Schema>>({
-	image: undefined,
+	images: [],
 })
 
 const toast = useToast()
 
 const loading = ref(false)
-const currentBlobId = ref<BlobObject['pathname']>('')
 const blobHistory = ref<BlobObject[]>([])
+
+const fullBlobList = computed(() => blobHistory.value.map((blob) => blob.pathname).join('\n'))
 
 const upload = useUpload('/api/blob', {
 	method: 'PUT',
+	multiple: true,
 	headers: { Authorization: `Bearer ${useRuntimeConfig().public.apiToken}` },
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
 	loading.value = true
 	try {
-		const uploadedFile = await upload(event.data.image)
-		blobHistory.value.push(uploadedFile)
-		currentBlobId.value = uploadedFile.pathname
-		const { copy } = useClipboard({ source: uploadedFile.pathname })
+		const uploadedFiles = await upload(event.data.images)
+
+		console.log('Uploaded files:', uploadedFiles)
+
+		// uploadedFiles is an array of BlobObject
+		const filesArray = Array.isArray(uploadedFiles) ? uploadedFiles : [uploadedFiles]
+		blobHistory.value.push(...filesArray)
+
+		// Create newline-separated list of pathnames for copying
+		const pathnames = filesArray.map((f) => f.pathname).join('\n')
+		const { copy } = useClipboard({ source: pathnames })
+
+		const fileCount = filesArray.length
+		const description =
+			fileCount === 1
+				? 'Je afbeelding is succesvol geüpload. Zorg ervoor je de bestandsnaam kopieert.'
+				: `${fileCount} afbeeldingen zijn succesvol geüpload. Zorg ervoor je de bestandsnamen kopieert.`
+
 		toast.add({
 			color: 'success',
 			title: 'Upload geslaagd',
-			description:
-				'Je afbeelding is succesvol geüpload. Zorg ervoor je de afbeelding ID kopieert.',
+			description,
 			actions: [
 				{
 					icon: 'lucide:copy',
-					label: 'Kopieer ID',
+					label: fileCount === 1 ? 'Kopieer bestandsnaam' : 'Kopieer bestandsnamen',
 					onClick: () => {
 						copy()
 						toast.add({
 							color: 'info',
 							title: 'Gekopieerd',
-							description: 'Het afbeelding ID is naar je klembord gekopieerd.',
+							description:
+								fileCount === 1
+									? 'De bestandsnaam is naar je klembord gekopieerd.'
+									: 'De bestandsnamen zijn naar je klembord gekopieerd.',
 						})
 					},
 				},
 			],
 		})
-		state.image = undefined
+		state.images = []
 	} catch (err) {
 		console.error('Upload failed:', err)
 		toast.add({
@@ -121,22 +147,19 @@ const { isDev } = useRuntimeConfig().public.mode
 			<h1
 				class="text-shadow-secondary-800 font-serif text-5xl font-bold text-white text-shadow-lg/30"
 			>
-				Upload een
-				<Hand>afbeelding</Hand>
+				Upload
+				<Hand>afbeeldingen</Hand>
 			</h1>
-			<UForm :schema="schema" :state="state" class="w-96 space-y-4" @submit="onSubmit">
-				<UFormField
-					name="image"
-					label="Afbeelding uploaden"
-					description="JPG, WEBP of PNG. 5MB Max."
-				>
+			<UForm :schema="schema" :state="state" class="w-full space-y-4" @submit="onSubmit">
+				<UFormField name="images">
 					<UFileUpload
-						v-model="state.image"
+						v-model="state.images"
 						accept="image/*"
 						icon="i-lucide-image"
-						label="Sleep je afbeelding hier in"
-						description="PNG, JPG of WebP (max. 5MB)"
-						class="min-h-60 w-full"
+						label="Sleep je afbeeldingen hier in"
+						description="PNG, JPG of WebP (max. 5MB per bestand)"
+						class="max-h-[70vh] min-h-[50vh] w-full"
+						multiple
 						highlight
 						:ui="{
 							base: 'bg-secondary-600',
@@ -147,7 +170,7 @@ const { isDev } = useRuntimeConfig().public.mode
 			</UForm>
 			<div
 				v-if="!!blobHistory.length"
-				class="bg-secondary-600 mt-8 space-y-6 rounded-lg p-4 py-6"
+				class="bg-secondary-600 relative mt-8 space-y-6 rounded-lg p-4 py-6"
 			>
 				<h2 class="color=primary font-bold">Recent geüpload</h2>
 				<ul class="space-y-3">
@@ -178,11 +201,21 @@ const { isDev } = useRuntimeConfig().public.mode
 				</ul>
 
 				<UAlert
-					color="neutral"
+					color="warning"
 					icon="lucide:info"
-					description="Let op: zodra je de pagina verlaat is deze lijst van uploads verdwenen. Zorg dat je de ID's kopieert vóórdat je de pagina verlaat!"
+					description="Let op: zodra je de pagina verlaat is deze lijst van uploads verdwenen. Zorg dat je de bestandsnamen kopieert vóórdat je de pagina verlaat!"
 					variant="subtle"
 				/>
+				<UseClipboard v-slot="{ copy, copied }" :source="fullBlobList">
+					<UButton
+						size="xs"
+						variant="soft"
+						label="Kopieer alles"
+						:icon="copied ? 'lucide:check' : 'lucide:copy'"
+						class="absolute top-5 right-5"
+						@click="copy()"
+					/>
+				</UseClipboard>
 			</div>
 		</UContainer>
 	</Section>

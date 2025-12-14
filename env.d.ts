@@ -6,8 +6,7 @@ declare global {
       DISABLE_PRE_PUSH_TYPECHECK?: 'true' | 'false'
       DEBUG?: 'true' | 'false'
       MODE: Mode
-      WORKER_MODE: Mode
-      CLOUDINARY_CLOUD_NAME: string
+      WORKER_MODE?: Mode
 
       PLAUSIBLE_DOMAIN: string
       DISABLE_TRACKING?: 'true' | 'false'
@@ -18,6 +17,7 @@ declare global {
       API_TOKEN: string
       GPT_TOKEN: string
       PUBLIC_API_TOKEN: string
+      SUPER_SECRET_CONFIRMATION_PASSWORD: string
 
       NUXT_HUB_PROJECT_KEY: string
       NUXT_HUB_PROJECT_SECRET_KEY: string
@@ -26,16 +26,10 @@ declare global {
       NUXT_HUB_CLOUDFLARE_API_TOKEN: string
 
       NUXT_HUB_WORKER_NAME: string
-      NUXT_HUB_WORKER_PREVIEW_NAME: string
 
-      NUXT_HUB_CLOUDFLARE_PROD_CACHE_NAMESPACE_ID: string
-      NUXT_HUB_CLOUDFLARE_PREVIEW_CACHE_NAMESPACE_ID: string
-
-      NUXT_HUB_CLOUDFLARE_PROD_KV_NAMESPACE_ID: string
-      NUXT_HUB_CLOUDFLARE_PREVIEW_KV_NAMESPACE_ID: string
-
-      NUXT_HUB_CLOUDFLARE_PROD_DB_ID: string
-      NUXT_HUB_CLOUDFLARE_PREVIEW_DB_ID: string
+      NUXT_HUB_CLOUDFLARE_CACHE_NAMESPACE_ID: string
+      NUXT_HUB_CLOUDFLARE_KV_NAMESPACE_ID: string
+      NUXT_HUB_CLOUDFLARE_DB_ID: string
     }
   }
 }

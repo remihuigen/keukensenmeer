@@ -8,6 +8,16 @@ const { data, error, status } = await useFetch(`/api/projects`)
 			Onze
 			<Hand> projecten </Hand>
 		</h1>
+
+		<UPageGrid v-if="data">
+			<UPageCard
+				v-for="project in data.data"
+				:key="project.id"
+				:title="project.publicTitle"
+				:description="project.description"
+				:to="`/projecten/${project.slug}`"
+			/>
+		</UPageGrid>
 		<pre>{{ data }}</pre>
 		<pre>{{ error }}</pre>
 		<pre>Status: {{ status }}</pre>

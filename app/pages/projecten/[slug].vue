@@ -1,7 +1,12 @@
 <script lang="ts" setup>
+import type { ProjectImage } from '~~/server/db/schema/projectImages'
+import type { Project } from '~~/server/db/schema/projects'
+
 const route = useRoute()
 
-const { data, error, status } = await useFetch(`/api/old/${route.params.slug}`)
+const { data, error, status } = await useFetch<{ data: Project & { images: ProjectImage[] } }>(
+	`/api/projecten/${route.params.slug}`,
+)
 
 if (!data.value) {
 	throw createError({
@@ -11,14 +16,16 @@ if (!data.value) {
 	})
 }
 
+const { data: project } = data.value
+
 useSeoMeta({
-	title: `Project - ${data.value.publicTitle}`,
-	description: data.value.description,
-	ogDescription: data.value.description,
-	twitterTitle: `Project - ${data.value.publicTitle}`,
-	twitterDescription: data.value.description,
-	ogImage: data.value.mainImage,
-	twitterImage: data.value.mainImage,
+	title: `Project - ${project.publicTitle}`,
+	description: project.description,
+	ogDescription: project.description,
+	twitterTitle: `Project - ${project.publicTitle}`,
+	twitterDescription: project.description,
+	// ogImage: project.mainImage,
+	// twitterImage: data.value.mainImage,
 })
 
 useSchemaOrg([
@@ -26,11 +33,24 @@ useSchemaOrg([
 		'@type': 'ItemPage',
 	}),
 ])
+
+const { isDev } = useRuntimeConfig().public.mode
 </script>
 
 <template>
-	<UContainer class="py-8">
-		<h1 class="font-serif text-4xl font-bold text-white">Project: {{ route.params.slug }}</h1>
+	<UContainer class="space-y-8 py-8">
+		<h1 class="font-serif text-4xl font-bold text-white">{{ project.publicTitle }}</h1>
+		<p class="leading-loose">{{ project.description }}</p>
+		<UPageColumns v-if="data">
+			<NuxtImg
+				v-for="image in project.images"
+				:key="image.id"
+				:src="isDev ? `/images/${image.pathname}` : getImagePath(image.pathname)"
+				class="aspect-auto w-full"
+				width="400"
+				:provider="isDev ? 'none' : 'cloudflare'"
+			/>
+		</UPageColumns>
 		<pre>{{ data }}</pre>
 		<pre>{{ error }}</pre>
 		<pre>Status: {{ status }}</pre>

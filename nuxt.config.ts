@@ -128,6 +128,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiToken: process.env.API_TOKEN!,
     gptToken: process.env.GPT_TOKEN!,
+    confirmationPassword: process.env.SUPER_SECRET_CONFIRMATION_PASSWORD!,
     public: {
       apiToken: process.env.PUBLIC_API_TOKEN,
       tracking: {
