@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.2](https://github.com/remihuigen/keukensenmeer/compare/v1.14.1...v1.14.2) (2025-12-14)
+
+
+### Bug Fixes
+
+* Fetch route ([cd25ca4](https://github.com/remihuigen/keukensenmeer/commit/cd25ca4740ff28a4951f6b3184704a09b29b4731))
+
 ## [1.14.1](https://github.com/remihuigen/keukensenmeer/compare/v1.14.0...v1.14.1) (2025-12-14)
 
 
