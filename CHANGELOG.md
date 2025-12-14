@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.15.0](https://github.com/remihuigen/keukensenmeer/compare/v1.14.2...v1.15.0) (2025-12-14)
+
+
+### Features
+
+* Add cache invalidation to project mutations ([9cbf1a9](https://github.com/remihuigen/keukensenmeer/commit/9cbf1a944ffc2e4236a91ad863b2765dbdfdae6e))
+
 ## [1.14.2](https://github.com/remihuigen/keukensenmeer/compare/v1.14.1...v1.14.2) (2025-12-14)
 
 
