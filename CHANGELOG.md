@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.3](https://github.com/remihuigen/keukensenmeer/compare/v1.15.2...v1.15.3) (2025-12-15)
+
+
+### Bug Fixes
+
+* Add automatic-immediate chunk errors ([56b5d05](https://github.com/remihuigen/keukensenmeer/commit/56b5d055b1969418e558e2bca1038f32c91280e6))
+
 ## [1.15.2](https://github.com/remihuigen/keukensenmeer/compare/v1.15.1...v1.15.2) (2025-12-14)
 
 
