@@ -31,6 +31,7 @@ export default defineNuxtConfig({
 
   experimental: {
     asyncContext: true,
+    emitRouteChunkError: 'automatic-immediate'
   },
 
   css: ['~/assets/css/main.css'],
